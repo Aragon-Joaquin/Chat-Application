@@ -8,21 +8,29 @@
 
 - **Expected time**: 5 months maximum - Until (5/1/2025 MM-DD-YY)
 - **Level required**: Medium
-- **Architecture**: ???
+- **Architecture**: Scream/clean/roca/custom
 - **Type of application**: SSR
 
 ## 📚 **Resources that i'll implement:**
 
 The **_NEW_** thingy means that i'll be learning those technologies
 
-- TypeScript
-- React
-- nextjs? **_NEW_**
-- Web Sockets (Socket.io) **_NEW_**
-- Electron **_NEW_**
-- Tailwind CSS
-- shacdn (or another component library) **_NEW_**
-- Postgresql (if i have time) **_NEW_**
+- General
+
+  - TypeScript
+  - ~~Electron (probably not, maybe for a side project) **_NEW_**~~
+
+- Server
+
+  - Nest JS / fastify? **_NEW_**
+  - Prisma? ORM **_NEW_**
+  - Web Sockets (Socket.io) **_NEW_**
+  - Postgresql **_NEW_**
+
+- Client
+  - React
+  - shacdn (or another component library) **_NEW_**
+  - Tailwind CSS
 
 ## 🏁 **Steps**
 
