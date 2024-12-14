@@ -18,18 +18,17 @@ The **_NEW_** thingy means that i'll be learning those technologies
 - General
 
   - TypeScript
-  - ~~Electron (probably not, maybe for a side project) **_NEW_**~~
 
 - Server
 
-  - Nest JS / fastify? **_NEW_**
-  - Prisma? ORM **_NEW_**
+  - NextJS **_NEW_**
+  - Prisma / TypeORM? **_NEW_**
   - Web Sockets (Socket.io) **_NEW_**
   - Postgresql **_NEW_**
 
 - Client
   - React
-  - shacdn (or another component library) **_NEW_**
+  - shadcn ui (or another component library) **_NEW_**
   - Tailwind CSS
 
 ## 🏁 **Steps**
