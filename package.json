@@ -1,0 +1,22 @@
+{
+	"name": "chat-application",
+	"version": "1.0.0",
+	"description": "> [!NOTE]\r > Updating this readme when the project it's almost done.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "concurrently \"npm run client\" \"npm run server\"",
+		"client": "cd packages/client && npm run dev",
+		"server": "cd packages/server && npm run start:dev"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"workspaces": [
+		"packages/server",
+		"packages/client"
+	],
+	"devDependencies": {
+		"concurrently": "^9.1.2"
+	}
+}
