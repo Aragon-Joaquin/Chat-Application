@@ -11,19 +11,19 @@
 
 -- RELATIONSHIPS ONE TO MANY & ONE TO ONE
 
-CREATE TABLE FileStorager (
-	fileID UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-	fileSRC text NOT NULL, -- i have no idea how long the url is gonna be
-	fileName varchar(30) NOT NULL
+CREATE TABLE file_storage (
+	file_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+	file_src text NOT NULL, -- i have no idea how long the url is gonna be
+	file_name varchar(30) NOT NULL
 );
 
-CREATE TABLE "User" (
-	userID SERIAL PRIMARY KEY, --this could be a UUID type
-	userName varchar(20) UNIQUE NOT NULL,
-	userPassword text NOT NULL,
-	profilePicture UUID, --MAKE A DEFAULT PROFILE PICTURE
+CREATE TABLE users (
+	user_id SERIAL PRIMARY KEY, --this could be a UUID type
+	user_name varchar(20) UNIQUE NOT NULL,
+	user_password text NOT NULL,
+	profile_picture UUID, --MAKE A DEFAULT PROFILE PICTURE
 	
-	CONSTRAINT fk_profilePicture FOREIGN KEY (profilePicture) REFERENCES FileStorager(fileID)
+	CONSTRAINT fk_profile_picture FOREIGN KEY (profile_picture) REFERENCES file_storage(file_id)
 );
 
 /* 
@@ -39,61 +39,61 @@ ON CONFLICT (roomID) DO UPDATE
 	
 */
 
-CREATE TABLE Room (
-	roomID char(6) PRIMARY KEY UNIQUE DEFAULT substr(md5(random()::text), 1, 6), -- generate a random code that consists of 6 characters
-	roomName varchar(20) NOT NULL,
-	roomPassword text NULL,
-	roomDescription varchar(150) NULL,
-	createdAt date NOT NULL DEFAULT CURRENT_DATE,
-	roomPicture UUID,
+CREATE TABLE room (
+	room_id char(6) PRIMARY KEY UNIQUE DEFAULT substr(md5(random()::text), 1, 6), -- generate a random code that consists of 6 characters
+	room_name varchar(20) NOT NULL,
+	room_password text NULL,
+	room_description varchar(150) NULL,
+	created_at date NOT NULL DEFAULT CURRENT_DATE,
+	room_picture UUID,
 	-- isEmpty boolean DEFAULT false NOT NULL,
 
-	CONSTRAINT fk_roomPicture FOREIGN KEY (roomPicture) REFERENCES FileStorager(fileID)
+	CONSTRAINT fk_room_picture FOREIGN KEY (room_picture) REFERENCES file_storage(file_id)
 );
 
 
-CREATE TABLE Roles (
-	roleName varchar(20) NOT NULL PRIMARY KEY UNIQUE,
-	deleteMessages boolean DEFAULT false NOT NULL,
-	removeUsers boolean DEFAULT false NOT NULL,
-	canBeRemoved boolean DEFAULT true NOT NULL
+CREATE TABLE roles (
+	role_name varchar(20) NOT NULL PRIMARY KEY UNIQUE,
+	delete_messages boolean DEFAULT false NOT NULL,
+	remove_users boolean DEFAULT false NOT NULL,
+	can_be_removed boolean DEFAULT true NOT NULL
 );
 
-INSERT into Roles(roleName)values('user');
-INSERT into Roles(roleName, deleteMessages, removeUsers) values('admin', true, true);
-INSERT into Roles values('owner', true, true, false);
+INSERT into roles(role_name)values('user');
+INSERT into roles(role_name, delete_messages, remove_users) values('admin', true, true);
+INSERT into roles values('owner', true, true, false);
 
-CREATE TABLE "Message"(
-	messageID UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-	messageContent text null, -- you can send images without text
-	dateSended timestamp not null default CURRENT_TIMESTAMP(0),
-	fileID UUID null,
+CREATE TABLE messages(
+	message_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+	message_content text null, -- you can send images without text
+	date_sended timestamp not null default CURRENT_TIMESTAMP(0),
+	file_id UUID null,
 
-	CONSTRAINT fk_fileID FOREIGN KEY (fileID) REFERENCES FileStorager(fileID)
+	CONSTRAINT fk_file_id FOREIGN KEY (file_id) REFERENCES file_storage(file_id)
 );
 
 -- RELATIONSHIPS MANY TO MANY
 
-CREATE TABLE Users_In_Room (
-	userID SERIAL NOT NULL,
-	roomID char(6) NOT NULL,
-	roleID varchar(20) NOT NULL,
+CREATE TABLE users_in_room (
+	user_id SERIAL NOT NULL,
+	room_id char(6) NOT NULL,
+	role_id varchar(20) NOT NULL,
 
-	PRIMARY KEY (userID, roomID),
+	PRIMARY KEY (user_id, room_id),
 
-	CONSTRAINT fk_userID FOREIGN KEY (userID) REFERENCES "User"(userID),
-	CONSTRAINT fk_roomID FOREIGN KEY (roomID) REFERENCES Room(roomID),
-	CONSTRAINT fk_roleID FOREIGN KEY (roleID) REFERENCES Roles(roleName)
+	CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(user_id),
+	CONSTRAINT fk_room_id FOREIGN KEY (room_id) REFERENCES room(room_id),
+	CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(role_name)
 );
 
-CREATE TABLE Room_Messages (
-	senderID SERIAL NOT NULL,
-	whichRoom char(6) NOT NULL,
-	messageID UUID NOT NULL,
+CREATE TABLE room_messages (
+	sender_id SERIAL NOT NULL,
+	which_room char(6) NOT NULL,
+	message_id UUID NOT NULL,
 
-	PRIMARY KEY (senderID, whichRoom, messageID),
+	PRIMARY KEY (sender_id, which_room, message_id),
 	
-	CONSTRAINT fk_senderID FOREIGN KEY (senderID) REFERENCES "User"(userID),
-	CONSTRAINT fk_whichRoom FOREIGN KEY (whichRoom) REFERENCES Room(roomID),
-	CONSTRAINT fk_messageID FOREIGN KEY (messageID) REFERENCES "Message"(messageID)
+	CONSTRAINT fk_sender_id FOREIGN KEY (sender_id) REFERENCES users(user_id),
+	CONSTRAINT fk_which_room FOREIGN KEY (which_room) REFERENCES room(room_id),
+	CONSTRAINT fk_message_id FOREIGN KEY (message_id) REFERENCES messages(message_id)
 );

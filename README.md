@@ -1,6 +1,11 @@
 > [!NOTE]
 > Updating this readme when the project it's almost done.
 
+#### things to remember:
+
+- Make a table for user logouts & expiration tokens
+- Hash passwords.
+
 ## ℹ **General info:**
 
 - **Expected time**: Until (5/1/2025 MM-DD-YY)
@@ -12,9 +17,11 @@
 The **_NEW_** thingy means that i'll be learning those technologies
 
 - General
+
   - TypeScript
 
 - Server
+
   - NestJS
   - TypeORM **_NEW_**
   - Web Sockets (Socket.io) **_NEW_**
