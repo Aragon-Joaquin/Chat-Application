@@ -16,13 +16,15 @@ export class LoginController {
   //send the credentials and verify them  with jwt, return jwt if okay
   @Get()
   login(@Body(new ValidationPipe()) body: UserDto) {
-    this.loginService.findAll();
     return body;
   }
 
   // register
   @Post()
-  register(@Body() body) {
+  register(@Body() body: UserDto) {
+    console.log(body);
+
+    this.loginService.registerUser(body);
     return body;
   }
 

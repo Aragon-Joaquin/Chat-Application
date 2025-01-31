@@ -26,6 +26,7 @@ export class room {
   @Column({ nullable: false, default: createDateNow() })
   created_at: Date;
 
+  @Column()
   @OneToOne(() => file_storage, (entity) => entity.file_id, { nullable: true })
   room_picture: UUID_TYPE;
 }

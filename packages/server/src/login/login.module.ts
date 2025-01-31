@@ -8,5 +8,6 @@ import { users, file_storage } from 'src/entities';
   imports: [TypeOrmModule.forFeature([users, file_storage])],
   providers: [LoginService],
   controllers: [LoginController],
+  exports: [LoginService],
 })
 export class LoginModule {}
