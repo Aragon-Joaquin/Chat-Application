@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { users } from 'src/entities';
-import { UserInformation } from 'src/login/dto/user.dto';
 import { LoginService } from 'src/login/login.service';
+import { comparePassword } from 'src/utils/hashingFuncs';
 
 @Injectable()
 export class AuthService {
@@ -11,29 +10,36 @@ export class AuthService {
     private loginService: LoginService,
   ) {}
 
-  async findUserBy({
-    condition,
-    userField,
-  }: {
-    condition: string;
-    userField: string | number;
-  }): Promise<users> {
-    if (!condition || !userField)
+  async LoginIfCredentials(name: string, password: string): Promise<any> {
+    if (!name || !password) return null;
+
+    const user = await this.loginService.findOne({
+      where: {
+        user_name: name,
+      },
+    });
+
+    if (!user) {
       throw new HttpException(
-        'Missing arguments on userField.',
+        'User does not exists with that. Try again.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const isSamePassword = await comparePassword({
+      userPassword: password,
+      originalPassword: user.user_password,
+    });
+
+    if (!isSamePassword)
+      throw new HttpException(
+        "Credentials don't match.",
         HttpStatus.BAD_REQUEST,
       );
 
-    return await this.loginService.findOne({
-      where: {
-        [condition]: userField,
-      },
+    return this.jwtService.sign({
+      userName: user.user_name,
+      id: user.user_id,
     });
-  }
-
-  LoginAndJWT({ userName, userPassword }: UserInformation) {
-    return {
-      access_token: this.jwtService.sign({ userName, userPassword }),
-    };
   }
 }

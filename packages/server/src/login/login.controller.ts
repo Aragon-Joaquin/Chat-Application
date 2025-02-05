@@ -4,12 +4,14 @@ import {
   Get,
   Patch,
   Post,
+  Req,
+  UnauthorizedException,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { UserDto } from './dto/user.dto';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
+import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 
 @Controller('login')
 export class LoginController {
@@ -17,8 +19,10 @@ export class LoginController {
 
   //send the credentials and verify them  with jwt, return jwt if okay
   @Get()
-  login(@Body(new ValidationPipe()) body: UserDto) {
-    return body;
+  @UseGuards(LocalAuthGuard)
+  login(@Req() req: Request, @Body(new ValidationPipe()) body: UserDto) {
+    if ('user' in req) return req.user;
+    throw new UnauthorizedException();
   }
 
   // register
