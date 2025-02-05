@@ -4,7 +4,7 @@ import { file_storage } from './FileStoragerEntity';
 
 @Entity()
 export class users {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment', { type: 'int' })
   user_id: number;
 
   @Column({ nullable: false, unique: true, length: 20 })

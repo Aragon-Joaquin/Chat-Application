@@ -3,7 +3,7 @@ import { UserTextDecorator } from '../decorators/userDecorator';
 export type UserInformation = {
   userName: string;
   userPassword: string;
-  profilePicture: string;
+  profilePicture?: string;
 };
 
 export class UserDto implements UserInformation {

@@ -4,10 +4,12 @@ import {
   Get,
   Patch,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { UserDto } from './dto/user.dto';
+import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 
 @Controller('login')
 export class LoginController {
@@ -20,12 +22,10 @@ export class LoginController {
   }
 
   // register
+
   @Post()
   register(@Body() body: UserDto) {
-    console.log(body);
-
-    this.loginService.registerUser(body);
-    return body;
+    return this.loginService.registerUser(body);
   }
 
   // change password

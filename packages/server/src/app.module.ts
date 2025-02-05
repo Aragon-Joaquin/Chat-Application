@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { LoginModule } from './login/login.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { AuthModule } from './auth/auth.module';
 import { EnvDBInfo } from './utils/getEnvVariables';
+import { PassportModule } from '@nestjs/passport';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     LoginModule,
+    AuthModule,
+    PassportModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -19,11 +21,8 @@ import { EnvDBInfo } from './utils/getEnvVariables';
       autoLoadEntities: true,
       entities: ['./entities/*.ts'],
     }),
-    AuthModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {
-  constructor(private dataSource: DataSource) {}
-}
+export class AppModule {}

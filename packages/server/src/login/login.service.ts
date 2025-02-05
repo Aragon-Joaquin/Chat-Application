@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { users } from 'src/entities';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { UserInformation } from './dto/user.dto';
 import { hashPassword } from 'src/utils/hashingFuncs';
 
@@ -12,11 +12,7 @@ export class LoginService {
     private userRepository: Repository<users>,
   ) {}
 
-  async findOneUser(): Promise<users[]> {
-    return await this.userRepository.find();
-  }
-
-  async registerUser(body: UserInformation): Promise<undefined> {
+  async registerUser(body: UserInformation): Promise<UserInformation> {
     const { userName, userPassword } = body;
     const isDuped = await this.userRepository.findOne({
       where: {
@@ -27,10 +23,25 @@ export class LoginService {
     if (isDuped)
       throw new HttpException('UserName is already taken', HttpStatus.CONFLICT);
 
-    // finish this
-    await this.userRepository.create({
+    await this.userRepository.insert({
       user_name: userName,
       user_password: await hashPassword(userPassword),
+      profile_picture: null,
     });
+
+    return body;
+  }
+
+  async findOne(where: FindOneOptions<users>): Promise<users> {
+    const user = await this.userRepository.findOne(where);
+    console.log(user);
+    if (!user) {
+      throw new HttpException(
+        `There isn't any user with identifier: ${where}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return user;
   }
 }

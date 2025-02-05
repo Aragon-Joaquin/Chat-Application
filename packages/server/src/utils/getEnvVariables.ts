@@ -23,3 +23,16 @@ export const hashingInformation = () => {
     HASH_SECRET: HASH_SECRET,
   };
 };
+
+const { JWT_SECRET } = process.env;
+
+export const getJWTSecret = () => {
+  if (JWT_SECRET == undefined)
+    throw new Error(
+      "Specify the JWT SECRET in the .env file. Vulnerability would be high if don't.",
+    );
+
+  return {
+    JWT_SECRET,
+  };
+};
