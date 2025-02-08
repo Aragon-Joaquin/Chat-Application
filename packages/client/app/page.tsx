@@ -1,7 +1,9 @@
-export default function Home() {
-	return (
-		<main>
-			<div>Hello world</div>
-		</main>
-	)
+'use server'
+
+import { redirect } from 'next/navigation'
+import { getJWT } from './_utils/JWTMethods'
+
+export default async function Home() {
+	const JWTInfo = await getJWT()
+	if (!JWTInfo) redirect('/login')
 }

@@ -5,19 +5,29 @@ import { Heading, Text } from '@radix-ui/themes'
 import { FormEvent } from 'react'
 import { FieldComponent, FieldSVGComponent } from './_components/Field.component'
 import { BottomText } from './_components/BottomText.component'
+import { callServer } from '../_utils/callServer'
 
-function submitCredentials(e: FormEvent<HTMLFormElement>) {
+const USER_FIELDNAME = 'username' as const
+const PASSWORD_FIELDNAME = 'password' as const
+
+async function submitCredentials(e: FormEvent<HTMLFormElement>) {
 	e.preventDefault()
-	console.log('submit', e)
-	//new FormData
+	const formData = new FormData(e?.currentTarget)
+	const userInfo = formData.get(USER_FIELDNAME)?.toString()
+	const passwordInfo = formData.get(PASSWORD_FIELDNAME)?.toString()
+
+	if (!userInfo || !passwordInfo) throw new Error('Fields are empty.')
+	const returnedJWT = await callServer({ HTTPMethod: 'GET', endpoint: 'login', bodyFields: [userInfo, passwordInfo] })
+	console.log(returnedJWT)
 }
 
 export default function Login() {
 	return (
 		<main className="flex h-screen items-center justify-center px-10">
+			{/* Root element causes a rerender on every keystroke */}
 			<Root
 				onSubmit={(e) => submitCredentials(e)}
-				className="border-2 border-transparent/5 shadow-inner rounded-md p-10 bg-neutral-100 flex flex-col gap-y-10"
+				className="border-2 border-transparent/10 shadow-inner rounded-md p-10 bg-neutral-100 flex flex-col gap-y-10"
 			>
 				<div className="flex flex-col gap-2">
 					<Heading as="h2" size="7" className="font-bold">
@@ -27,9 +37,9 @@ export default function Login() {
 				</div>
 
 				<div className="flex flex-col gap-y-4">
-					<FieldComponent fieldName="username" labelName="Username" placeholder="What's your username?" />
+					<FieldComponent fieldName={USER_FIELDNAME} labelName="Username" placeholder="What's your username?" />
 					<FieldSVGComponent
-						fieldName="password"
+						fieldName={PASSWORD_FIELDNAME}
 						labelName="Password"
 						placeholder="Enter your password..."
 						type="password"

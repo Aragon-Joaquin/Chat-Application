@@ -1,6 +1,6 @@
 import { Control, Field } from '@radix-ui/react-form'
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons'
-import { useId, useState } from 'react'
+import { memo, useId, useState } from 'react'
 import { FieldHeader } from './inputSection/FieldHeader.component'
 
 interface FieldComponentProps {
@@ -10,7 +10,7 @@ interface FieldComponentProps {
 	type?: 'text' | 'password'
 }
 
-export function FieldComponent({ fieldName, labelName, placeholder, type = 'text' }: FieldComponentProps) {
+function FieldComponentFunc({ fieldName, labelName, placeholder, type = 'text' }: FieldComponentProps) {
 	const htmlID = useId()
 
 	return (
@@ -27,7 +27,9 @@ export function FieldComponent({ fieldName, labelName, placeholder, type = 'text
 	)
 }
 
-export function FieldSVGComponent({ fieldName, labelName, placeholder, type = 'password' }: FieldComponentProps) {
+export const FieldComponent = memo(FieldComponentFunc)
+
+function FieldSVGComponentFunc({ fieldName, labelName, placeholder, type = 'password' }: FieldComponentProps) {
 	const htmlID = useId()
 	const [view, setView] = useState<boolean>(false)
 	return (
@@ -59,3 +61,5 @@ export function FieldSVGComponent({ fieldName, labelName, placeholder, type = 'p
 		</Field>
 	)
 }
+
+export const FieldSVGComponent = memo(FieldSVGComponentFunc)

@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className="min-h-screen min-w-screen">
+			<body>
 				<Theme appearance="light" grayColor="mauve" panelBackground="translucent" hasBackground>
 					{children}
 				</Theme>

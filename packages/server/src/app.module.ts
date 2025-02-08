@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EnvDBInfo } from './utils/getEnvVariables';
 import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
+import { WsConnGateway } from './ws-conn/ws-conn.gateway';
+import { WsConnModule } from './ws-conn/ws-conn.module';
 
 @Module({
   imports: [
@@ -21,8 +23,9 @@ import { AuthModule } from './auth/auth.module';
       autoLoadEntities: true,
       entities: ['./entities/*.ts'],
     }),
+    WsConnModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [WsConnGateway],
 })
 export class AppModule {}

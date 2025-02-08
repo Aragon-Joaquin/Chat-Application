@@ -1,7 +1,8 @@
 import { Strong, Text } from '@radix-ui/themes'
 import Link from 'next/link'
+import { memo } from 'react'
 
-export function BottomText({
+function BottomTextFunc({
 	descriptionText,
 	linkTo,
 	boldText
@@ -19,3 +20,5 @@ export function BottomText({
 		</Text>
 	)
 }
+
+export const BottomText = memo(BottomTextFunc)

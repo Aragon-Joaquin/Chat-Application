@@ -8,20 +8,18 @@
 	padding: 0;
 }
 
-:root {
-	--background: #ffffff;
-	--foreground: #171717;
+.radix-themes {
+	--color-background: #e6e6e6;
+	--color-foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
+/* @media (prefers-color-scheme: dark) { //! fix this
+	.radix-themes {
+		--color-background: #0a0a0a;
+		--color-foreground: #ededed;
 	}
-}
+} */
 
 body {
-	color: var(--foreground);
-	background: var(--background);
 	font-family: Arial, Helvetica, sans-serif;
 }
