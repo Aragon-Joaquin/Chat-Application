@@ -1,10 +1,14 @@
 import { UserTextDecorator } from '../decorators/userDecorator';
 
-export type UserInformation = {
+export interface UserInformation {
   userName: string;
   userPassword: string;
-  profilePicture?: string;
-};
+}
+
+export interface UserInDB extends UserInformation {
+  id: number;
+  profilePicture: string;
+}
 
 export class UserDto implements UserInformation {
   @UserTextDecorator()
@@ -12,6 +16,4 @@ export class UserDto implements UserInformation {
 
   @UserTextDecorator(8, 50)
   userPassword: string;
-
-  profilePicture: string;
 }

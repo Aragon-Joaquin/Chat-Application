@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { WsConnGateway } from './ws-conn.gateway';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoginModule } from 'src/login/login.module';
 
 @Module({
   providers: [WsConnGateway],
-  imports: [TypeOrmModule.forFeature()],
+  imports: [LoginModule],
 })
 export class WsConnModule {}

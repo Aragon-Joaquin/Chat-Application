@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginService } from 'src/login/login.service';
+import { getJWTSecret } from 'src/utils/getEnvVariables';
 import { comparePassword } from 'src/utils/hashingFuncs';
 
 @Injectable()
@@ -41,5 +42,24 @@ export class AuthService {
       userName: user.user_name,
       id: user.user_id,
     });
+  }
+  async VerifyJWT(token: string): Promise<boolean> {
+    const verifyIfTrue = this.jwtService.verify(token, {
+      secret: getJWTSecret().JWT_SECRET,
+    });
+
+    if (!verifyIfTrue) return true;
+    return false;
+  }
+
+  DecodeJWT(token: string) {
+    try {
+      return this.jwtService.decode(token);
+    } catch (e) {
+      throw new HttpException(
+        'Error Decoding JWT',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
