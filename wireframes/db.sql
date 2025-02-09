@@ -26,12 +26,10 @@ CREATE TABLE users (
 	CONSTRAINT fk_profile_picture FOREIGN KEY (profile_picture) REFERENCES file_storage(file_id)
 );
 
+
+CREATE SEQUENCE ROOMID_ONERROR;
+
 /* 
-TESTING. PROBABLY I'LL HANDLE THIS IN THE SERVER INSTEAD OF THE DB
-
--- CREATE SEQUENCE ROOMID_ONERROR;
--- ...ON CONFLICT (roomID) DO UPDATE lpad(nextval('ROOMID_ONERROR'), 6, '0')
-
 INSERT INTO Room (roomID)
 VALUES (substr(md5(random()::text), 1, 6))
 ON CONFLICT (roomID) DO UPDATE

@@ -1,16 +1,7 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
-import { users } from 'src/entities';
 import { UserInDB } from 'src/login/dto/user.dto';
 import { LoginService } from 'src/login/login.service';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class WsConnGuard implements CanActivate {
@@ -20,10 +11,9 @@ export class WsConnGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const token = context
-      .switchToWs()
-      .getClient()
-      .handshake.headers.authorization.split(' ')[1]; //the [0] is the Bearer thingy
+    const token = context.switchToWs().getClient().handshake
+      .headers.authorization;
+
     const decoded: Pick<UserInDB, 'userName' | 'id'> =
       this.authService.DecodeJWT(token);
 

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginService } from 'src/login/login.service';
 import { getJWTSecret } from 'src/utils/getEnvVariables';
 import { comparePassword } from 'src/utils/hashingFuncs';
+import { JWT_DECODED_INFO } from 'src/utils/types';
 
 @Injectable()
 export class AuthService {
@@ -52,9 +53,13 @@ export class AuthService {
     return false;
   }
 
-  DecodeJWT(token: string) {
+  /**
+   *
+   * @param token: Just send the Authorizarion header which should be 'Bearer eyJhbGciOiJIUzI1NiIsInR...'. The function then splits the string to keep the token
+   */
+  DecodeJWT(authorization: string): JWT_DECODED_INFO {
     try {
-      return this.jwtService.decode(token);
+      return this.jwtService.decode(authorization.split(' ')[1]); //split the token between 'Bearer' and the real jwt
     } catch (e) {
       throw new HttpException(
         'Error Decoding JWT',

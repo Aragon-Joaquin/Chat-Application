@@ -1,4 +1,4 @@
-import { UserTextDecorator } from '../decorators/userDecorator';
+import { TextMinMaxDecorator } from 'src/decorators';
 
 export interface UserInformation {
   userName: string;
@@ -11,9 +11,9 @@ export interface UserInDB extends UserInformation {
 }
 
 export class UserDto implements UserInformation {
-  @UserTextDecorator()
+  @TextMinMaxDecorator()
   userName: string;
 
-  @UserTextDecorator(8, 50)
+  @TextMinMaxDecorator(8, 50)
   userPassword: string;
 }

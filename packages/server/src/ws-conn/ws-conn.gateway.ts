@@ -1,4 +1,4 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { InternalServerErrorException, UseGuards } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -7,9 +7,10 @@ import {
 import { Server, Socket } from 'socket.io';
 import { WS_ACTIONS, WS_NAMESPACE, WS_PORT } from 'src/utils/constants';
 import { messageWSShape } from './types.d';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 import { WsConnGuard } from './ws-conn.guard';
+import { WsConnService } from './ws-conn.service';
+import { RoomService } from 'src/room/room.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @WebSocketGateway(WS_PORT, {
   namespace: WS_NAMESPACE,
@@ -19,11 +20,10 @@ import { WsConnGuard } from './ws-conn.guard';
 export class WsConnGateway {
   @WebSocketServer() wss: Server;
 
-  // this.dataSource.manager.insert(users, {user_id: 1}) - example
-  // this.dataSource.createQueryRunner().manager.insert(users, {user_id: 1}) example 2
   constructor(
-    @InjectDataSource()
-    private dataSource: DataSource,
+    private roomService: RoomService,
+    private wsService: WsConnService,
+    private authService: AuthService,
   ) {}
 
   @SubscribeMessage(WS_ACTIONS.SEND)
@@ -32,7 +32,27 @@ export class WsConnGateway {
   }
 
   @SubscribeMessage(WS_ACTIONS.JOIN)
-  handleJoinRoom(client: Socket, roomID: string) {}
+  async handleJoinRoom(
+    client: Socket,
+    roomData: { roomID: string; roomPassword: string },
+  ) {
+    const { roomID, roomPassword } = roomData;
+    const JWT_Info = this.authService.DecodeJWT(
+      client.handshake.headers.authorization,
+    );
+    try {
+      await this.roomService.JoinRoom(roomID, roomPassword, {
+        userName: JWT_Info.userName,
+        id: JWT_Info.id,
+      });
+      await client.join(roomID);
+      this.wss
+        .in(roomID)
+        .emit('JoinEvent', `${JWT_Info.userName} joined the room.`);
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 
   // @SubscribeMessage(WS_ACTIONS.LEAVE)
 

@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
 import { WsConnGateway } from './ws-conn/ws-conn.gateway';
 import { WsConnModule } from './ws-conn/ws-conn.module';
+import { RoomModule } from './room/room.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { WsConnModule } from './ws-conn/ws-conn.module';
       entities: ['./entities/*.ts'],
     }),
     WsConnModule,
+    RoomModule,
   ],
   controllers: [],
   providers: [WsConnGateway],
