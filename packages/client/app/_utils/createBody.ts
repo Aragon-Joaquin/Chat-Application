@@ -1,15 +1,18 @@
 import { HTTP_METHOD } from 'next/dist/server/web/http'
-import { URL_ENDPOINTS } from './utils'
 
 interface CREATE_REQUEST_BODY {
 	HTTPMethod: HTTP_METHOD
-	endpoint: URL_ENDPOINTS
+	endpoint: string
 	data: (string | number)[]
 }
 
 const URL_BODY_METHODS = {
 	login: {
 		GET: ['userName, userPassword']
+	},
+	//improve this logic later
+	'room/roomHistory': {
+		GET: ['roomName', 'limit', 'offset']
 	}
 }
 
@@ -21,7 +24,7 @@ export function CREATE_REQUEST_BODY({ HTTPMethod, endpoint, data }: CREATE_REQUE
 	if (bodyFields?.length <= 0) return null
 
 	const arrayOfInformation = bodyFields.map((field, i) => {
-		return { [field]: [data[i]] }
+		return { [field]: [data[i] ?? null] }
 	})
 
 	return { ...{ body: Object.assign({}, ...arrayOfInformation) } }

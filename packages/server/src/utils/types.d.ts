@@ -8,3 +8,8 @@ export interface JWT_DECODED_INFO {
   iat: number; // issued at       (seconds since Unix epoch)
   exp: number; // expiration time (seconds since Unix epoch)
 }
+
+export interface REQUEST_DB_OPTIONS {
+  offset?: number;
+  limit?: number;
+}
