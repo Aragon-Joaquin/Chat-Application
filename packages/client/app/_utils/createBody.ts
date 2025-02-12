@@ -1,30 +1,28 @@
 import { HTTP_METHOD } from 'next/dist/server/web/http'
+import { EVERY_ROUTE, ROUTES_HASHMAP } from './utils'
 
-interface CREATE_REQUEST_BODY {
-	HTTPMethod: HTTP_METHOD
-	endpoint: string
-	data: (string | number)[]
+export type CREATE_BODY = {
+	rootRoute: EVERY_ROUTE['rootRoute']
+	subroute: keyof EVERY_ROUTE['listOfSubRoutes']
+	HTTPmethod: HTTP_METHOD
+	bodyFields: (string | number)[] | []
 }
 
-const URL_BODY_METHODS = {
-	login: {
-		GET: ['userName, userPassword']
-	},
-	//improve this logic later
-	'room/roomHistory': {
-		GET: ['roomName', 'limit', 'offset']
-	}
-}
+export function CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyFields }: CREATE_BODY) {
+	const getRoute = ROUTES_HASHMAP[rootRoute as keyof typeof ROUTES_HASHMAP]
 
-export function CREATE_REQUEST_BODY({ HTTPMethod, endpoint, data }: CREATE_REQUEST_BODY) {
-	const endpointURL = URL_BODY_METHODS[endpoint as keyof typeof URL_BODY_METHODS]
-	if (`${HTTPMethod}` in endpointURL) return null
+	if (!(`${subroute}` in getRoute)) return null
+	if (!(`${HTTPmethod}` in getRoute.listOfSubRoutes[subroute])) return null
 
-	const bodyFields: string[] | [] = endpointURL[HTTPMethod as keyof typeof endpointURL]
-	if (bodyFields?.length <= 0) return null
+	const getSubrouteAllMethods = getRoute.listOfSubRoutes[subroute]
+	if (!(`${HTTPmethod}` in getSubrouteAllMethods)) return null
 
-	const arrayOfInformation = bodyFields.map((field, i) => {
-		return { [field]: [data[i] ?? null] }
+	const getMethodIformation = getSubrouteAllMethods[HTTPmethod as keyof typeof getSubrouteAllMethods]
+
+	if (getMethodIformation.bodyParametersName?.length <= 0) return null
+
+	const arrayOfInformation = getMethodIformation.bodyParametersName.map((field, i) => {
+		return { [field]: [bodyFields[i] ?? null] }
 	})
 
 	return { ...{ body: Object.assign({}, ...arrayOfInformation) } }

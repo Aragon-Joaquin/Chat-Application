@@ -1,25 +1,19 @@
-import { HTTP_METHOD } from 'next/dist/server/web/http'
 import { getJWT } from './JWTMethods'
-import { URL_ENDPOINTS, URL_DATABASE } from './utils.d'
-import { CREATE_REQUEST_BODY } from './createBody'
+import { URL_DATABASE } from './utils.d'
+import { CREATE_BODY, CREATE_REQUEST_BODY } from './createBody'
 
 const GET_DB_ENDPOINT = (endpoint: string) => `${URL_DATABASE}/${endpoint === null || `${endpoint}`}`
 
-interface propsCallServer {
-	HTTPMethod: HTTP_METHOD
-	endpoint: URL_ENDPOINTS
-	bodyFields?: (string | number)[]
-	passJWT?: boolean
+interface CALL_SERVER extends CREATE_BODY {
+	passJWT: boolean
 }
 
-export async function callServer({ HTTPMethod, endpoint, bodyFields = [], passJWT = false }: propsCallServer) {
-	const [[key, value]] = Object?.entries(endpoint)
+export async function callServer({ rootRoute, subroute, HTTPmethod, bodyFields = [], passJWT = false }: CALL_SERVER) {
 	try {
-		const finalEndpoint = `${key}${value != '/' && value}`
-		const data = await fetch(GET_DB_ENDPOINT(finalEndpoint), {
-			method: HTTPMethod,
+		const data = await fetch(GET_DB_ENDPOINT(`${rootRoute}${subroute != '/' && subroute}`), {
+			method: HTTPmethod,
 			...{ ...(passJWT && { headers: { Authorization: `Bearer ${await getJWT()}` } }) },
-			...{ ...CREATE_REQUEST_BODY({ HTTPMethod, endpoint: finalEndpoint, data: bodyFields }) }
+			...{ ...CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyFields }) }
 		})
 		return await data.json()
 	} catch (e) {
