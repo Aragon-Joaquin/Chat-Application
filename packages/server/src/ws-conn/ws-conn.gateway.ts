@@ -5,12 +5,17 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { WS_ACTIONS, WS_NAMESPACE, WS_PORT } from 'src/utils/constants';
-import { messageWSShape } from './types.d';
+import {
+  ROLES,
+  WS_ACTIONS,
+  WS_ENDPOINTS_EVENTS,
+  WS_NAMESPACE,
+  WS_PORT,
+} from 'src/utils/constants';
 import { WsConnGuard } from './ws-conn.guard';
-import { WsConnService } from './ws-conn.service';
 import { RoomService } from 'src/room/room.service';
 import { AuthService } from 'src/auth/auth.service';
+import { messages } from 'src/entities';
 
 @WebSocketGateway(WS_PORT, {
   namespace: WS_NAMESPACE,
@@ -22,13 +27,26 @@ export class WsConnGateway {
 
   constructor(
     private roomService: RoomService,
-    private wsService: WsConnService,
     private authService: AuthService,
   ) {}
 
+  getJWTHeader = (client: Socket) =>
+    this.authService.DecodeJWT(client.handshake.headers.authorization);
+
   @SubscribeMessage(WS_ACTIONS.SEND)
-  handleMessage(client: Socket, payload: messageWSShape): string {
-    return 'Hello world!';
+  async handleMessage(
+    client: Socket,
+    payload: { roomID: string; messageString: string },
+  ) {
+    const { roomID, messageString } = payload;
+
+    const JWT_Info = this.getJWTHeader(client);
+
+    await this.roomService.FindUserInRoom(JWT_Info['id'], roomID);
+
+    client.broadcast
+      .to(roomID)
+      .emit(WS_ENDPOINTS_EVENTS.MESSAGE, String(messageString));
   }
 
   @SubscribeMessage(WS_ACTIONS.JOIN)
@@ -37,24 +55,47 @@ export class WsConnGateway {
     roomData: { roomID: string; roomPassword: string },
   ) {
     const { roomID, roomPassword } = roomData;
-    const JWT_Info = this.authService.DecodeJWT(
-      client.handshake.headers.authorization,
-    );
+    const JWT_Info = this.getJWTHeader(client);
+
     try {
-      await this.roomService.JoinRoom(roomID, roomPassword, {
-        userName: JWT_Info.userName,
-        id: JWT_Info.id,
-      });
+      await this.roomService.JoinRoom(roomID, roomPassword, JWT_Info);
       await client.join(roomID);
       this.wss
         .in(roomID)
-        .emit('JoinEvent', `${JWT_Info.userName} joined the room.`);
+        .emit(
+          WS_ENDPOINTS_EVENTS.JOINED_ROOM,
+          `${JWT_Info.userName} joined the room.`,
+        );
     } catch (error) {
       throw new InternalServerErrorException();
     }
   }
 
-  // @SubscribeMessage(WS_ACTIONS.LEAVE)
+  @SubscribeMessage(WS_ACTIONS.LEAVE)
+  async handleLeaveRoom(client: Socket, roomID: string) {
+    const JWT_Info = this.getJWTHeader(client);
 
-  // @SubscribeMessage(WS_ACTIONS.DELETE)
+    await this.roomService.LeaveRoom(JWT_Info.id, roomID);
+    client.leave(roomID);
+  }
+
+  @SubscribeMessage(WS_ACTIONS.DELETE)
+  async handleDeleteMessages(
+    client: Socket,
+    payload: { messageID: messages['message_id']; roomID: string },
+  ) {
+    const { messageID, roomID } = payload;
+    const JWT_Info = this.getJWTHeader(client);
+
+    const message = await this.roomService.DeleteMessageInRoom(
+      JWT_Info.id,
+      roomID,
+      messageID,
+    );
+
+    this.wss.in(roomID).emit(WS_ENDPOINTS_EVENTS.DELETE_MESSAGE, {
+      messageID: message.message_id,
+      sender: message.sender_id,
+    });
+  }
 }

@@ -12,3 +12,14 @@ export const WS_ACTIONS = {
   SEND: 'sendMessage',
   DELETE: 'deleteMessage',
 };
+export const WS_ENDPOINTS_EVENTS = {
+  MESSAGE: 'sendMessage',
+  JOINED_ROOM: 'joinedRoom',
+  DELETE_MESSAGE: 'deleteMessage',
+};
+
+export const ROLES = {
+  user: 'user',
+  admin: 'admin',
+  owner: 'owner',
+};
