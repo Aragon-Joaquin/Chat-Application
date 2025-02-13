@@ -57,26 +57,34 @@ export class WsConnGateway {
     const { roomID, roomPassword } = roomData;
     const JWT_Info = this.getJWTHeader(client);
 
-    try {
-      await this.roomService.JoinRoom(roomID, roomPassword, JWT_Info);
-      await client.join(roomID);
-      this.wss
-        .in(roomID)
-        .emit(
-          WS_ENDPOINTS_EVENTS.JOINED_ROOM,
-          `${JWT_Info.userName} joined the room.`,
-        );
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
+    await Promise.all([
+      this.roomService.JoinRoom(roomID, roomPassword, JWT_Info),
+      client.join(roomID),
+    ]);
+
+    this.wss
+      .in(roomID)
+      .emit(
+        WS_ENDPOINTS_EVENTS.JOINED_ROOM,
+        `${JWT_Info.userName} joined the room.`,
+      );
   }
 
   @SubscribeMessage(WS_ACTIONS.LEAVE)
   async handleLeaveRoom(client: Socket, roomID: string) {
     const JWT_Info = this.getJWTHeader(client);
 
-    await this.roomService.LeaveRoom(JWT_Info.id, roomID);
-    client.leave(roomID);
+    await Promise.all([
+      this.roomService.LeaveRoom(JWT_Info.id, roomID),
+      client.leave(roomID),
+    ]);
+
+    this.wss
+      .in(roomID)
+      .emit(
+        WS_ENDPOINTS_EVENTS.LEAVED_ROOM,
+        `${JWT_Info.userName} has leaved the room.`,
+      );
   }
 
   @SubscribeMessage(WS_ACTIONS.DELETE)

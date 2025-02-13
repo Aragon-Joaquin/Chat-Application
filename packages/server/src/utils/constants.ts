@@ -15,6 +15,7 @@ export const WS_ACTIONS = {
 export const WS_ENDPOINTS_EVENTS = {
   MESSAGE: 'sendMessage',
   JOINED_ROOM: 'joinedRoom',
+  LEAVED_ROOM: 'leavedRoom',
   DELETE_MESSAGE: 'deleteMessage',
 };
 

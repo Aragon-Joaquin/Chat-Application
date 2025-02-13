@@ -14,8 +14,7 @@ export class WsConnGuard implements CanActivate {
     const token = context.switchToWs().getClient().handshake
       .headers.authorization;
 
-    const decoded: Pick<UserInDB, 'userName' | 'id'> =
-      this.authService.DecodeJWT(token);
+    const decoded = this.authService.DecodeJWT(token);
 
     return !!(await this.loginService.findOne({
       where: { user_id: decoded.id, user_name: decoded.userName },
