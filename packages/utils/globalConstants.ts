@@ -4,6 +4,7 @@ export const WS_NAMESPACE = 'roomChats'
 export const WS_ACTIONS = {
 	LEAVE: 'leaveRoom',
 	JOIN: 'joinRoom',
+	JOIN_MULTIPLE: 'joinRooms',
 	SEND: 'sendMessage',
 	DELETE: 'deleteMessage'
 }
@@ -20,3 +21,5 @@ export const ROLES = {
 	admin: 'admin',
 	owner: 'owner'
 }
+
+export const MAXIMUM_ROOMS_PER_USER = 5 as const

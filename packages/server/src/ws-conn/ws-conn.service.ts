@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { ROLES } from 'globalConstants';
+import { MAXIMUM_ROOMS_PER_USER, ROLES } from 'globalConstants';
 import { AuthService } from 'src/auth/auth.service';
 import {
   messages,
@@ -36,7 +36,11 @@ export class WsConnService {
     });
   }
 
-  async JoinRoom(id: string, password: string, userInfo: JWT_DECODED_INFO) {
+  async JoinToNewRoom(
+    id: string,
+    password: string,
+    userInfo: JWT_DECODED_INFO,
+  ) {
     const [roomExisting, user] = await Promise.all([
       this.roomService.FindOne({ where: { room_id: id } }),
       this.loginService.findOne({
@@ -88,9 +92,8 @@ export class WsConnService {
     return history;
   }
 
-  async GetAllRoomMessages(token: string, limit?: number) {
-    const JWT_INFO = this.authService.DecodeJWT(token);
-    const userInRooms = await this.GetRoomsOfUser(JWT_INFO.id);
+  async GetAllRoomMessages(JWT_INFO: JWT_DECODED_INFO['id'], limit?: number) {
+    const userInRooms = await this.GetRoomsOfUser(JWT_INFO);
     if (!userInRooms) return null;
 
     // i need to match the userInRooms.room_id === room_messages.which_room
@@ -107,7 +110,7 @@ export class WsConnService {
       .where('room_msgs.which_room IN(:...room_id)', {
         room_id: [...userInRooms.map((room) => room.room_id)],
       })
-      .limit(1)
+      .limit(limit ?? 1)
       .orderBy('date_sendes', 'DESC')
       .getRawMany();
   }
@@ -170,5 +173,17 @@ export class WsConnService {
     });
 
     return message;
+  }
+
+  /**
+   * @returns True if it has exceeded the maximum amount of rooms the user can join. False otherwise
+   */
+  async hasExceededMaxRooms(token: JWT_DECODED_INFO['id']): Promise<boolean> {
+    const user = await this.loginService.findOne({ where: { user_id: token } });
+    const userRooms = await this.dataSource.manager.countBy(users_in_room, {
+      user_id: user.user_id,
+    });
+
+    return userRooms >= MAXIMUM_ROOMS_PER_USER ? true : false;
   }
 }

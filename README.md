@@ -4,7 +4,8 @@
 #### things to remember:
 
 - Make a table for user logouts & expiration tokens
-- Hash passwords.
+- Make a maximum of 5 rooms that a user can join.
+- Make a module, controller and service for room_messages to atleast atomize the ws-conn service file
 
 ## ℹ **General info:**
 

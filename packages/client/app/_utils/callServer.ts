@@ -17,6 +17,7 @@ export async function callServer({ rootRoute, subroute, HTTPmethod, bodyFields =
 		})
 		return await data.json()
 	} catch (e) {
+		// transform this into a hook or return something else?
 		console.log(e)
 	}
 }

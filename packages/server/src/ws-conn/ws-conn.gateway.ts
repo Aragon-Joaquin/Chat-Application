@@ -51,15 +51,14 @@ export class WsConnGateway {
   @SubscribeMessage(WS_ACTIONS.JOIN)
   async handleJoinRoom(
     client: Socket,
-    roomData: { roomID: string; roomPassword: string },
+    payload: { roomID: string; roomPassword: string },
   ) {
-    const { roomID, roomPassword } = roomData;
+    const { roomID, roomPassword } = payload;
     const JWT_Info = this.getJWTHeader(client);
 
-    await Promise.all([
-      this.wsConnService.JoinRoom(roomID, roomPassword, JWT_Info),
-      client.join(roomID),
-    ]);
+    // this cannot be Promised.all() since it need to verify first if the credentials are okay
+    await this.wsConnService.JoinToNewRoom(roomID, roomPassword, JWT_Info);
+    await client.join(roomID);
 
     this.wss
       .in(roomID)
@@ -67,6 +66,14 @@ export class WsConnGateway {
         WS_ENDPOINTS_EVENTS.JOINED_ROOM,
         `${JWT_Info.userName} joined the room.`,
       );
+  }
+
+  @SubscribeMessage(WS_ACTIONS.JOIN_MULTIPLE)
+  async handleJoinMultiple(client: Socket) {
+    const JWT_Info = this.getJWTHeader(client);
+    const rooms = await this.wsConnService.GetRoomsOfUser(JWT_Info.id);
+
+    await client.join([...rooms.map((room) => room.room_id)]);
   }
 
   @SubscribeMessage(WS_ACTIONS.LEAVE)

@@ -23,7 +23,10 @@ export class RoomController {
   ) {}
 
   @Post()
-  async createRoom(@Body(new ValidationPipe()) body: RoomDto) {
+  async createRoom(
+    @Body(new ValidationPipe()) body: RoomDto,
+    @Headers('Authorization') auth: string,
+  ) {
     return await this.roomService.CreateRoom(body);
   }
 
@@ -35,8 +38,8 @@ export class RoomController {
     return this.wsConn.RoomHistory(auth, body);
   }
 
-  @Get('allRooms')
-  async getAllRooms(@Headers('Authorization') auth: string) {
-    return this.wsConn.GetAllRoomMessages(auth);
-  }
+  // @Get('allRooms')
+  // async getAllRooms(@Headers('Authorization') auth: string) {
+  //   return this.wsConn.GetAllRoomMessages(auth);
+  // }
 }
