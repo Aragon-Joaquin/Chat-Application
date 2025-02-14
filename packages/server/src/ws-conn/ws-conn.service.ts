@@ -6,13 +6,19 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 import { ROLES } from 'globalConstants';
 import { AuthService } from 'src/auth/auth.service';
-import { messages, room, room_messages, users_in_room } from 'src/entities';
+import {
+  messages,
+  room,
+  room_messages,
+  users,
+  users_in_room,
+} from 'src/entities';
 import { LoginService } from 'src/login/login.service';
 import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { RoomService } from 'src/room/room.service';
 import { comparePassword } from 'src/utils/hashingFuncs';
 import { JWT_DECODED_INFO } from 'src/utils/types';
-import { DataSource } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 
 @Injectable()
 export class WsConnService {
@@ -91,7 +97,19 @@ export class WsConnService {
     // then order by DESC the room_messages.date_sended
     // to finally get the last room_messages.message_id and query it with a ton of more rooms
 
-    return; //! finish this
+    //! this probably won't work
+    return await this.dataSource
+      .createQueryBuilder(room_messages, 'room_msgs')
+      .select('room_msgs.sender_id', 'sender')
+      .addSelect('room_msgs.message_id', 'message')
+      .innerJoin(users, 'users', 'users.user_id = room_msgs.sender_id')
+      .innerJoin(messages, 'msgs', 'msgs.message_id = room_msgs.message_id')
+      .where('room_msgs.which_room IN(:...room_id)', {
+        room_id: [...userInRooms.map((room) => room.room_id)],
+      })
+      .limit(1)
+      .orderBy('date_sendes', 'DESC')
+      .getRawMany();
   }
 
   async FindUserInRoom(
