@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginService } from 'src/login/login.service';
 import { getJWTSecret } from 'src/utils/getEnvVariables';
@@ -59,7 +64,9 @@ export class AuthService {
    */
   DecodeJWT(authorization: string): JWT_DECODED_INFO {
     try {
-      return this.jwtService.decode(authorization.split(' ')[1]); //split the token between 'Bearer' and the real jwt
+      const user = this.jwtService.decode(authorization.split(' ')[1]); //split the token between 'Bearer' and the real jwt
+      if (!user) throw new UnauthorizedException('User is not in room');
+      return user;
     } catch (e) {
       throw new HttpException(
         'Error Decoding JWT',

@@ -1,12 +1,6 @@
 /*
     THIS IS POSTGRESQL.
     ANY HELP WITH THE SQL FILE IS APPRECIATED AND I WILL GIVE YOU CREDIT FOR IT.
-
-
-	things to remember: 
-	- passwords will be hashed
-	- passwords lengths will be controlled in the server before hashing
-	- insert into ON CONFLICT in Room table "roomID"
 */
 
 -- RELATIONSHIPS ONE TO MANY & ONE TO ONE
@@ -64,7 +58,6 @@ INSERT into roles values('owner', true, true, false);
 CREATE TABLE messages(
 	message_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 	message_content text null, -- you can send images without text
-	date_sended timestamp not null default CURRENT_TIMESTAMP(0),
 	file_id UUID null,
 
 	CONSTRAINT fk_file_id FOREIGN KEY (file_id) REFERENCES file_storage(file_id)
@@ -88,6 +81,7 @@ CREATE TABLE room_messages (
 	sender_id SERIAL NOT NULL,
 	which_room char(6) NOT NULL,
 	message_id UUID NOT NULL,
+	date_sended timestamp not null default CURRENT_TIMESTAMP(0),
 
 	PRIMARY KEY (sender_id, which_room, message_id),
 	

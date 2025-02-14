@@ -15,4 +15,5 @@ export type REQUEST_SHAPE<Routes extends string, HTTPMethod extends HTTP_METHOD>
 	}
 }
 
-export type typeMethodRequest<T extends EVERY_ROUTE> = T['subroutes'][keyof T['subroutes']][keyof HTTP_METHOD]
+export type typeMethodRequest<T extends EVERY_ROUTE> =
+	T['listOfSubRoutes'][keyof T['listOfSubRoutes']][keyof HTTP_METHOD]

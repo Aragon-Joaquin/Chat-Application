@@ -1,6 +1,6 @@
+import { CREATE_BODY, CREATE_REQUEST_BODY } from './bodyRequests'
 import { getJWT } from './JWTMethods'
 import { URL_DATABASE } from './utils.d'
-import { CREATE_BODY, CREATE_REQUEST_BODY } from './createBody'
 
 const GET_DB_ENDPOINT = (endpoint: string) => `${URL_DATABASE}/${endpoint === null || `${endpoint}`}`
 

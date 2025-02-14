@@ -1,4 +1,4 @@
-import { InternalServerErrorException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -6,16 +6,15 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import {
-  ROLES,
   WS_ACTIONS,
   WS_ENDPOINTS_EVENTS,
   WS_NAMESPACE,
   WS_PORT,
-} from 'src/utils/constants';
+} from 'globalConstants';
 import { WsConnGuard } from './ws-conn.guard';
-import { RoomService } from 'src/room/room.service';
 import { AuthService } from 'src/auth/auth.service';
 import { messages } from 'src/entities';
+import { WsConnService } from './ws-conn.service';
 
 @WebSocketGateway(WS_PORT, {
   namespace: WS_NAMESPACE,
@@ -26,8 +25,8 @@ export class WsConnGateway {
   @WebSocketServer() wss: Server;
 
   constructor(
-    private roomService: RoomService,
     private authService: AuthService,
+    private wsConnService: WsConnService,
   ) {}
 
   getJWTHeader = (client: Socket) =>
@@ -42,7 +41,7 @@ export class WsConnGateway {
 
     const JWT_Info = this.getJWTHeader(client);
 
-    await this.roomService.FindUserInRoom(JWT_Info['id'], roomID);
+    await this.wsConnService.FindUserInRoom(JWT_Info['id'], roomID);
 
     client.broadcast
       .to(roomID)
@@ -58,7 +57,7 @@ export class WsConnGateway {
     const JWT_Info = this.getJWTHeader(client);
 
     await Promise.all([
-      this.roomService.JoinRoom(roomID, roomPassword, JWT_Info),
+      this.wsConnService.JoinRoom(roomID, roomPassword, JWT_Info),
       client.join(roomID),
     ]);
 
@@ -75,7 +74,7 @@ export class WsConnGateway {
     const JWT_Info = this.getJWTHeader(client);
 
     await Promise.all([
-      this.roomService.LeaveRoom(JWT_Info.id, roomID),
+      this.wsConnService.LeaveRoom(JWT_Info.id, roomID),
       client.leave(roomID),
     ]);
 
@@ -95,7 +94,7 @@ export class WsConnGateway {
     const { messageID, roomID } = payload;
     const JWT_Info = this.getJWTHeader(client);
 
-    const message = await this.roomService.DeleteMessageInRoom(
+    const message = await this.wsConnService.DeleteMessageInRoom(
       JWT_Info.id,
       roomID,
       messageID,

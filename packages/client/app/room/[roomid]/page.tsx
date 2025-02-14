@@ -6,10 +6,10 @@ export default async function RoomDynamicPage({ params }: { params: Promise<{ sl
 	if (!slug) return notFound()
 
 	const response: Array<unknown> = await callServer({
-		HTTPMethod: 'GET',
-		endpoint: { room: '/roomhistory' },
-		passJWT: true,
-		bodyFields: [slug, 20, 0]
+		rootRoute: '/room',
+		subroute: '/roomhistory',
+		HTTPmethod: 'GET',
+		passJWT: true
 	})
 
 	//this will be the group chat logic, incluiding
