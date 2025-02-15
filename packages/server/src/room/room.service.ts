@@ -2,8 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { room } from 'src/entities';
 import { FindOneOptions, InsertResult, Repository } from 'typeorm';
 import { RoomDto } from './dto/room.dto';
-import { MAXIMUM_ROOMS_PER_USER } from 'globalConstants';
-import { JWT_DECODED_INFO } from 'src/utils/types';
 
 //! this is the worst monolith i've created yet
 @Injectable()

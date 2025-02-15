@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { WsConnGateway } from './ws-conn/ws-conn.gateway';
 import { WsConnModule } from './ws-conn/ws-conn.module';
 import { RoomModule } from './room/room.module';
+import { RoomMessagesModule } from './room-messages/room-messages.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RoomModule } from './room/room.module';
     }),
     WsConnModule,
     RoomModule,
+    RoomMessagesModule,
   ],
   controllers: [],
   providers: [WsConnGateway],
