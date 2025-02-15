@@ -6,6 +6,7 @@ import { WsConnService } from './ws-conn.service';
 import { LoginService } from 'src/login/login.service';
 import { AuthService } from 'src/auth/auth.service';
 import { RoomMessagesService } from 'src/room-messages/room-messages.service';
+import { UsersRoomsService } from 'src/users-rooms/users-rooms.service';
 
 @Module({
   providers: [
@@ -15,6 +16,7 @@ import { RoomMessagesService } from 'src/room-messages/room-messages.service';
     LoginService,
     AuthService,
     RoomMessagesService,
+    UsersRoomsService,
   ],
   imports: [],
   controllers: [WsConnController],

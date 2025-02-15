@@ -57,7 +57,7 @@ export class WsConnGateway {
     const JWT_Info = this.getJWTHeader(client);
 
     // this cannot be Promised.all() since it need to verify first if the credentials are okay
-    await this.wsConnService.JoinToNewRoom(roomID, roomPassword, JWT_Info);
+    await this.wsConnService.JoinToNewRoom(roomID, JWT_Info, roomPassword);
     await client.join(roomID);
 
     this.wss

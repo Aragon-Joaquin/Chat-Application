@@ -12,7 +12,7 @@ export class LoginService {
     private userRepository: Repository<users>,
   ) {}
 
-  async registerUser(body: UserInformation): Promise<UserInformation> {
+  async RegisterUser(body: UserInformation): Promise<UserInformation> {
     const { userName, userPassword } = body;
     const isDuped = await this.userRepository.findOne({
       where: {
@@ -32,7 +32,7 @@ export class LoginService {
     return body;
   }
 
-  async findOne(where: FindOneOptions<users>): Promise<users> {
+  async FindOne(where: FindOneOptions<users>): Promise<users> {
     try {
       const user = await this.userRepository.findOne(where);
       if (!user) {

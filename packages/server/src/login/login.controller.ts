@@ -29,7 +29,7 @@ export class LoginController {
 
   @Post()
   register(@Body() body: UserDto) {
-    return this.loginService.registerUser(body);
+    return this.loginService.RegisterUser(body);
   }
 
   // change password

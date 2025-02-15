@@ -1,23 +1,13 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MAXIMUM_ROOMS_PER_USER } from 'globalConstants';
 import { AuthService } from 'src/auth/auth.service';
-import {
-  messages,
-  room,
-  room_messages,
-  users,
-  users_in_room,
-} from 'src/entities';
+import { messages, room, users_in_room } from 'src/entities';
 import { LoginService } from 'src/login/login.service';
 import { RoomMessagesService } from 'src/room-messages/room-messages.service';
 import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { RoomService } from 'src/room/room.service';
-import { comparePassword } from 'src/utils/hashingFuncs';
+import { UsersRoomsService } from 'src/users-rooms/users-rooms.service';
 import { JWT_DECODED_INFO } from 'src/utils/types';
 import { DataSource } from 'typeorm';
 
@@ -28,49 +18,36 @@ export class WsConnService {
     private loginService: LoginService,
     private authService: AuthService,
     private roomMsgs: RoomMessagesService,
+    private usersRoomsService: UsersRoomsService,
     @InjectDataSource()
     private dataSource: DataSource,
   ) {}
 
-  async GetRoomsOfUser(user: JWT_DECODED_INFO['id']) {
-    return await this.dataSource.manager.findBy(users_in_room, {
-      user_id: user,
-    });
-  }
+  GetRoomsOfUser = async (user: JWT_DECODED_INFO['id']) =>
+    await this.usersRoomsService.GetUsersRooms(user);
 
   async JoinToNewRoom(
     id: string,
-    password: string,
     userInfo: JWT_DECODED_INFO,
+    password?: string,
   ) {
     const [roomExisting, user] = await Promise.all([
       this.roomService.FindOne({ where: { room_id: id } }),
-      this.loginService.findOne({
+      this.loginService.FindOne({
         where: { user_name: userInfo.userName, user_id: userInfo.id },
       }),
     ]);
 
-    if (
-      !comparePassword({
-        userPassword: password,
-        originalPassword: roomExisting.room_password,
-      })
-    )
-      throw new BadRequestException("Passwords don't match.");
-
-    return await this.dataSource.manager.insert(users_in_room, {
-      room_id: roomExisting.room_id,
-      user_id: user.user_id,
-      role_name: 'user',
-    });
+    return await this.usersRoomsService.VerifyAndJoinRoom(
+      roomExisting,
+      user,
+      password,
+    );
   }
 
   async LeaveRoom(user: JWT_DECODED_INFO['id'], roomID: string) {
     const userExists = await this.FindUserInRoom(user, roomID);
-    await this.dataSource.manager.delete(users_in_room, {
-      user_id: userExists.user_id,
-      room_id: userExists.room_id,
-    });
+    await this.usersRoomsService.DeleteFromRoom(userExists);
   }
 
   async RoomHistory(token: string, body?: RoomHistoryDto) {
@@ -96,13 +73,7 @@ export class WsConnService {
     userID: JWT_DECODED_INFO['id'],
     roomID: room['room_id'],
   ) {
-    const userExists = await this.dataSource.manager.findOneBy(users_in_room, {
-      user_id: userID,
-      room_id: roomID,
-    });
-
-    if (!userExists) throw new UnauthorizedException();
-    return userExists;
+    return await this.usersRoomsService.GetUsersOneRoom(userID, roomID);
   }
 
   async DeleteMessageInRoom(
@@ -115,6 +86,7 @@ export class WsConnService {
       this.roomMsgs.FindMessageInRoom({ messageID, roomID }),
     ]);
 
+    if (typeof userExists == 'object') return;
     return await this.roomMsgs.DeleteMessageInRoom(userExists, message);
   }
 
@@ -122,7 +94,7 @@ export class WsConnService {
    * @returns True if it has exceeded the maximum amount of rooms the user can join. False otherwise
    */
   async hasExceededMaxRooms(token: JWT_DECODED_INFO['id']): Promise<boolean> {
-    const user = await this.loginService.findOne({ where: { user_id: token } });
+    const user = await this.loginService.FindOne({ where: { user_id: token } });
     const userRooms = await this.dataSource.manager.countBy(users_in_room, {
       user_id: user.user_id,
     });

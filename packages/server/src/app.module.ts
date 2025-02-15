@@ -8,6 +8,7 @@ import { WsConnGateway } from './ws-conn/ws-conn.gateway';
 import { WsConnModule } from './ws-conn/ws-conn.module';
 import { RoomModule } from './room/room.module';
 import { RoomMessagesModule } from './room-messages/room-messages.module';
+import { UsersRoomsModule } from './users-rooms/users-rooms.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RoomMessagesModule } from './room-messages/room-messages.module';
     WsConnModule,
     RoomModule,
     RoomMessagesModule,
+    UsersRoomsModule,
   ],
   controllers: [],
   providers: [WsConnGateway],

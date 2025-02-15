@@ -20,7 +20,7 @@ export class AuthService {
   async LoginIfCredentials(name: string, password: string): Promise<any> {
     if (!name || !password) return null;
 
-    const user = await this.loginService.findOne({
+    const user = await this.loginService.FindOne({
       where: {
         user_name: name,
       },
