@@ -10,7 +10,7 @@ import {
   WS_ENDPOINTS_EVENTS,
   WS_NAMESPACE,
   WS_PORT,
-} from 'globalConstants';
+} from '@chat-app/utils/globalConstants';
 import { WsConnGuard } from './ws-conn.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { messages } from 'src/entities';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { MAXIMUM_ROOMS_PER_USER } from 'globalConstants';
+import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
 import { AuthService } from 'src/auth/auth.service';
 import { messages, room, users_in_room } from 'src/entities';
 import { LoginService } from 'src/login/login.service';

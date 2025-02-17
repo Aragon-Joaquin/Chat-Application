@@ -13,8 +13,7 @@
 	"author": "",
 	"license": "ISC",
 	"workspaces": [
-		"packages/server",
-		"packages/client"
+		"packages/*"
 	],
 	"devDependencies": {
 		"concurrently": "^9.1.2"

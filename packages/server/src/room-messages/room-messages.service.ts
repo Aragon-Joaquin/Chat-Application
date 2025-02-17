@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ROLES } from 'globalConstants';
+import { ROLES } from '@chat-app/utils/globalConstants';
 import {
   messages,
   room,

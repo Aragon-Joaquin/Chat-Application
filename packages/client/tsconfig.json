@@ -19,8 +19,7 @@
 			}
 		],
 		"paths": {
-			"@/*": ["./*"],
-			"globalConstants": ["../utils/globalConstants"]
+			"@/*": ["./*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
