@@ -17,7 +17,12 @@ async function submitCredentials(e: FormEvent<HTMLFormElement>) {
 	const passwordInfo = formData.get(PASSWORD_FIELDNAME)?.toString()
 
 	if (!userInfo || !passwordInfo) throw new Error('Fields are empty.')
-	const returnedJWT = await callServer({ HTTPMethod: 'GET', endpoint: 'login', bodyFields: [userInfo, passwordInfo] })
+	const returnedJWT = await callServer({
+		rootRoute: '/login',
+		subroute: '/',
+		HTTPmethod: 'GET',
+		bodyFields: [userInfo, passwordInfo]
+	})
 	console.log(returnedJWT)
 }
 
