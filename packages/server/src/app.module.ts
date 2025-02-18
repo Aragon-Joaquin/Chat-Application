@@ -9,12 +9,25 @@ import { WsConnModule } from './ws-conn/ws-conn.module';
 import { RoomModule } from './room/room.module';
 import { RoomMessagesModule } from './room-messages/room-messages.module';
 import { UsersRoomsModule } from './users-rooms/users-rooms.module';
+import {
+  file_storage,
+  messages,
+  roles,
+  room,
+  room_messages,
+  users,
+  users_in_room,
+} from './entities';
 
 @Module({
   imports: [
     LoginModule,
     AuthModule,
     PassportModule,
+    WsConnModule,
+    RoomModule,
+    RoomMessagesModule,
+    UsersRoomsModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -24,12 +37,16 @@ import { UsersRoomsModule } from './users-rooms/users-rooms.module';
       database: EnvDBInfo.DB_NAME,
       synchronize: EnvDBInfo.IS_PRODUCTION,
       autoLoadEntities: true,
-      entities: ['./entities/*.ts'],
+      entities: [
+        file_storage,
+        messages,
+        roles,
+        room_messages,
+        users_in_room,
+        room,
+        users,
+      ],
     }),
-    WsConnModule,
-    RoomModule,
-    RoomMessagesModule,
-    UsersRoomsModule,
   ],
   controllers: [],
   providers: [WsConnGateway],

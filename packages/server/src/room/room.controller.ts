@@ -1,9 +1,10 @@
 import {
   Body,
   Controller,
+  forwardRef,
   Get,
   Headers,
-  Param,
+  Inject,
   Post,
   UseGuards,
   ValidationPipe,
@@ -25,7 +26,7 @@ export class RoomController {
   @Post()
   async createRoom(
     @Body(new ValidationPipe()) body: RoomDto,
-    @Headers('Authorization') auth: string,
+    // @Headers('Authorization') auth: string,
   ) {
     return await this.roomService.CreateRoom(body);
   }

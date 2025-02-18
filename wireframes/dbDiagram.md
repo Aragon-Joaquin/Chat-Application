@@ -1,5 +1,7 @@
 ## I USED [dbdiagram.io](https://dbdiagram.io/d) TO DRAW THIS DIAGRAM
 
+### UPDATE: this was a prototype. The .sql in the wireframe folder is what im currently using and its updated if i found some inconsistency.
+
 ```sql
 Table Roles {
   // user - admin - owner

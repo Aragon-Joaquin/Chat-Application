@@ -13,9 +13,7 @@ export class users_in_room {
   @ManyToOne(() => room, (entity) => entity.room_id)
   room_id: string;
 
-  @Column({ nullable: false, length: 20 })
-  @ManyToOne(() => roles, (entity) => entity.role_name)
-  role_name: string;
+  @Column()
+  @ManyToOne(() => roles, (entity) => entity.role_name, { nullable: false })
+  role_id: string;
 }
-
-//not finished.

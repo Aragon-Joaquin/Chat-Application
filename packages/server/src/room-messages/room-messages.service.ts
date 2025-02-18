@@ -10,10 +10,14 @@ import {
 import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { JWT_DECODED_INFO } from 'src/utils/types';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RoomMessagesService {
-  constructor(private roomMsgsRepo: Repository<room_messages>) {}
+  constructor(
+    @InjectRepository(room_messages)
+    private roomMsgsRepo: Repository<room_messages>,
+  ) {}
 
   async InnerJoinRoomMessages(body?: RoomHistoryDto) {
     const history = await this.roomMsgsRepo
@@ -48,7 +52,7 @@ export class RoomMessagesService {
 
   async DeleteMessageInRoom(userExists: users_in_room, message: room_messages) {
     if (
-      userExists.role_name === ROLES.user &&
+      userExists.role_id === ROLES.user &&
       userExists.user_id !== message.sender_id
     )
       throw new UnauthorizedException(
@@ -80,7 +84,7 @@ export class RoomMessagesService {
         room_id: [...userInRooms.map((room) => room.room_id)],
       })
       .limit(limit ?? 1)
-      .orderBy('date_sendes', 'DESC')
+      .orderBy('date_sended', 'DESC')
       .getRawMany();
   }
 }

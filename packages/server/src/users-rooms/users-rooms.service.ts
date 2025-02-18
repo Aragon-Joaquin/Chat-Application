@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { room, users, users_in_room } from 'src/entities';
 import { comparePassword } from 'src/utils/hashingFuncs';
 import { JWT_DECODED_INFO } from 'src/utils/types';
@@ -10,7 +11,10 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersRoomsService {
-  constructor(private usersRoomsService: Repository<users_in_room>) {}
+  constructor(
+    @InjectRepository(users_in_room)
+    private usersRoomsService: Repository<users_in_room>,
+  ) {}
 
   async GetUsersRooms(user: JWT_DECODED_INFO['id']) {
     const rooms = await this.usersRoomsService.findBy({
@@ -44,7 +48,7 @@ export class UsersRoomsService {
     return await this.usersRoomsService.insert({
       room_id: room.room_id,
       user_id: user.user_id,
-      role_name: 'user',
+      role_id: 'user',
     });
   }
 

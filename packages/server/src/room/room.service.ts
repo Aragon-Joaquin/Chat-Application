@@ -2,11 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { room } from 'src/entities';
 import { FindOneOptions, InsertResult, Repository } from 'typeorm';
 import { RoomDto } from './dto/room.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
-//! this is the worst monolith i've created yet
 @Injectable()
 export class RoomService {
-  constructor(private roomRepository: Repository<room>) {}
+  constructor(
+    @InjectRepository(room)
+    private roomRepository: Repository<room>,
+  ) {}
 
   async FindOne(where: FindOneOptions<room>): Promise<room> {
     const roomExisting = this.roomRepository.findOne(where);
