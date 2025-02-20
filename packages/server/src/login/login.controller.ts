@@ -18,7 +18,7 @@ export class LoginController {
   constructor(private loginService: LoginService) {}
 
   //send the credentials and verify them  with jwt, return jwt if okay
-  @Get()
+  @Post()
   @UseGuards(LocalAuthGuard)
   login(@Req() req: Request, @Body(new ValidationPipe()) body: UserDto) {
     if ('user' in req) return req.user;
@@ -27,7 +27,7 @@ export class LoginController {
 
   // register
 
-  @Post()
+  @Post('/register')
   register(@Body() body: UserDto) {
     return this.loginService.RegisterUser(body);
   }

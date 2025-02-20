@@ -1,13 +1,15 @@
 import { REQUEST_SHAPE } from './utils'
 
-type LOGIN_ROUTES = '/'
+type LOGIN_ROUTES = '/' | '/register'
 
-export const LOGIN_REQUEST: REQUEST_SHAPE<LOGIN_ROUTES, 'GET' | 'POST'> = {
+export const LOGIN_REQUEST: REQUEST_SHAPE<LOGIN_ROUTES, 'POST'> = {
 	rootRoute: '/login',
 	listOfSubRoutes: {
 		'/': {
-			GET: { passJWT: true, bodyParametersName: ['userName, userPassword'] },
-			POST: { passJWT: false, bodyParametersName: [] }
+			POST: { passJWT: false, bodyParametersName: ['userName', 'userPassword'] }
+		},
+		'/register': {
+			POST: { passJWT: false, bodyParametersName: ['userName', 'userPassword'] }
 		}
 	}
 }

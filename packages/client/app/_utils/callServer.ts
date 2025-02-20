@@ -15,15 +15,11 @@ export async function callServer({
 	bodyFields = [],
 	passJWT = false
 }: CALL_SERVER) {
-	try {
-		const data = await fetch(GET_DB_ENDPOINT(`${rootRoute}${subroute != '/' && subroute}`), {
+	return (
+		await fetch(GET_DB_ENDPOINT(`${rootRoute}${subroute != '/' ? subroute : ''}`), {
 			method: HTTPmethod,
 			...{ ...(passJWT && { headers: { Authorization: `Bearer ${await getJWT()}` } }) },
 			...{ ...CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyFields }) }
 		})
-		return await data.json()
-	} catch (e) {
-		// transform this into a hook or return something else?
-		console.log(e)
-	}
+	).json()
 }

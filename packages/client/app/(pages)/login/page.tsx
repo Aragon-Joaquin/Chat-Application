@@ -5,28 +5,30 @@ import { Heading, Text } from '@radix-ui/themes'
 import { FormEvent } from 'react'
 import { FieldComponent, FieldSVGComponent } from './_components/Field.component'
 import { BottomText } from './_components/BottomText.component'
-import { callServer } from '../_utils/callServer'
+import { useCallServer } from '@/app/_hooks/useCallServer'
+import { BadRequest } from '@/app/_errors'
+import { CustomFormData } from '@/app/_utils/FormData'
 
 const USER_FIELDNAME = 'username' as const
 const PASSWORD_FIELDNAME = 'password' as const
 
-async function submitCredentials(e: FormEvent<HTMLFormElement>) {
-	e.preventDefault()
-	const formData = new FormData(e?.currentTarget)
-	const userInfo = formData.get(USER_FIELDNAME)?.toString()
-	const passwordInfo = formData.get(PASSWORD_FIELDNAME)?.toString()
-
-	if (!userInfo || !passwordInfo) throw new Error('Fields are empty.')
-	const returnedJWT = await callServer({
-		rootRoute: '/login',
-		subroute: '/',
-		HTTPmethod: 'GET',
-		bodyFields: [userInfo, passwordInfo]
-	})
-	console.log(returnedJWT)
-}
-
 export default function Login() {
+	const handleSubmit = useCallServer()
+
+	async function submitCredentials(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault()
+		const formData = new CustomFormData([USER_FIELDNAME, PASSWORD_FIELDNAME], e?.currentTarget)
+
+		if (formData.formDataHasNulls()) throw new BadRequest('Fields remain empty', 400)
+
+		return await handleSubmit({
+			rootRoute: '/login',
+			subroute: '/',
+			HTTPmethod: 'POST',
+			bodyFields: formData.formGetData
+		})
+	}
+
 	return (
 		<main className="flex h-screen items-center justify-center px-10">
 			{/* Root element causes a rerender on every keystroke */}
