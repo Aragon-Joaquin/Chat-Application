@@ -7,26 +7,29 @@ import { FieldComponent, FieldSVGComponent } from './_components/Field.component
 import { BottomText } from './_components/BottomText.component'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { BadRequest } from '@/app/_errors'
-import { CustomFormData } from '@/app/_utils/FormData'
+import { FDNoNulls } from '@/app/_utils/FormData'
 
 const USER_FIELDNAME = 'username' as const
 const PASSWORD_FIELDNAME = 'password' as const
 
 export default function Login() {
-	const handleSubmit = useCallServer()
+	const { makeHTTPRequest, isPending } = useCallServer()
 
 	async function submitCredentials(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
-		const formData = new CustomFormData([USER_FIELDNAME, PASSWORD_FIELDNAME], e?.currentTarget)
+		const formData = FDNoNulls({ fields: [USER_FIELDNAME, PASSWORD_FIELDNAME], currentTargets: e?.currentTarget })
 
-		if (formData.formDataHasNulls()) throw new BadRequest('Fields remain empty', 400)
+		if (formData == null) throw new BadRequest('Fields remain empty', 400)
 
-		return await handleSubmit({
+		//save jwt
+		const result = makeHTTPRequest({
 			rootRoute: '/login',
 			subroute: '/',
 			HTTPmethod: 'POST',
-			bodyFields: formData.formGetData
+			bodyFields: formData
 		})
+
+		console.log({ result })
 	}
 
 	return (
@@ -54,7 +57,7 @@ export default function Login() {
 				</div>
 
 				<Submit type="submit" className="w-full px-4 py-2 rounded-md bg-zinc-900 text-white">
-					Login
+					{!isPending ? 'Login' : 'Loading... (making a animation later)'}
 				</Submit>
 				<div className="flex flex-col gap-y-2 justify-center w-full text-center">
 					<BottomText descriptionText="Don't have an account?" linkTo="/register" boldText="Register now." />

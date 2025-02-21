@@ -2,7 +2,7 @@ import { CREATE_BODY, CREATE_REQUEST_BODY } from './bodyRequests'
 import { getJWT } from './JWTMethods'
 import { URL_DATABASE } from './utils'
 
-const GET_DB_ENDPOINT = (endpoint: string) => `${URL_DATABASE}/${endpoint === null || `${endpoint}`}`
+const GET_DB_ENDPOINT = (endpoint: string) => `${URL_DATABASE}${endpoint === null || `${endpoint}`}`
 
 interface CALL_SERVER extends CREATE_BODY {
 	passJWT?: boolean

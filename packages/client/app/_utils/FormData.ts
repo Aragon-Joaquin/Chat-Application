@@ -1,27 +1,32 @@
-export class CustomFormData {
-	private fields: string[]
-	private currentTargets: EventTarget & HTMLFormElement
-	public formGetData: (string | null)[] = []
+//! this needs function overloading.
+// FD stands for formData
 
-	constructor(fields: string[], currentTargets: EventTarget & HTMLFormElement) {
-		this.fields = fields
-		this.currentTargets = currentTargets
-	}
+interface FDTypes {
+	fields: string[]
+	currentTargets: EventTarget & HTMLFormElement
+}
 
-	getFormData() {
-		if (!this.fields.length || !this.currentTargets) return []
+/**
+ * @description the function gives null is the fields are not the same length, otherwise returns true
+ */
+export function FDNoNulls({ fields, currentTargets }: FDTypes): string[] | null {
+	if (!fields.length || !currentTargets) return []
 
-		const allFormData = new FormData(this.currentTargets)
-		const values = this.fields.map((value) => {
-			const data = allFormData.get(value)?.toString()
-			return !data ? null : data
-		})
+	const allFormData = new FormData(currentTargets)
+	const values = fields.filter((value) => {
+		const data = allFormData.get(value)?.toString()
+		return !data ? null : data
+	})
 
-		this.formGetData = values
-	}
+	return values.length != fields.length ? null : values
+}
 
-	formDataHasNulls() {
-		if (this.formGetData == undefined) return true
-		return this.formGetData.some((value) => (value == null ? true : false))
-	}
+export function FDNulls({ fields, currentTargets }: FDTypes) {
+	if (!fields.length || !currentTargets) return []
+
+	const allFormData = new FormData(currentTargets)
+	return fields.map((value) => {
+		const data = allFormData.get(value)?.toString()
+		return !data ? null : data
+	})
 }

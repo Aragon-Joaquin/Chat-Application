@@ -1,9 +1,10 @@
+'use client'
 import { createContext } from 'react'
-import { BadServerRequest } from '../_errors'
+import { BadRequest } from '../_errors'
 
 interface ErrorContextInterface {
-	UIError: BadServerRequest | null
-	setUIError: (error: BadServerRequest | null | Error) => void
+	UIError: BadRequest | Error | null
+	setUIError: (error: BadRequest | Error) => void
 }
 
 export const ErrorContext = createContext<ErrorContextInterface>({} as ErrorContextInterface)

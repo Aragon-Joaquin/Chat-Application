@@ -1,13 +1,11 @@
 import {
   Body,
   Controller,
-  Get,
   Patch,
   Post,
   Req,
   UnauthorizedException,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { UserDto } from './dto/user.dto';
@@ -20,9 +18,9 @@ export class LoginController {
   //send the credentials and verify them  with jwt, return jwt if okay
   @Post()
   @UseGuards(LocalAuthGuard)
-  login(@Req() req: Request, @Body(new ValidationPipe()) body: UserDto) {
+  login(@Req() req: Request) {
     if ('user' in req) return req.user;
-    throw new UnauthorizedException();
+    throw new UnauthorizedException('Request is not specified');
   }
 
   // register
