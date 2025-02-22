@@ -16,7 +16,6 @@ export default function LogInFormLayout({ children }: { children: ReactNode }) {
 	async function submitCredentials(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 
-		//! temporal solution
 		const fieldsFromInputs = Array.from(e?.currentTarget)
 			.map((value) => {
 				return value.getAttribute('name') ?? ''
@@ -25,11 +24,10 @@ export default function LogInFormLayout({ children }: { children: ReactNode }) {
 
 		const formData = FDNoNulls({ fields: fieldsFromInputs, currentTargets: e?.currentTarget })
 		if (formData == null) throw new BadRequest('Fields remain empty', 400)
-		//save jwt
+
+		//! it has to be a better way to do this...
 		makeHTTPRequest({
-			rootRoute: '/login',
-			subroute: '/',
-			HTTPmethod: 'POST',
+			...path.reqInfo,
 			bodyFields: formData
 		})
 	}
