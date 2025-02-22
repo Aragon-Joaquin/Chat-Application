@@ -28,5 +28,5 @@ export function CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyField
 		return { [field]: bodyFields[i] ?? '' }
 	})
 
-	return { body: JSON.stringify(Object.assign({}, ...arrayOfInformation)) }
+	return Object.assign({}, ...arrayOfInformation)
 }

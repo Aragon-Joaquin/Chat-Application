@@ -32,21 +32,14 @@ export class LoginService {
     return body;
   }
 
-  async FindOne(where: FindOneOptions<users>): Promise<users> {
-    try {
-      const user = await this.userRepository.findOne(where);
-      if (!user) {
-        throw new HttpException(
-          `There isn't any user with identifier: ${where}`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      return user;
-    } catch (e) {
+  async FindOne(whereObject: FindOneOptions<users>): Promise<users> {
+    const user = await this.userRepository.findOne(whereObject);
+    if (!user) {
       throw new HttpException(
-        'Error while searching user',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        `There isn't any user with that name identifier.`,
+        HttpStatus.BAD_REQUEST,
       );
     }
+    return user;
   }
 }

@@ -15,11 +15,16 @@ export async function callServer({
 	bodyFields = [],
 	passJWT = false
 }: CALL_SERVER) {
+	const bodyParameter = CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyFields })
+
 	return (
 		await fetch(GET_DB_ENDPOINT(`${rootRoute}${subroute != '/' ? subroute : ''}`), {
 			method: HTTPmethod,
+			headers: {
+				'Content-Type': 'application/json'
+			},
 			...{ ...(passJWT && { headers: { Authorization: `Bearer ${await getJWT()}` } }) },
-			...{ ...CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyFields }) }
+			body: JSON.stringify(bodyParameter)
 		})
 	).json()
 }

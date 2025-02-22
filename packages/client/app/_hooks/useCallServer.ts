@@ -1,10 +1,11 @@
-import { useCallback, useTransition } from 'react'
+import { useCallback, useState, useTransition } from 'react'
 import { BadRequest } from '../_errors'
 import { callServer } from '../_utils/callServer'
 import { useConsumeContext } from './consumeContext'
 
 export function useCallServer() {
 	const [isPending, startTransition] = useTransition()
+	const [responseData, setResponseData] = useState<unknown | null>(null)
 
 	const {
 		ErrorContext: { setUIError }
@@ -17,7 +18,7 @@ export function useCallServer() {
 				try {
 					const response = await callServer({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT })
 					if (response?.statusCode != 200) throw new BadRequest(response?.message, response.statusCode)
-					return response
+					setResponseData(response)
 				} catch (error) {
 					if (error instanceof BadRequest) setUIError(error)
 					else setUIError(new Error("Unexpected error from server. We're working on it."))
@@ -29,6 +30,7 @@ export function useCallServer() {
 
 	return {
 		makeHTTPRequest,
-		isPending
+		isPending,
+		responseData
 	}
 }
