@@ -1,6 +1,6 @@
 import { HTTP_METHOD } from 'next/dist/server/web/http'
 import { EVERY_ROUTE, LIST_OF_SUBROUTES, ROUTES_HASHMAP } from '../utils'
-import { BadRequest } from '../../_errors'
+import { BadRequest, BadRequestCodes } from '../../_errors'
 
 export type CREATE_BODY = {
 	rootRoute: EVERY_ROUTE['rootRoute']
@@ -14,10 +14,12 @@ export function CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyField
 	if (bodyFields == undefined) return null
 
 	const getRoute = ROUTES_HASHMAP[rootRoute as keyof typeof ROUTES_HASHMAP]
-	if (!(`${subroute}` in getRoute['listOfSubRoutes'])) throw new BadRequest('Bad subroute specification.', 400)
+	if (!(`${subroute}` in getRoute['listOfSubRoutes']))
+		throw new BadRequest('Bad subroute specification.', BadRequestCodes.BAD_REQUEST)
 
 	const specificRoute = getRoute.listOfSubRoutes[subroute as keyof typeof getRoute.listOfSubRoutes]
-	if (!(`${HTTPmethod}` in specificRoute)) throw new BadRequest('HTTP Method is not defined', 400)
+	if (!(`${HTTPmethod}` in specificRoute))
+		throw new BadRequest('HTTP Method is not defined', BadRequestCodes.BAD_REQUEST)
 
 	// TODO: TS infers the types that are overlap since its a union between two or more types, somehow fix?
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

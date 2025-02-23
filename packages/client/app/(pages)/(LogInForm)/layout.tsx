@@ -1,5 +1,5 @@
 'use client'
-import { BadRequest } from '@/app/_errors'
+import { BadRequest, BadRequestCodes } from '@/app/_errors'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { FDNoNulls } from '@/app/_utils/FormData'
 import { Root, Submit } from '@radix-ui/react-form'
@@ -23,7 +23,7 @@ export default function LogInFormLayout({ children }: { children: ReactNode }) {
 			.filter((value) => value)
 
 		const formData = FDNoNulls({ fields: fieldsFromInputs, currentTargets: e?.currentTarget })
-		if (formData == null) throw new BadRequest('Fields remain empty', 400)
+		if (formData == null) throw new BadRequest('Fields remain empty', BadRequestCodes.BAD_REQUEST)
 
 		//! it has to be a better way to do this...
 		makeHTTPRequest({
