@@ -1,0 +1,36 @@
+.formLogin {
+	@apply border-2 border-transparent/10 shadow-inner rounded-md rounded-t-none p-10 bg-neutral-100 flex flex-col gap-y-7 relative
+					before:content-[""] before:w-full before:h-2 before:absolute before:inset-0 before:-translate-y-full
+					before:rounded-t-md before:border-2 before:border-transparent/10;
+	& > div {
+		@apply flex flex-col gap-2;
+	}
+}
+
+.submitButton {
+	@apply w-full px-4 py-2 rounded-md bg-zinc-900 text-white transition-colors;
+}
+
+.footerForm {
+	@apply flex flex-col gap-y-2 justify-center w-full text-center;
+}
+
+.paddingFields {
+	@apply flex flex-col gap-y-4;
+}
+
+/*
+! fields 
+*/
+
+.SVGField {
+	@apply w-5 h-5 transition-all hover:scale-110 cursor-pointer absolute right-0 top-0.5 -translate-x-1/2 translate-y-1/2;
+}
+
+.controlField {
+	@apply p-2 rounded-md border-2 border-transparent/20 shadow-inner bg-neutral-100 w-full;
+}
+
+.errorMessage {
+	@apply text-sm text-red-600 font-medium;
+}

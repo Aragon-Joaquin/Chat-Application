@@ -11,7 +11,6 @@ export function useCallServer() {
 		ErrorContext: { setUIError }
 	} = useConsumeContext()
 
-	//! i think i might use a useState
 	const makeHTTPRequest = useCallback(
 		({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT }: Parameters<typeof callServer>[0]) => {
 			startTransition(async () => {

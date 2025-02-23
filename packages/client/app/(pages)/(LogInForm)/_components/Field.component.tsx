@@ -1,65 +1,60 @@
 import { Control, Field } from '@radix-ui/react-form'
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons'
-import { memo, useId, useState } from 'react'
-import { FieldHeader } from './inputSection/FieldHeader.component'
+import { memo, RefObject, useCallback, useId, useState } from 'react'
+import { FieldHeader, FieldHeaderCompare } from './inputSection/FieldHeader.component'
+import { useFieldContext } from '../_hooks/useFieldContext'
 
 interface FieldComponentProps {
 	fieldName: string
 	labelName: string
 	placeholder: string
 	type?: 'text' | 'password'
+	ref?: RefObject<HTMLInputElement> | RefObject<null>
+	compare?: boolean
+	errorFieldName?: string
 }
 
-function FieldComponentFunc({ fieldName, labelName, placeholder, type = 'text' }: FieldComponentProps) {
+function FieldSVGComponentFunc({
+	fieldName,
+	labelName,
+	placeholder,
+	type = 'password',
+	ref,
+	errorFieldName
+}: FieldComponentProps) {
 	const htmlID = useId()
+	const { view } = useFieldContext()
 
 	return (
 		<Field name={fieldName} className="flex flex-col">
-			<FieldHeader labelName={labelName} htmlID={htmlID} />
-			<Control
-				placeholder={placeholder}
-				required
-				type={type}
-				id={htmlID}
-				className="p-2 rounded-md border-2 border-transparent/20 shadow-inner bg-neutral-100 w-full"
-			/>
-		</Field>
-	)
-}
-
-export const FieldComponent = memo(FieldComponentFunc)
-
-function FieldSVGComponentFunc({ fieldName, labelName, placeholder, type = 'password' }: FieldComponentProps) {
-	const htmlID = useId()
-	const [view, setView] = useState<boolean>(false)
-	return (
-		<Field name={fieldName} className="flex flex-col">
-			<FieldHeader labelName={labelName} htmlID={htmlID} />
+			<FieldHeader labelName={labelName} htmlID={htmlID} errorFieldName={errorFieldName} />
 			<div className="relative">
 				<Control
+					ref={ref}
 					placeholder={placeholder}
 					required
 					type={view ? 'text' : type}
 					id={htmlID}
-					className="p-2 rounded-md border-2 border-transparent/20 shadow-inner bg-neutral-100 w-full pr-10 font-normal"
+					className="controlField pr-10"
 				/>
-				{view ? (
-					//! TODO: fix this boilerplate
-					<EyeOpenIcon
-						color="black"
-						className="w-5 h-5 transition-all hover:scale-110 cursor-pointer absolute right-0 top-0.5 -translate-x-1/2 translate-y-1/2"
-						onClick={() => setView((prevState) => !prevState)}
-					/>
-				) : (
-					<EyeClosedIcon
-						color="black"
-						className="w-5 h-5 transition-all hover:scale-110 cursor-pointer absolute right-0 top-0.5 -translate-x-1/2 translate-y-1/2"
-						onClick={() => setView((prevState) => !prevState)}
-					/>
-				)}
+
+				<SVGEye />
 			</div>
 		</Field>
 	)
 }
 
 export const FieldSVGComponent = memo(FieldSVGComponentFunc)
+
+export function SVGEye() {
+	const { view, resetViewState } = useFieldContext()
+	return (
+		<>
+			{view ? (
+				<EyeOpenIcon color="black" className="SVGField" onClick={() => resetViewState((prevState) => !prevState)} />
+			) : (
+				<EyeClosedIcon color="black" className="SVGField" onClick={() => resetViewState((prevState) => !prevState)} />
+			)}
+		</>
+	)
+}

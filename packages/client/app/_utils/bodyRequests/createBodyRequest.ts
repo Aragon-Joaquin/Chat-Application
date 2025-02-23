@@ -9,7 +9,6 @@ export type CREATE_BODY = {
 	bodyFields?: (string | number)[] | []
 }
 
-//! this function dont need to be this... verbose?
 export function CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyFields }: CREATE_BODY) {
 	if (bodyFields == undefined) return null
 

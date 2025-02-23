@@ -4,7 +4,7 @@ import { URL_DATABASE } from './utils'
 
 const GET_DB_ENDPOINT = (endpoint: string) => `${URL_DATABASE}${endpoint === null || `${endpoint}`}`
 
-interface CALL_SERVER extends CREATE_BODY {
+export interface callServerParameters extends CREATE_BODY {
 	passJWT?: boolean
 }
 
@@ -14,7 +14,7 @@ export async function callServer({
 	HTTPmethod,
 	bodyFields = [],
 	passJWT = false
-}: CALL_SERVER) {
+}: callServerParameters) {
 	const bodyParameter = CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyFields })
 
 	return (
