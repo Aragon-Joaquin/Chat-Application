@@ -10,8 +10,8 @@ import { FieldHeader, FieldHeaderCompare } from '../_components/inputSection/Fie
 import { useFieldContext } from '../_hooks/useFieldContext'
 import { SVGEye } from '../_components/Field.component'
 
-const USER_FIELDNAME = 'username' as const
-const PASSWORD_FIELDNAME = 'password' as const
+const USER_FIELDNAME = 'userName' as const
+const PASSWORD_FIELDNAME = 'userPassword' as const
 const PASSWORD_FIELDNAME_CLARIFICATION = 'passwordConfirm' as const
 
 export default function RegisterPage() {
@@ -27,11 +27,10 @@ export default function RegisterPage() {
 		e.preventDefault()
 		if (passwordField.current?.value !== pwdCompare.current?.value) return resetComparingState(true)
 
-		submitCredentials(e, {
-			rootRoute: '/login',
-			subroute: '/register',
-			HTTPmethod: 'POST'
-		})
+		submitCredentials(e, { rootRoute: '/login', subroute: '/register', HTTPmethod: 'POST' }, [
+			USER_FIELDNAME,
+			PASSWORD_FIELDNAME
+		])
 	}
 
 	return (

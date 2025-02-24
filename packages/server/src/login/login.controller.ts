@@ -26,6 +26,7 @@ export class LoginController {
   // register
   @Post('/register')
   register(@Body() body: UserDto) {
+    console.log(body);
     return this.loginService.RegisterUser(body);
   }
 

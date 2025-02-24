@@ -15,11 +15,13 @@ export function FDNoNulls({ fields, currentTargets }: FDTypes): string[] | null 
 	const allFormData = new FormData(currentTargets)
 	const values: string[] = []
 
-	allFormData.forEach((data) => {
-		return data && values.push(data.toString())
+	fields.forEach((data) => {
+		const dataField = allFormData.get(data)
+		return dataField && values.push(dataField.toString())
 	})
 
-	return values.length != fields.length ? null : values
+	if (values.length != fields.length) return null
+	return values
 }
 
 // export function FDNulls
