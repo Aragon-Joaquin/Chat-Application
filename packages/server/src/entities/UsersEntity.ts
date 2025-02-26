@@ -7,13 +7,12 @@ export class users {
   @PrimaryGeneratedColumn('increment', { type: 'int' })
   user_id: number;
 
-  @Column({ nullable: false, unique: true, length: 20 })
+  @Column({ nullable: false, unique: true, length: 20, type: 'varchar' })
   user_name: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'varchar' })
   user_password: string;
 
-  @Column()
   @OneToOne(() => file_storage, (entity) => entity.file_id, { nullable: true })
-  profile_picture: UUID_TYPE;
+  profile_picture: file_storage;
 }

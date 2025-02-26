@@ -6,25 +6,30 @@ import { Control, Field, Root, Submit } from '@radix-ui/react-form'
 import { BottomText } from '../_components/BottomText.component'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { FieldHeader } from '../_components/inputSection/FieldHeader.component'
-import { FormEvent, useId } from 'react'
+import { FormEvent, useEffect, useId } from 'react'
 import { useSubmitCredentials } from '../_hooks/submitCredentials'
+import { permanentRedirect } from 'next/navigation'
 
 const USER_FIELDNAME = 'username' as const
 const PASSWORD_FIELDNAME = 'password' as const
 
 export default function Login() {
 	const { isPending } = useCallServer()
-	const submitCredentials = useSubmitCredentials()
+	const { submitCredentials, hasToken } = useSubmitCredentials()
 	const htmlID = useId()
 
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		submitCredentials(e, {
+		if (hasToken) return
+		await submitCredentials(e, {
 			rootRoute: '/login',
 			subroute: '/',
 			HTTPmethod: 'POST'
 		})
 	}
+	useEffect(() => {
+		if (hasToken) permanentRedirect('room')
+	}, [hasToken])
 
 	return (
 		<Root className={`formLogin before:bg-blue-500`} onSubmit={(e) => handleSubmit(e)}>
@@ -50,7 +55,7 @@ export default function Login() {
 			</div>
 
 			<Submit type="submit" className={`submitButton ${isPending && 'bg-zinc-900/80'}`} disabled={isPending}>
-				{!isPending ? 'Login' : 'Loading... (making a animation later)'}
+				{!isPending ? (hasToken ? 'You are already logged in!' : 'Login') : 'Loading... (making a animation later)'}
 			</Submit>
 			<div className="footerForm">
 				<BottomText descriptionText="Don't have an account yet?" linkTo="/register" boldText="Register now" />

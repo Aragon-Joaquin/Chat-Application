@@ -19,15 +19,14 @@ export class LoginController {
   @Post()
   @UseGuards(LocalAuthGuard)
   login(@Req() req: Request) {
-    if ('user' in req) return req.user;
+    if ('user' in req) return JSON.stringify({ access_token: req.user });
     throw new UnauthorizedException('Request is not specified');
   }
 
   // register
   @Post('/register')
-  register(@Body() body: UserDto) {
-    console.log(body);
-    return this.loginService.RegisterUser(body);
+  async register(@Body() body: UserDto) {
+    return await this.loginService.RegisterUser(body);
   }
 
   // change password

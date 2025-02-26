@@ -13,3 +13,11 @@ export interface REQUEST_DB_OPTIONS {
   offset?: number;
   limit?: number;
 }
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JWT_DECODED_INFO;
+    }
+  }
+}

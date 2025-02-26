@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
-import { AuthService } from 'src/auth/auth.service';
 import { messages, room, users_in_room } from 'src/entities';
 import { LoginService } from 'src/login/login.service';
 import { RoomMessagesService } from 'src/room-messages/room-messages.service';
@@ -16,7 +15,6 @@ export class WsConnService {
   constructor(
     private roomService: RoomService,
     private loginService: LoginService,
-    private authService: AuthService,
     private roomMsgs: RoomMessagesService,
     private usersRoomsService: UsersRoomsService,
     @InjectDataSource()
@@ -50,8 +48,7 @@ export class WsConnService {
     await this.usersRoomsService.DeleteFromRoom(userExists);
   }
 
-  async RoomHistory(token: string, body?: RoomHistoryDto) {
-    const user = this.authService.DecodeJWT(token);
+  async RoomHistory(user: JWT_DECODED_INFO, body?: RoomHistoryDto) {
     const room = await this.roomService.FindOne({
       where: { room_id: body.roomName },
     });

@@ -52,7 +52,7 @@ export class RoomMessagesService {
 
   async DeleteMessageInRoom(userExists: users_in_room, message: room_messages) {
     if (
-      userExists.role_id === ROLES.user &&
+      userExists.role_id.role_name === ROLES.user &&
       userExists.user_id !== message.sender_id
     )
       throw new UnauthorizedException(
@@ -73,18 +73,12 @@ export class RoomMessagesService {
     // then order by DESC the room_messages.date_sended
     // to finally get the last room_messages.message_id and query it with a ton of more rooms
 
-    //! this probably won't work
+    //! i have no rooms yet, so... testing more later on
     return await this.roomMsgsRepo
       .createQueryBuilder('room_msgs')
-      .select('room_msgs.sender_id', 'sender')
-      .addSelect('room_msgs.message_id', 'message')
-      .innerJoin(users, 'users', 'users.user_id = room_msgs.sender_id')
-      .innerJoin(messages, 'msgs', 'msgs.message_id = room_msgs.message_id')
-      .where('room_msgs.which_room IN(:...room_id)', {
+      .where('room_msgs.which_room IN(:room_id)', {
         room_id: [...userInRooms.map((room) => room.room_id)],
       })
-      .limit(limit ?? 1)
-      .orderBy('date_sended', 'DESC')
-      .getRawMany();
+      .getManyAndCount();
   }
 }

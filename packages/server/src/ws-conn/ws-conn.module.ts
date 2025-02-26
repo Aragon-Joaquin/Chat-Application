@@ -4,18 +4,18 @@ import { WsConnController } from './ws-conn.controller';
 import { WsConnService } from './ws-conn.service';
 import { RoomModule } from 'src/room/room.module';
 import { LoginModule } from 'src/login/login.module';
-import { AuthModule } from 'src/auth/auth.module';
 import { RoomMessagesModule } from 'src/room-messages/room-messages.module';
 import { UsersRoomsModule } from 'src/users-rooms/users-rooms.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   providers: [WsConnGateway, WsConnService],
   imports: [
     LoginModule,
     forwardRef(() => RoomModule),
-    AuthModule,
     RoomMessagesModule,
     UsersRoomsModule,
+    AuthModule,
   ],
   controllers: [WsConnController],
   exports: [WsConnService],

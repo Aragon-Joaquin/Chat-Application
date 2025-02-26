@@ -4,12 +4,12 @@ import { UUID_TYPE } from 'src/utils/types';
 
 @Entity()
 export class file_storage {
-  @PrimaryColumn({ default: randomUUID() })
+  @PrimaryColumn({ default: randomUUID(), type: 'varchar' })
   file_id: UUID_TYPE;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'varchar' })
   file_src: string;
 
-  @Column({ nullable: false, length: 30 })
+  @Column({ nullable: false, length: 30, type: 'varchar' })
   file_name: string;
 }

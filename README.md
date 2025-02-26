@@ -5,7 +5,7 @@
 
 - Make a table for user logouts & expiration tokens
 - Make a maximum of 5 rooms that a user can join.
-- Make a module, controller and service for room_messages to atleast atomize the ws-conn service file
+- encode when sending the userPassword and maybe encode cookies with the jwt
 
 ## ℹ **General info:**
 

@@ -3,9 +3,13 @@ import { BadRequest } from '../_errors'
 import { callServer } from '../_utils/callServer'
 import { useConsumeContext } from './consumeContext'
 
+type anythingRes = {
+	[key: string]: unknown
+}
+
 export function useCallServer() {
 	const [isPending, startTransition] = useTransition()
-	const [responseData, setResponseData] = useState<unknown | null>(null)
+	const [responseData, setResponseData] = useState<anythingRes | null>(null)
 
 	const {
 		ErrorContext: { setUIError }
@@ -16,7 +20,9 @@ export function useCallServer() {
 			startTransition(async () => {
 				try {
 					const response = await callServer({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT })
-					if (response?.statusCode != 200) throw new BadRequest(response?.message, response.statusCode)
+					if (response?.statusCode < 200 || response?.statusCode > 299)
+						throw new BadRequest(response?.message ?? 'Status code is not in range of 200-299', response.statusCode)
+
 					setResponseData(response)
 				} catch (error) {
 					if (error instanceof BadRequest) setUIError(error)

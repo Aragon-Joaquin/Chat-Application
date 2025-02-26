@@ -17,12 +17,10 @@ export class UsersRoomsService {
   ) {}
 
   async GetUsersRooms(user: JWT_DECODED_INFO['id']) {
-    const rooms = await this.usersRoomsService.findBy({
+    console.log({ user });
+    return await this.usersRoomsService.findBy({
       user_id: user,
     });
-    if (!rooms)
-      throw new BadRequestException('User does not belong to any room');
-    return rooms;
   }
 
   async GetUsersOneRoom(user: JWT_DECODED_INFO['id'], room: room['room_id']) {
@@ -48,7 +46,7 @@ export class UsersRoomsService {
     return await this.usersRoomsService.insert({
       room_id: room.room_id,
       user_id: user.user_id,
-      role_id: 'user',
+      role_id: { role_name: 'user' },
     });
   }
 

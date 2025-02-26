@@ -5,7 +5,9 @@ const JWT_COOKIE_NAME = 'JWT_ONLYUSE' as const
 
 export async function getJWT() {
 	const AllCookies = await cookies()
-	return AllCookies?.get(JWT_COOKIE_NAME) ?? null
+	const gotCookie = AllCookies?.get(JWT_COOKIE_NAME)
+
+	return gotCookie != null ? gotCookie?.toString() : null
 }
 
 export async function setJWT(returnedValue: string) {

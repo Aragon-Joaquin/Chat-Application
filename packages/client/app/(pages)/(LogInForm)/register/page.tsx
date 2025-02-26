@@ -15,7 +15,7 @@ const PASSWORD_FIELDNAME = 'userPassword' as const
 const PASSWORD_FIELDNAME_CLARIFICATION = 'passwordConfirm' as const
 
 export default function RegisterPage() {
-	const submitCredentials = useSubmitCredentials()
+	const { submitCredentials } = useSubmitCredentials()
 	const { isPending } = useCallServer()
 	const { passwordField, pwdCompare, view, resetComparingState } = useFieldContext()
 
@@ -23,11 +23,11 @@ export default function RegisterPage() {
 	const passwordID = useId()
 	const pwdCompId = useId()
 
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		if (passwordField.current?.value !== pwdCompare.current?.value) return resetComparingState(true)
 
-		submitCredentials(e, { rootRoute: '/login', subroute: '/register', HTTPmethod: 'POST' }, [
+		await submitCredentials(e, { rootRoute: '/login', subroute: '/register', HTTPmethod: 'POST' }, [
 			USER_FIELDNAME,
 			PASSWORD_FIELDNAME
 		])
@@ -57,6 +57,7 @@ export default function RegisterPage() {
 							required
 							type={view ? 'text' : 'password'}
 							id={passwordID}
+							autoComplete="off"
 							className="controlField pr-10"
 						/>
 
@@ -75,6 +76,7 @@ export default function RegisterPage() {
 							type={view ? 'text' : 'password'}
 							id={pwdCompId}
 							className="controlField pr-10"
+							autoComplete="off"
 							onChange={() => resetComparingState(false)}
 						/>
 

@@ -11,22 +11,22 @@ export class room {
     nullable: false,
     unique: true,
     length: 6,
+    type: 'varchar',
   })
   room_id: ROOM_CODE_TYPE;
 
-  @Column({ length: 20, nullable: false })
+  @Column({ length: 20, nullable: false, type: 'varchar' })
   room_name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   room_password: string;
 
-  @Column({ length: 150, nullable: true })
+  @Column({ length: 150, nullable: true, type: 'varchar' })
   room_description: string;
 
-  @Column({ nullable: false, default: createDateNow() })
+  @Column({ nullable: false, default: createDateNow(), type: 'date' })
   created_at: Date;
 
-  @Column()
   @OneToOne(() => file_storage, (entity) => entity.file_id, { nullable: true })
-  room_picture: UUID_TYPE;
+  room_picture: file_storage;
 }

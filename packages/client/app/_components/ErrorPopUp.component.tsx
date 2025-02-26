@@ -7,7 +7,7 @@ interface ErrorCode extends Omit<Error, 'message'> {
 	errorCode: number
 }
 
-//! finish this
+//! make this toast multi-use (okay's, warnings, info...)
 function PopUp({ error, onErrorClick }: { error: ErrorCode | Error; onErrorClick: (close: null) => void }) {
 	const [openToast, setOpenToast] = useState<boolean>(false)
 
@@ -20,7 +20,7 @@ function PopUp({ error, onErrorClick }: { error: ErrorCode | Error; onErrorClick
 			<Toast
 				open={openToast}
 				onOpenChange={setOpenToast}
-				className="relative border-2 border-neutral-950/20 p-2 rounded-md rounded-l-none shadow-xl grid grid-cols-[225px_auto] auto-rows-auto *:h-full
+				className="relative border-2 border-neutral-950/20 p-2 rounded-md rounded-l-none shadow-xl grid grid-cols-[225px_auto] auto-rows-auto
 				before:content-[''] before:h-[calc(100%_+_4px)] before:w-5 before:bg-red-500 before:absolute before:-translate-x-full before:rounded-l-md before:border-2 before:border-red-800/20 before:-translate-y-[2px]"
 			>
 				<ToastTitle className="flex flex-row items-center gap-x-1 col-span-1 row-span-1 select-text mb-1">
@@ -41,7 +41,7 @@ function PopUp({ error, onErrorClick }: { error: ErrorCode | Error; onErrorClick
 					<Cross2Icon className="w-full h-full text-slate-600 hover:scale-125 transition-all" width={0} height={0} />
 				</ToastClose>
 			</Toast>
-			<ToastViewport className="fixed right-0 bottom-0 z-50 min-h-28 max-h-72 w-80 mr-5 mb-5" />
+			<ToastViewport className="fixed right-0 bottom-0 z-50 min-h-28 max-h-72 w-80 mr-5 mb-5 flex justify-center" />
 		</ToastProvider>
 	)
 }

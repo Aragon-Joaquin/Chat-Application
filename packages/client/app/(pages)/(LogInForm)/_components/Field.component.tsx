@@ -1,7 +1,7 @@
 import { Control, Field } from '@radix-ui/react-form'
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons'
-import { memo, RefObject, useCallback, useId, useState } from 'react'
-import { FieldHeader, FieldHeaderCompare } from './inputSection/FieldHeader.component'
+import { memo, RefObject, useId } from 'react'
+import { FieldHeader } from './inputSection/FieldHeader.component'
 import { useFieldContext } from '../_hooks/useFieldContext'
 
 interface FieldComponentProps {
@@ -36,6 +36,7 @@ function FieldSVGComponentFunc({
 					type={view ? 'text' : type}
 					id={htmlID}
 					className="controlField pr-10"
+					autoComplete={'off'}
 				/>
 
 				<SVGEye />
