@@ -23,3 +23,8 @@ export const ROLES = {
 }
 
 export const MAXIMUM_ROOMS_PER_USER = 5 as const
+
+export const COOKIE_EXPIRATION = {
+	ANNOTATION_MODE: '12h',
+	BY_SECONDS: 43200
+}

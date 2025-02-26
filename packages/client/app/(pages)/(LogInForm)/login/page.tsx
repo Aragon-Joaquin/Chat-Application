@@ -18,10 +18,10 @@ export default function Login() {
 	const { submitCredentials, hasToken } = useSubmitCredentials()
 	const htmlID = useId()
 
-	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		if (hasToken) return
-		await submitCredentials(e, {
+		submitCredentials(e, {
 			rootRoute: '/login',
 			subroute: '/',
 			HTTPmethod: 'POST'

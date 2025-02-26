@@ -21,10 +21,10 @@ export async function callServer({
 		await fetch(GET_DB_ENDPOINT(`${rootRoute}${subroute != '/' ? subroute : ''}`), {
 			method: HTTPmethod,
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				...{ ...(passJWT && { Authorization: `Bearer ${await getJWT()}` }) }
 			},
-			...{ ...(passJWT && { headers: { Authorization: `Bearer ${await getJWT()}` } }) },
-			body: JSON.stringify(bodyParameter)
+			...{ ...(bodyParameter != null && { body: JSON.stringify(bodyParameter) }) }
 		})
 	).json()
 }

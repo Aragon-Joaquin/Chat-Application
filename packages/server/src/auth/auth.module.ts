@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
+import { COOKIE_EXPIRATION } from '@chat-app/utils/globalConstants';
 
 import { JwtModule } from '@nestjs/jwt';
 import { getJWTSecret } from 'src/utils/getEnvVariables';
@@ -14,7 +15,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     PassportModule,
     JwtModule.register({
       secret: getJWTSecret().JWT_SECRET,
-      signOptions: { expiresIn: '12h' },
+      signOptions: { expiresIn: COOKIE_EXPIRATION.ANNOTATION_MODE },
     }),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
