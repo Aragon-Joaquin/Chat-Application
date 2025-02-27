@@ -1,0 +1,5 @@
+.asideLayout {
+	& .borderLayout {
+		@apply border-y-[1px] border-y-transparent/20 py-3 px-2;
+	}
+}

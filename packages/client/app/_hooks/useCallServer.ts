@@ -3,13 +3,9 @@ import { BadRequest } from '../_errors'
 import { callServer } from '../_utils/callServer'
 import { useConsumeContext } from './consumeContext'
 
-type anythingRes = {
-	[key: string]: unknown
-}
-
-export function useCallServer() {
+export function useCallServer<T>() {
 	const [isPending, startTransition] = useTransition()
-	const [responseData, setResponseData] = useState<anythingRes | null>(null)
+	const [responseData, setResponseData] = useState<T | null>(null)
 
 	const {
 		ErrorContext: { setUIError }

@@ -1,6 +1,7 @@
 import { BadRequest, BadRequestCodes } from '@/app/_errors'
 import { useConsumeContext } from '@/app/_hooks/consumeContext'
 import { useCallServer } from '@/app/_hooks/useCallServer'
+import { LOGIN_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
 import { callServer } from '@/app/_utils/callServer'
 import { FDNoNulls } from '@/app/_utils/FormData'
 import { getJWT, setJWT } from '@/app/_utils/JWTMethods'
@@ -15,7 +16,7 @@ function getFieldsFromInputs(values: FormEvent<HTMLFormElement>) {
 }
 
 export function useSubmitCredentials() {
-	const { makeHTTPRequest, responseData } = useCallServer()
+	const { makeHTTPRequest, responseData } = useCallServer<LOGIN_TYPES_RESPONSES>()
 	const [hasToken, setHasToken] = useState<boolean>(false)
 	const {
 		ErrorContext: { setUIError }
