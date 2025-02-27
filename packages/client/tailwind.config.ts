@@ -14,6 +14,9 @@ export default {
 			},
 			textColor: {
 				descriptionColor: '#797979'
+			},
+			fontFamily: {
+				poppins: ['var(--font-poppins)']
 			}
 		}
 	},
