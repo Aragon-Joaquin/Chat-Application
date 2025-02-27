@@ -7,6 +7,7 @@ interface SimpleFormProps {
 	fieldName: string
 	labelName: string
 	inputType: HTMLInputTypeAttribute
+	requiredField?: boolean
 }
 
 export function SimpleForm({
@@ -37,20 +38,26 @@ export function SimpleForm({
 }
 
 function FormMaker({ fieldProps }: { fieldProps: SimpleFormProps }) {
-	const { fieldName, labelName, inputType } = fieldProps
+	const { fieldName, labelName, inputType, requiredField } = fieldProps
 
 	const htmlID = useId()
 	return (
 		<Field name={fieldName} className="w-full">
-			<div className="flex flex-row justify-between">
-				<Label htmlFor={htmlID} className="font-semibold">
+			<div className="flex flex-row justify-between mb-1">
+				<Label htmlFor={htmlID} className="font-semibold text-sm -ml-2">
 					{labelName}
 				</Label>
 				<Message match="valueMissing" className="errorMessage">
 					{fieldName} is empty
 				</Message>
 			</div>
-			<Control id={htmlID} type={inputType} autoComplete="off" className="controlField" required />
+			<Control
+				id={htmlID}
+				type={inputType}
+				autoComplete="off"
+				className="controlField"
+				{...(requiredField && { required: true })}
+			/>
 		</Field>
 	)
 }

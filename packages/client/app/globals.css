@@ -7,7 +7,8 @@
 }
 
 .controlField {
-	@apply p-2 rounded-md border-2 border-transparent/20 shadow-inner bg-neutral-100 w-full data-[data-invalid]:border-2 data-[data-invalid]:border-red-400;
+	@apply p-2 rounded-md border-2 border-transparent/20 shadow-inner bg-neutral-100 w-full data-[invalid]:!border-red-300
+			focus:!outline-blue-400 focus:!bg-blue-100;
 }
 
 .errorMessage {

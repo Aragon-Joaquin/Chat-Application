@@ -5,7 +5,7 @@ export function SearchRooms() {
 		<SimpleForm
 			httpReq={{ rootRoute: '/room', subroute: '/', HTTPmethod: 'GET', passJWT: true }}
 			arrayOfFields={[
-				{ fieldName: 'roomName', labelName: 'Room Code', inputType: 'text' },
+				{ fieldName: 'roomName', labelName: 'Room Code', inputType: 'text', requiredField: true },
 				{ fieldName: 'roomPassword', labelName: 'Password', inputType: 'password' }
 			]}
 		/>
