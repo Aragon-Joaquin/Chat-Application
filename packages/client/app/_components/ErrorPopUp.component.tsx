@@ -30,7 +30,7 @@ function PopUp({ error, onErrorClick }: { error: ErrorCode | Error; onErrorClick
 						<p className="text-neutral-600/70 text-sm">{'errorCode' in error ? error.errorCode : 0}</p>
 					</h3>
 				</ToastTitle>
-				<ToastDescription className="col-span-full row-span-2 text-neutral-500 px-2 select-text text-sm overflow-y-auto h-full">
+				<ToastDescription className="col-span-full row-span-2 text-descriptionColor px-2 select-text text-sm overflow-y-auto h-full">
 					{Array.isArray(error.message) ? <ErrorList values={error.message} /> : (error?.message ?? 'Unknown Error')}
 				</ToastDescription>
 

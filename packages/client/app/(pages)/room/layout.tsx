@@ -1,18 +1,18 @@
 'use client'
 
+import './room.css'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { MagnifyingGlassIcon, PlusIcon } from '@radix-ui/react-icons'
-import { Button, Heading } from '@radix-ui/themes'
+import { Heading } from '@radix-ui/themes'
 import Link from 'next/link'
 import { ReactNode, useEffect } from 'react'
 import { NoChatsAvailable } from './_components/noChatsAvailable.component'
 import { ChatBubble } from './_components/chatBubble.component'
 import { Poppins } from 'next/font/google'
 import { Root, Slot } from '@radix-ui/themes/components/text-field'
-
-import './room.css'
 import { ROOM_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
 import { CustomDialog } from '@/app/_components/customDialog'
+import { SearchRooms } from './_components/DialogExtras'
 
 const poppins = Poppins({
 	weight: '600',
@@ -21,7 +21,7 @@ const poppins = Poppins({
 })
 
 export default function RoomLayout({ children }: { children: ReactNode }) {
-	const { responseData, isPending, makeHTTPRequest } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
+	const { responseData, makeHTTPRequest } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
 
 	useEffect(() => {
 		makeHTTPRequest({
@@ -56,14 +56,10 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 				>
 					Main chats
 					<CustomDialog
-						trigger={
-							<Button className="hover:cursor-pointer hover:scale-110 hover:transition-all" title="Create new group.">
-								<PlusIcon />
-							</Button>
-						}
+						iconName={<PlusIcon />}
 						title="Join room"
 						description="Soon i'll implement the ability to search & filter public rooms, for now, just ask your friends what's the room code."
-						mainComponent={<h1>hi</h1>}
+						mainComponent={<SearchRooms />}
 					/>
 				</Heading>
 

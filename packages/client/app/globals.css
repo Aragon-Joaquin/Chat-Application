@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+.SVGField {
+	@apply w-5 h-5 transition-all hover:scale-110 cursor-pointer absolute right-0 top-0.5 -translate-x-1/2 translate-y-1/2;
+}
+
+.controlField {
+	@apply p-2 rounded-md border-2 border-transparent/20 shadow-inner bg-neutral-100 w-full data-[data-invalid]:border-2 data-[data-invalid]:border-red-400;
+}
+
+.errorMessage {
+	@apply text-sm text-red-600 font-medium;
+}
+
+.submitButton {
+	@apply w-full px-4 py-2 rounded-md bg-zinc-900 text-white transition-colors;
+}
+
 * {
 	box-sizing: border-box;
 	margin: 0;
