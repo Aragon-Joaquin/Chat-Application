@@ -1,4 +1,4 @@
-import { IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { TextMinMaxDecorator } from 'src/decorators';
 import { ROOM_CODE_TYPE, UUID_TYPE } from 'src/utils/types';
 
@@ -15,13 +15,15 @@ export interface RoomInDB extends RoomInformation {
 }
 
 export class RoomDto implements RoomInformation {
-  @TextMinMaxDecorator(6, 6)
+  @TextMinMaxDecorator(1, 20)
   room_name: string;
 
+  @IsOptional()
   @IsString()
   @MaxLength(150)
   room_description?: string;
 
+  @IsOptional()
   @IsString()
   @MaxLength(20)
   room_password?: string;

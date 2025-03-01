@@ -2,6 +2,7 @@ import { Root, Field, Label, Control, Message, Submit } from '@radix-ui/react-fo
 import { FormEvent, HTMLInputTypeAttribute, useId } from 'react'
 import { useCallServer } from '../_hooks/useCallServer'
 import { callServer } from '../_utils/callServer'
+import { getAllFormsData, getFieldsFromInputs } from '../_utils/FormData'
 
 interface SimpleFormProps {
 	fieldName: string
@@ -21,7 +22,13 @@ export function SimpleForm({
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
-		makeHTTPRequest(httpReq)
+		const formData = getAllFormsData({
+			fields: getFieldsFromInputs(e),
+			currentTargets: e?.currentTarget,
+			acceptNulls: true
+		})
+
+		makeHTTPRequest({ ...httpReq, bodyFields: formData ?? [] })
 	}
 
 	return (

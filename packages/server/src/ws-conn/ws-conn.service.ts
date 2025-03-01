@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
 import { messages, room, users_in_room } from 'src/entities';
-import { LoginService } from 'src/login/login.service';
 import { RoomMessagesService } from 'src/room-messages/room-messages.service';
 import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { RoomService } from 'src/room/room.service';
@@ -14,7 +13,6 @@ import { DataSource } from 'typeorm';
 export class WsConnService {
   constructor(
     private roomService: RoomService,
-    private loginService: LoginService,
     private roomMsgs: RoomMessagesService,
     private usersRoomsService: UsersRoomsService,
     @InjectDataSource()
@@ -29,16 +27,13 @@ export class WsConnService {
     userInfo: JWT_DECODED_INFO,
     password?: string,
   ) {
-    const [roomExisting, user] = await Promise.all([
-      this.roomService.FindOne({ where: { room_id: id } }),
-      this.loginService.FindOne({
-        where: { user_name: userInfo.userName, user_id: userInfo.id },
-      }),
-    ]);
+    const roomExisting = await this.roomService.FindOne({
+      where: { room_id: id },
+    });
 
     return await this.usersRoomsService.VerifyAndJoinRoom(
       roomExisting,
-      user,
+      userInfo,
       password,
     );
   }
@@ -91,9 +86,8 @@ export class WsConnService {
    * @returns True if it has exceeded the maximum amount of rooms the user can join. False otherwise
    */
   async hasExceededMaxRooms(token: JWT_DECODED_INFO['id']): Promise<boolean> {
-    const user = await this.loginService.FindOne({ where: { user_id: token } });
     const userRooms = await this.dataSource.manager.countBy(users_in_room, {
-      user_id: user.user_id,
+      user_id: token,
     });
 
     return userRooms >= MAXIMUM_ROOMS_PER_USER ? true : false;

@@ -8,13 +8,17 @@ export interface ROOM_TYPES_RESPONSES {
 	'/allRooms': [string[], number]
 }
 
-export const ROOM_REQUEST: REQUEST_SHAPE<ROOM_ROUTES, 'GET'> = {
+export const ROOM_REQUEST: REQUEST_SHAPE<ROOM_ROUTES> = {
 	rootRoute: '/room',
 	listOfSubRoutes: {
 		'/': {
 			GET: {
 				passJWT: false,
 				bodyParametersName: []
+			},
+			POST: {
+				passJWT: true,
+				bodyParametersName: ['room_name', 'room_password']
 			}
 		},
 		'/roomhistory': {

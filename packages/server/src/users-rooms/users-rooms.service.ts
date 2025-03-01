@@ -4,7 +4,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { room, users, users_in_room } from 'src/entities';
+import { room, users_in_room } from 'src/entities';
+import { typesOfRoles } from 'src/utils/constants';
 import { comparePassword } from 'src/utils/hashingFuncs';
 import { JWT_DECODED_INFO } from 'src/utils/types';
 import { Repository } from 'typeorm';
@@ -33,7 +34,11 @@ export class UsersRoomsService {
     return oneRoom;
   }
 
-  async VerifyAndJoinRoom(room: room, user: users, password?: string) {
+  async VerifyAndJoinRoom(
+    room: room,
+    user: JWT_DECODED_INFO,
+    password?: string,
+  ) {
     if (
       !comparePassword({
         userPassword: password,
@@ -45,8 +50,16 @@ export class UsersRoomsService {
 
     return await this.usersRoomsService.insert({
       room_id: room.room_id,
-      user_id: user.user_id,
-      role_id: { role_name: 'user' },
+      user_id: user.id,
+      role_id: { role_name: typesOfRoles.USER },
+    });
+  }
+
+  async JoinRoomONCreation(roomID: room['room_id'], user: JWT_DECODED_INFO) {
+    return await this.usersRoomsService.insert({
+      room_id: roomID,
+      user_id: user.id,
+      role_id: { role_name: typesOfRoles.OWNER },
     });
   }
 

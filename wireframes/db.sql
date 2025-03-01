@@ -23,14 +23,6 @@ CREATE TABLE users (
 
 CREATE SEQUENCE ROOMID_ONERROR;
 
-/* 
-INSERT INTO Room (roomID)
-VALUES (substr(md5(random()::text), 1, 6))
-ON CONFLICT (roomID) DO UPDATE
-    SET roomID = lpad(nextval('ROOMID_ONERROR'), 6, '0'); 
-	
-*/
-
 CREATE TABLE room (
 	room_id char(6) PRIMARY KEY UNIQUE DEFAULT substr(md5(random()::text), 1, 6), -- generate a random code that consists of 6 characters
 	room_name varchar(20) NOT NULL,

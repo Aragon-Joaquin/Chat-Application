@@ -26,8 +26,8 @@ export function SearchRooms() {
 				<SimpleForm
 					httpReq={{ rootRoute: '/room', subroute: '/', HTTPmethod: 'GET', passJWT: true }}
 					arrayOfFields={[
-						{ fieldName: 'roomName', labelName: 'Room Code', inputType: 'text', requiredField: true },
-						{ fieldName: 'roomPassword', labelName: 'Password', inputType: 'password' }
+						{ fieldName: 'room_name', labelName: 'Room Code', inputType: 'text', requiredField: true },
+						{ fieldName: 'room_password', labelName: 'Password', inputType: 'password' }
 					]}
 				/>
 			</Content>
@@ -37,8 +37,8 @@ export function SearchRooms() {
 				<SimpleForm
 					httpReq={{ rootRoute: '/room', subroute: '/', HTTPmethod: 'POST', passJWT: true }}
 					arrayOfFields={[
-						{ fieldName: 'roomName', labelName: 'Room Name', inputType: 'text', requiredField: true },
-						{ fieldName: 'roomPassword', labelName: 'Room Password (optional)', inputType: 'password' }
+						{ fieldName: 'room_name', labelName: 'Room Name', inputType: 'text', requiredField: true },
+						{ fieldName: 'room_password', labelName: 'Room Password (optional)', inputType: 'password' }
 					]}
 				/>
 			</Content>

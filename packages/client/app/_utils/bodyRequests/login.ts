@@ -6,7 +6,7 @@ export interface LOGIN_TYPES_RESPONSES {
 	'/register': null
 }
 
-export const LOGIN_REQUEST: REQUEST_SHAPE<LOGIN_ROUTES, 'POST'> = {
+export const LOGIN_REQUEST: REQUEST_SHAPE<LOGIN_ROUTES> = {
 	rootRoute: '/login',
 	listOfSubRoutes: {
 		'/': {

@@ -20,12 +20,10 @@ export function CREATE_REQUEST_BODY({ rootRoute, subroute, HTTPmethod, bodyField
 	if (!(`${HTTPmethod}` in specificRoute))
 		throw new BadRequest('HTTP Method is not defined', BadRequestCodes.BAD_REQUEST)
 
-	// TODO: TS infers the types that are overlap since its a union between two or more types, somehow fix?
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const getMethodInformation: any = specificRoute[HTTPmethod as keyof typeof specificRoute]
-	if (getMethodInformation.bodyParametersName?.length <= 0) return null
+	const getMethodInformation = specificRoute[HTTPmethod as keyof typeof specificRoute]
+	if (getMethodInformation == null || getMethodInformation?.bodyParametersName?.length <= 0) return null
 
-	const arrayOfInformation = getMethodInformation.bodyParametersName.map((field: string, i: number) => {
+	const arrayOfInformation = getMethodInformation.bodyParametersName.map((field, i) => {
 		return { [field]: bodyFields[i] ?? '' }
 	})
 
