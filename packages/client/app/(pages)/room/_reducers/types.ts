@@ -16,11 +16,6 @@ export type roomState = {
 	messages: Messages[]
 }
 
-export type reducerActions = {
-	payload: roomState | roomState['roomKey']
-	type: keyof typeof STATE_ACTIONS
-}
-
 type TYPES_NAMES<T extends keyof typeof STATE_ACTIONS> = Extract<keyof typeof STATE_ACTIONS, T>
 
 export type PAYLOAD_TYPES =
@@ -33,4 +28,5 @@ export type PAYLOAD_TYPES =
 			payload: { roomInfo: roomState['roomKey']; message: Omit<Messages, 'URLFile' | 'userName'> }
 	  }
 
-export type PICK_PAYLOAD<T extends keyof typeof STATE_ACTIONS> = Extract<PAYLOAD_TYPES, { type: T }>['payload']
+export type PICK_TYPE<T extends keyof typeof STATE_ACTIONS> = Extract<PAYLOAD_TYPES, { type: T }>
+export type PICK_PAYLOAD<T extends keyof typeof STATE_ACTIONS> = PICK_TYPE<T>['payload']

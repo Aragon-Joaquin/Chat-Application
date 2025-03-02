@@ -1,14 +1,14 @@
 import { ReactNode, useReducer } from 'react'
 import { RoomContext } from './context'
 import { roomReducer } from '../_reducers/roomReducer'
-import { reducerActions, roomState } from '../_reducers/types'
+import { PICK_PAYLOAD, roomState } from '../_reducers/types'
 
 const initialRoomState: roomState[] = []
 
 function useRoomReducer() {
 	const [roomState, dispatch] = useReducer(roomReducer, initialRoomState)
 
-	const AddRoom = (payload: reducerActions['payload']) =>
+	const AddRoom = (payload: PICK_PAYLOAD<'ADD_ROOM'>) =>
 		dispatch({
 			type: 'ADD_ROOM',
 			payload

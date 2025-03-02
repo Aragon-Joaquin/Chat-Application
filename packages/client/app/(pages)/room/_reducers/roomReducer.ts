@@ -4,7 +4,7 @@ import { searchRoom } from './utils/functions'
 const roomStateActions = {
 	[STATE_ACTIONS.ADD_ROOM]: function ({ state, payload }: { state: roomState[]; payload: PICK_PAYLOAD<'ADD_ROOM'> }) {
 		if (searchRoom(state, payload) == undefined) return state
-		return [...state, payload]
+		return [...state, { roomKey: payload, messages: [] }]
 	},
 
 	[STATE_ACTIONS.ADD_MESSAGE]: function ({
@@ -61,8 +61,6 @@ const roomStateActions = {
 
 export function roomReducer(state: roomState[], action: PAYLOAD_TYPES) {
 	const { type, payload } = action
-	if (!type || !payload) return
-
 	const grabActionFunc = roomStateActions[type]
 
 	// i have no idea what did i just do
