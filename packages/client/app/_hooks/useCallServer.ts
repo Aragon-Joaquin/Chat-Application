@@ -16,6 +16,7 @@ export function useCallServer<T>() {
 			startTransition(async () => {
 				try {
 					const response = await callServer({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT })
+					console.log({ response })
 					if (response?.statusCode < 200 || response?.statusCode > 299)
 						throw new BadRequest(response?.message ?? 'Status code is not in range of 200-299', response.statusCode)
 
