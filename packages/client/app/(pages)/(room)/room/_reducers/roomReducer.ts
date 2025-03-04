@@ -7,6 +7,19 @@ const roomStateActions = {
 		return [...state, { roomKey: payload, messages: [] }]
 	},
 
+	[STATE_ACTIONS.ADD_MULTIPLE_ROOMS]: function ({
+		state,
+		payload
+	}: {
+		state: roomState[]
+		payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>
+	}) {
+		console.log('payload: ', payload)
+		if (!payload) return state
+
+		return state
+	},
+
 	[STATE_ACTIONS.ADD_MESSAGE]: function ({
 		state,
 		payload
@@ -62,7 +75,8 @@ const roomStateActions = {
 export function roomReducer(state: roomState[], action: PAYLOAD_TYPES) {
 	const { type, payload } = action
 	const grabActionFunc = roomStateActions[type]
+	console.log({ state, grabActionFunc })
 
 	// i have no idea what did i just do
-	return grabActionFunc({ state, payload: payload as keyof Parameters<typeof grabActionFunc>[0]['payload'] })
+	return grabActionFunc({ state, payload: payload as keyof Parameters<typeof grabActionFunc>[0]['payload'] }) ?? state
 }

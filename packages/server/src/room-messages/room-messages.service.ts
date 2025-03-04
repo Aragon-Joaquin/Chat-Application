@@ -65,20 +65,4 @@ export class RoomMessagesService {
 
     return message;
   }
-
-  async GetRoomMessages(userInRooms: users_in_room[], limit?: number) {
-    if (!userInRooms) return null;
-
-    // i need to match the userInRooms.room_id === room_messages.which_room
-    // then order by DESC the room_messages.date_sended
-    // to finally get the last room_messages.message_id and query it with a ton of more rooms
-
-    //! i have no rooms yet, so... testing more later on
-    return await this.roomMsgsRepo
-      .createQueryBuilder('room_msgs')
-      .where('room_msgs.which_room IN(:room_id)', {
-        room_id: [...userInRooms.map((room) => room.room_id)],
-      })
-      .getManyAndCount();
-  }
 }

@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode, useReducer } from 'react'
 import { RoomContext } from './context'
 import { roomReducer } from '../_reducers/roomReducer'
@@ -11,6 +13,12 @@ function useRoomReducer() {
 	const AddRoom = (payload: PICK_PAYLOAD<'ADD_ROOM'>) =>
 		dispatch({
 			type: 'ADD_ROOM',
+			payload
+		})
+
+	const AddMultipleRooms = (payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>) =>
+		dispatch({
+			type: 'ADD_MULTIPLE_ROOMS',
 			payload
 		})
 
@@ -35,6 +43,7 @@ function useRoomReducer() {
 	return {
 		roomState,
 		AddRoom,
+		AddMultipleRooms,
 		AddMessage,
 		LeaveRoom,
 		DeleteMessage
@@ -42,16 +51,12 @@ function useRoomReducer() {
 }
 
 export function GetRoomContext({ children }: { children: ReactNode }) {
-	const { roomState, AddRoom, AddMessage, LeaveRoom, DeleteMessage } = useRoomReducer()
+	const reducerRoom = useRoomReducer()
 
 	return (
 		<RoomContext.Provider
 			value={{
-				roomState,
-				AddRoom,
-				AddMessage,
-				LeaveRoom,
-				DeleteMessage
+				...reducerRoom
 			}}
 		>
 			{children}

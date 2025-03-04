@@ -32,7 +32,6 @@ export class RoomService {
         room_password: pwd,
       });
     } catch (error) {
-      // yes, i need to maintain the state
       if ('constraint' in error && error.constraint === 'room_pkey') {
         const getCount: Array<{ actual_count: string }> =
           await this.roomRepository.query(

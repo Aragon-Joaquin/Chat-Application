@@ -1,7 +1,6 @@
 'use client'
 
 import './room.css'
-import { useCallServer } from '@/app/_hooks/useCallServer'
 import { MagnifyingGlassIcon, PlusIcon } from '@radix-ui/react-icons'
 import { Heading } from '@radix-ui/themes'
 import Link from 'next/link'
@@ -12,9 +11,16 @@ import { Root, Slot } from '@radix-ui/themes/components/text-field'
 import { ROOM_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
 import { CustomDialog } from '@/app/_components/customDialog'
 import { SearchRooms } from './_components/DialogExtras'
+import { useRoomContext } from './_hooks/consumeRoomContext'
+import { useCallServer } from '@/app/_hooks/useCallServer'
+
+type ENDPOINT_REQ = ROOM_TYPES_RESPONSES['/allRooms']
 
 export default function RoomLayout({ children }: { children: ReactNode }) {
-	const { responseData, makeHTTPRequest } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
+	const { isPending, makeHTTPRequest, responseData } = useCallServer<ENDPOINT_REQ>()
+	const {
+		RoomCtx: { AddMultipleRooms, roomState }
+	} = useRoomContext()
 
 	useEffect(() => {
 		makeHTTPRequest({
@@ -25,7 +31,12 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 		})
 	}, [makeHTTPRequest])
 
-	// if (isPending) return <>Loading...</>
+	useEffect(() => {
+		if (responseData == null) return
+		AddMultipleRooms(['responseData', 'asd'])
+	}, [AddMultipleRooms, responseData])
+
+	if (isPending) return <>Loading...</>
 
 	return (
 		<main className="flex flex-row h-screen w-screen overflow-hidden">
@@ -58,10 +69,10 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 				</section>
 
 				<main className="borderLayout overflow-y-auto h-full bg-slate-100">
-					{responseData?.at(1) == 0 ? (
+					{roomState?.length == 0 ? (
 						<NoChatsAvailable />
 					) : (
-						responseData?.map((roomInfo, idx) => {
+						roomState?.map((roomInfo, idx) => {
 							return <ChatBubble key={idx} roomInfo={roomInfo} />
 						})
 					)}

@@ -1,5 +1,6 @@
 export const STATE_ACTIONS = {
 	ADD_ROOM: 'ADD_ROOMS',
+	ADD_MULTIPLE_ROOMS: 'ADD_MULTIPLE_ROOMS',
 	LEAVE_ROOM: 'LEAVE_ROOM',
 	ADD_MESSAGE: 'ADD_MESSAGE',
 	DELETED_MESSAGE: 'DELETED_MESSAGE'
@@ -20,6 +21,7 @@ type TYPES_NAMES<T extends keyof typeof STATE_ACTIONS> = Extract<keyof typeof ST
 
 export type PAYLOAD_TYPES =
 	| { type: TYPES_NAMES<'ADD_ROOM'>; payload: roomState['roomKey'] }
+	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState['roomKey']> }
 	| { type: TYPES_NAMES<'ADD_MESSAGE'>; payload: { roomInfo: roomState['roomKey']; newMessage: roomState['messages'] } }
 	| { type: TYPES_NAMES<'LEAVE_ROOM'>; payload: roomState['roomKey'] }
 	| {

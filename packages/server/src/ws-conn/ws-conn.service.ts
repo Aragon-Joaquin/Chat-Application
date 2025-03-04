@@ -56,11 +56,6 @@ export class WsConnService {
     return history;
   }
 
-  async GetAllRoomMessages(JWT_INFO: JWT_DECODED_INFO['id'], limit?: number) {
-    const userInRooms = await this.GetRoomsOfUser(JWT_INFO);
-    return await this.roomMsgs.GetRoomMessages(userInRooms, limit);
-  }
-
   async FindUserInRoom(
     userID: JWT_DECODED_INFO['id'],
     roomID: room['room_id'],
@@ -91,5 +86,19 @@ export class WsConnService {
     });
 
     return userRooms >= MAXIMUM_ROOMS_PER_USER ? true : false;
+  }
+
+  async GetRoomMessages(
+    rooms: Array<users_in_room> | Array<room>,
+    limit?: number,
+  ) {
+    if (!rooms || !rooms.length) return null;
+
+    const getRooms = rooms?.map((room) => `('${room.room_id}')::varchar`);
+
+    //i just hate orms at this point
+    return await this.dataSource.query(`
+      SELECT * from users_in_room LEFT JOIN room_messages ON users_in_room.room_id = room_messages.which_room WHERE room_id IN (${getRooms})
+    `);
   }
 }

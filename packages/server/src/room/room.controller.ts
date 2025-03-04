@@ -57,7 +57,7 @@ export class RoomController {
 
   @Get('allRooms')
   async getAllRooms(@Request() req: RequestType) {
-    console.log('auth from sv', req?.user);
-    return await this.wsConn.GetAllRoomMessages(req.user.id);
+    const rooms = await this.wsConn.GetRoomsOfUser(req.user.id);
+    return await this.wsConn.GetRoomMessages(rooms);
   }
 }

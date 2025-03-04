@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { room, users_in_room } from 'src/entities';
+import { room, room_messages, users_in_room } from 'src/entities';
 import { typesOfRoles } from 'src/utils/constants';
 import { comparePassword } from 'src/utils/hashingFuncs';
 import { JWT_DECODED_INFO } from 'src/utils/types';
