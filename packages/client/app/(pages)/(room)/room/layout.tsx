@@ -11,15 +11,15 @@ import { Root, Slot } from '@radix-ui/themes/components/text-field'
 import { ROOM_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
 import { CustomDialog } from '@/app/_components/customDialog'
 import { SearchRooms } from './_components/DialogExtras'
-import { useRoomContext } from './_hooks/consumeRoomContext'
 import { useCallServer } from '@/app/_hooks/useCallServer'
+import { useRoomContext } from './_hooks/consumeRoomContext'
 
 type ENDPOINT_REQ = ROOM_TYPES_RESPONSES['/allRooms']
 
 export default function RoomLayout({ children }: { children: ReactNode }) {
 	const { isPending, makeHTTPRequest, responseData } = useCallServer<ENDPOINT_REQ>()
 	const {
-		RoomCtx: { AddMultipleRooms, roomState }
+		RoomCtx: { roomState, AddMultipleRooms }
 	} = useRoomContext()
 
 	useEffect(() => {
@@ -33,8 +33,9 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		if (responseData == null) return
-		AddMultipleRooms(['responseData', 'asd'])
-	}, [AddMultipleRooms, responseData])
+		AddMultipleRooms(responseData.map((room) => room.room_id))
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [responseData])
 
 	if (isPending) return <>Loading...</>
 

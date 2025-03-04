@@ -4,9 +4,9 @@ import { useContext } from 'react'
 import { RoomContext } from '../_context/context'
 
 export function useRoomContext() {
-	const RoomValues = useContext(RoomContext)
+	const RoomCtx = useContext(RoomContext)
 
 	return {
-		RoomCtx: RoomValues
+		RoomCtx
 	}
 }
