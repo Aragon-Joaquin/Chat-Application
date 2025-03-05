@@ -7,6 +7,10 @@ export function useRoomContext() {
 	const RoomCtx = useContext(RoomContext)
 
 	return {
-		RoomCtx
+		RoomCtx,
+		selectedRoom: {
+			selectedRoom: RoomCtx.selectedRoom,
+			setSelectedRoom: RoomCtx.setSelectedRoom
+		}
 	}
 }

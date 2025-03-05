@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useReducer } from 'react'
+import { ReactNode, useCallback, useReducer, useState } from 'react'
 import { RoomContext } from './context'
 import { roomReducer } from '../_reducers/roomReducer'
 import { PICK_PAYLOAD, roomState } from '../_reducers/types'
@@ -52,11 +52,25 @@ function useRoomReducer() {
 
 export function GetRoomContext({ children }: { children: ReactNode }) {
 	const reducerRoom = useRoomReducer()
+	const [selectedRoom, setSelectedRoom] = useState<roomState>()
+
+	//! could be done in a more 'performant way', like just pointing to the index of the array
+	const handleSetState = useCallback(
+		(stateID: roomState['roomInfo']['room_id']) => {
+			const findRoomInState = reducerRoom?.roomState?.find((room) => room.roomInfo.room_id === stateID)
+
+			if (findRoomInState == undefined) return setSelectedRoom(undefined)
+			setSelectedRoom(findRoomInState)
+		},
+		[reducerRoom?.roomState]
+	)
 
 	return (
 		<RoomContext.Provider
 			value={{
-				...reducerRoom
+				...reducerRoom,
+				selectedRoom,
+				setSelectedRoom: handleSetState
 			}}
 		>
 			{children}

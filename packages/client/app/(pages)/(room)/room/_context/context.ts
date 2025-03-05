@@ -9,6 +9,9 @@ interface RoomContextProps {
 	AddMessage: (payload: PICK_PAYLOAD<'ADD_MESSAGE'>) => void
 	LeaveRoom: (payload: PICK_PAYLOAD<'LEAVE_ROOM'>) => void
 	DeleteMessage: (payload: PICK_PAYLOAD<'DELETED_MESSAGE'>) => void
+
+	selectedRoom: roomState | undefined
+	setSelectedRoom: (stateID: roomState['roomInfo']['room_id']) => void
 }
 
 export const RoomContext = createContext<RoomContextProps>({} as RoomContextProps)

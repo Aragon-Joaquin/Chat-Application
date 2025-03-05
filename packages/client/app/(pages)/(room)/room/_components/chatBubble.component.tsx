@@ -1,23 +1,21 @@
-import Image from 'next/image'
 import { roomState } from '../_reducers/types'
 import { Heading, Text } from '@radix-ui/themes'
+import { useRoomContext } from '../_hooks/consumeRoomContext'
+import ImageAndFallback from './ImageAndFallback.component'
 
 export function ChatBubble({ roomAllProps }: { roomAllProps: roomState }) {
+	const {
+		selectedRoom: { setSelectedRoom }
+	} = useRoomContext()
 	const { roomInfo, messages } = roomAllProps
 
 	return (
-		<li className="flex flex-row items-center gap-x-2 p-2 rounded-md hover:bg-transparent/10 hover:cursor-pointer odd:bg-neutral-100/80">
+		<li
+			className="flex flex-row items-center gap-x-2 p-2 rounded-md hover:bg-transparent/10 hover:cursor-pointer odd:bg-neutral-100/80"
+			onClick={() => setSelectedRoom(roomInfo.room_id)}
+		>
 			<aside className="w-12 h-12">
-				{roomInfo?.room_picture != null ? (
-					<Image
-						src={roomInfo.room_picture}
-						alt={`${roomInfo.room_name}`}
-						className={`${roomInfo.room_description}`}
-						title="Group Image"
-					/>
-				) : (
-					<div className="w-full h-full bg-neutral-300 rounded-full border-2 border-neutral-400" />
-				)}
+				<ImageAndFallback roomInfo={roomInfo} />
 			</aside>
 
 			<div>
