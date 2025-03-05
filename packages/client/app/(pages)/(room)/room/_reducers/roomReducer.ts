@@ -4,7 +4,7 @@ import { searchRoom } from './utils/functions'
 const roomStateActions = {
 	[STATE_ACTIONS.ADD_ROOM]: function ({ state, payload }: { state: roomState[]; payload: PICK_PAYLOAD<'ADD_ROOM'> }) {
 		if (searchRoom(state, payload) == undefined) return state
-		return [...state, { roomKey: payload, messages: [] }]
+		return [...state, { roomInfo: payload, messages: [] }]
 	},
 
 	[STATE_ACTIONS.ADD_MULTIPLE_ROOMS]: function ({
@@ -16,7 +16,7 @@ const roomStateActions = {
 	}) {
 		if (!payload) return state
 
-		const testing: roomState[] = payload.map((room) => ({ roomKey: room, messages: [] }))
+		const testing: Array<roomState> = payload.map((room) => ({ roomInfo: room, messages: [] }))
 		return [...state, ...testing]
 	},
 
@@ -49,7 +49,7 @@ const roomStateActions = {
 		const roomCode = searchRoom(state, payload)
 		if (roomCode == undefined) return state
 
-		return state.filter((room) => room.roomKey != state[roomCode].roomKey)
+		return state.filter((room) => room.roomInfo['room_id'] != state[roomCode].roomInfo['room_id'])
 	},
 
 	[STATE_ACTIONS.DELETED_MESSAGE]: function ({

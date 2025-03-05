@@ -14,10 +14,8 @@ import { SearchRooms } from './_components/DialogExtras'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { useRoomContext } from './_hooks/consumeRoomContext'
 
-type ENDPOINT_REQ = ROOM_TYPES_RESPONSES['/allRooms']
-
 export default function RoomLayout({ children }: { children: ReactNode }) {
-	const { isPending, makeHTTPRequest, responseData } = useCallServer<ENDPOINT_REQ>()
+	const { isPending, makeHTTPRequest, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
 	const {
 		RoomCtx: { roomState, AddMultipleRooms }
 	} = useRoomContext()
@@ -33,7 +31,7 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		if (responseData == null) return
-		AddMultipleRooms(responseData.map((room) => room.room_id))
+		AddMultipleRooms(responseData)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [responseData])
 
@@ -69,17 +67,19 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 					</Root>
 				</section>
 
-				<main className="borderLayout overflow-y-auto h-full bg-slate-100">
+				<main className="borderLayout overflow-y-auto h-screen">
 					{roomState?.length == 0 ? (
 						<NoChatsAvailable />
 					) : (
-						roomState?.map((roomInfo, idx) => {
-							return <ChatBubble key={idx} roomInfo={roomInfo} />
-						})
+						<ul className="flex flex-col gap-y-2">
+							{roomState?.map((roomState) => {
+								return <ChatBubble key={roomState.roomInfo.room_id} roomAllProps={roomState} />
+							})}
+						</ul>
 					)}
 				</main>
 			</aside>
-			<div>{children}</div>
+			{children}
 		</main>
 	)
 }

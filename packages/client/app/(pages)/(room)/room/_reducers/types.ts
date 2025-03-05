@@ -6,28 +6,39 @@ export const STATE_ACTIONS = {
 	DELETED_MESSAGE: 'DELETED_MESSAGE'
 }
 
-type Messages = {
+export type Messages = {
 	userName: string
 	messageID: string
 	URLFile?: string
 }
 
+export type RoomInfo = {
+	room_id: string
+	room_name: string
+	room_description?: string | null
+	created_at: Date
+	room_picture?: string | null
+}
+
 export type roomState = {
-	roomKey: string
+	roomInfo: RoomInfo
 	messages: Messages[]
 }
 
 type TYPES_NAMES<T extends keyof typeof STATE_ACTIONS> = Extract<keyof typeof STATE_ACTIONS, T>
 
 export type PAYLOAD_TYPES =
-	| { type: TYPES_NAMES<'ADD_ROOM'>; payload: roomState['roomKey'] }
-	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState['roomKey']> }
-	| { type: TYPES_NAMES<'ADD_MESSAGE'>; payload: { roomInfo: roomState['roomKey']; newMessage: roomState['messages'] } }
-	| { type: TYPES_NAMES<'LEAVE_ROOM'>; payload: roomState['roomKey'] }
+	| { type: TYPES_NAMES<'ADD_ROOM'>; payload: roomState['roomInfo'] }
+	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState['roomInfo']> }
+	| {
+			type: TYPES_NAMES<'ADD_MESSAGE'>
+			payload: { roomInfo: roomState['roomInfo']; newMessage: roomState['messages'] }
+	  }
+	| { type: TYPES_NAMES<'LEAVE_ROOM'>; payload: roomState['roomInfo'] }
 	| {
 			type: TYPES_NAMES<'DELETED_MESSAGE'>
 			//! i'll omit 'userName' if i need it in a future
-			payload: { roomInfo: roomState['roomKey']; message: Omit<Messages, 'URLFile' | 'userName'> }
+			payload: { roomInfo: roomState['roomInfo']; message: Omit<Messages, 'URLFile' | 'userName'> }
 	  }
 
 export type PICK_TYPE<T extends keyof typeof STATE_ACTIONS> = Extract<PAYLOAD_TYPES, { type: T }>
