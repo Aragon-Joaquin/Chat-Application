@@ -21,7 +21,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new BadRequestException('Wrong JWT Shape.');
 
     await this.loginService.FindOne({ where: { user_id: payload.id } });
-    console.log('jwt payload', payload);
 
     return payload;
   }

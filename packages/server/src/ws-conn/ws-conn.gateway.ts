@@ -16,11 +16,14 @@ import { AuthService } from 'src/auth/auth.service';
 import { messages } from 'src/entities';
 import { WsConnService } from './ws-conn.service';
 
+@UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
+  cors: {
+    origin: '*',
+  },
   namespace: WS_NAMESPACE,
   transports: ['websocket'],
 })
-@UseGuards(WsConnGuard)
 export class WsConnGateway {
   @WebSocketServer() wss: Server;
 
@@ -30,7 +33,7 @@ export class WsConnGateway {
   ) {}
 
   getJWTHeader = (client: Socket) =>
-    this.authService.DecodeJWT(client.handshake.headers.authorization);
+    this.authService.DecodeJWT(client?.handshake?.auth['Authorization']);
 
   @SubscribeMessage(WS_ACTIONS.SEND)
   async handleMessage(

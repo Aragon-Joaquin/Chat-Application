@@ -62,7 +62,12 @@ export class AuthService {
    *
    * @param token: Just send the Authorizarion header which should be 'Bearer eyJhbGciOiJIUzI1NiIsInR...'. The function then splits the string to keep the token
    */
-  DecodeJWT(authorization: string): JWT_DECODED_INFO {
+  DecodeJWT(authorization: string | null): JWT_DECODED_INFO {
+    if (!authorization)
+      throw new HttpException(
+        'Auth header does not exists on the request',
+        HttpStatus.BAD_REQUEST,
+      );
     try {
       const user = this.jwtService.decode(authorization.split(' ')[1]); //split the token between 'Bearer' and the real jwt
       if (!user) throw new UnauthorizedException('User is not in room');

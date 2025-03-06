@@ -39,7 +39,6 @@ export class RoomController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
 
-    console.log({ roomCreated });
     await this.usersRoomsService.JoinRoomONCreation(
       roomCreated[0]?.room_id,
       req?.user,

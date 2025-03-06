@@ -1,7 +1,11 @@
 //! d.ts === files are declaration files that contain only type information.
+import { WS_PORT } from '@chat-app/utils/globalConstants'
 import { LOGIN_REQUEST, ROOM_REQUEST } from './bodyRequests'
 
-export const URL_DATABASE = 'http://localhost:3000' as const
+export const GET_BACKEND_URL = 'http://localhost' as const
+
+export const URL_DATABASE = `${GET_BACKEND_URL}:3000` as const
+export const URL_WS = `${GET_BACKEND_URL}:${WS_PORT}` as const
 
 export type EVERY_ROUTE = typeof ROOM_REQUEST & typeof LOGIN_REQUEST
 

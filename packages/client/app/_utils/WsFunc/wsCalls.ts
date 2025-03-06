@@ -1,11 +1,13 @@
-import { io, Socket } from 'socket.io-client'
-import { URL_DATABASE } from '../utils'
-import { WS_NAMESPACE, WS_ACTIONS } from '@chat-app/utils/globalConstants'
+//! IO does not have an inference nor type defined in the documentation
 
-export const createSocket = () => io(`${URL_DATABASE}/${WS_NAMESPACE}`, { transports: ['websocket'] })
+import { io } from 'socket.io-client'
+import { URL_WS } from '../utils'
+import { WS_NAMESPACE } from '@chat-app/utils/globalConstants'
+import { getJWT } from '../JWTMethods'
 
-export function InitializeConnection(IO: Socket) {
-	IO.on(WS_ACTIONS.JOIN_MULTIPLE, (socket) => {
-		socket.emit()
+export const createSocket = async () =>
+	io(`${URL_WS}/${WS_NAMESPACE}`, {
+		transports: ['websocket'],
+		auth: { Authorization: `Bearer ${await getJWT()}` },
+		autoConnect: true
 	})
-}

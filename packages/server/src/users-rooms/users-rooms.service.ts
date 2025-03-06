@@ -18,7 +18,6 @@ export class UsersRoomsService {
   ) {}
 
   async GetUsersRooms(user: JWT_DECODED_INFO['id']) {
-    console.log({ user });
     return await this.usersRoomsService.findBy({
       user_id: user,
     });

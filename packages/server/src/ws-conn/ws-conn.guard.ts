@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginService } from 'src/login/login.service';
 
@@ -9,10 +10,12 @@ export class WsConnGuard implements CanActivate {
     private loginService: LoginService,
   ) {}
 
+  //! this is unsafe & very tricky (unless i implement a way to renue jwts)
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const token = context.switchToWs().getClient().handshake
-      .headers.authorization;
+    const req = context?.switchToHttp()?.getRequest();
+    const token: string | undefined = req?.handshake?.auth['Authorization'];
 
+    if (token == undefined) return false;
     const decoded = this.authService.DecodeJWT(token);
 
     return !!(await this.loginService.FindOne({
