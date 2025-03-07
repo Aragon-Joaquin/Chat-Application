@@ -1,7 +1,7 @@
 import { roomState } from '../_reducers/types'
 import { Heading, Text } from '@radix-ui/themes'
 import { useRoomContext } from '../_hooks/consumeRoomContext'
-import ImageAndFallback from './ImageAndFallback.component'
+import { ImageAndFallback } from '@app/_components/ImageAndFallback.component'
 
 export function ChatBubble({ roomAllProps }: { roomAllProps: roomState }) {
 	const {
@@ -15,7 +15,7 @@ export function ChatBubble({ roomAllProps }: { roomAllProps: roomState }) {
 			onClick={() => setSelectedRoom(roomInfo.room_id)}
 		>
 			<aside className="w-12 h-12">
-				<ImageAndFallback roomInfo={roomInfo} />
+				<ImageAndFallback picture={roomInfo.room_picture ?? ''} />
 			</aside>
 
 			<div>
@@ -23,7 +23,7 @@ export function ChatBubble({ roomAllProps }: { roomAllProps: roomState }) {
 					{roomInfo.room_name}
 				</Heading>
 				<span>
-					<Text as="p">{messages.at(-1)?.userName ?? 'No messages yet.'}</Text>
+					<Text as="p">{messages.at(-1)?.userProps?.user_name ?? 'No messages yet.'}</Text>
 				</span>
 			</div>
 		</li>

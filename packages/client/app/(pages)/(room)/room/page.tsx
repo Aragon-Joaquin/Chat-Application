@@ -2,7 +2,7 @@
 
 import { NoChatSelected } from './_components/NoChatSelected.component'
 import { useRoomContext } from './_hooks/consumeRoomContext'
-import { FooterRoom, HeaderRoom } from './_components/RoomLayout'
+import { FooterRoom, HeaderRoom, MessagesRoom } from './_components/RoomLayout'
 
 /*
 ! im thinking instead of using a dynamic segment, i preffer making a state pointing to which roomid render
@@ -20,7 +20,11 @@ export default function RoomPage() {
 	return (
 		<main className="flex flex-col w-full h-full">
 			<HeaderRoom room={selectedRoom['roomInfo']} />
-			<div className="flex-1">main content here</div>
+			<main className="flex-1">
+				{selectedRoom?.messages.map((messageType) => {
+					return <MessagesRoom key={messageType.message_id} messages={messageType} />
+				})}
+			</main>
 			<FooterRoom />
 		</main>
 	)

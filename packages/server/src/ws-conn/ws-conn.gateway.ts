@@ -38,7 +38,7 @@ export class WsConnGateway {
   @SubscribeMessage(WS_ACTIONS.SEND)
   async handleMessage(
     client: Socket,
-    payload: { roomID: string; messageString: string },
+    payload: { messageString: string; roomID: string; file?: string },
   ) {
     const { roomID, messageString } = payload;
 
@@ -80,7 +80,8 @@ export class WsConnGateway {
   }
 
   @SubscribeMessage(WS_ACTIONS.LEAVE)
-  async handleLeaveRoom(client: Socket, roomID: string) {
+  async handleLeaveRoom(client: Socket, payload: { roomID: string }) {
+    const { roomID } = payload;
     const JWT_Info = this.getJWTHeader(client);
 
     await Promise.all([

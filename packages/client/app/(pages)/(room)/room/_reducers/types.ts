@@ -7,9 +7,10 @@ export const STATE_ACTIONS = {
 }
 
 export type Messages = {
-	userName: string
-	messageID: string
-	URLFile?: string
+	userProps: { user_name: string; profile_picture: string }
+	message_content: string
+	message_id: string
+	file_id?: string
 }
 
 export type RoomInfo = {
