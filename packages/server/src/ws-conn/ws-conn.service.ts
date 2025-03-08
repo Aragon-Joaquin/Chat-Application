@@ -8,6 +8,7 @@ import { RoomService } from 'src/room/room.service';
 import { UsersRoomsService } from 'src/users-rooms/users-rooms.service';
 import { JWT_DECODED_INFO } from 'src/utils/types';
 import { DataSource } from 'typeorm';
+import { MAX_MESSAGES_PER_REQ } from 'src/utils/constants';
 
 @Injectable()
 export class WsConnService {
@@ -98,13 +99,36 @@ export class WsConnService {
     const getRooms = rooms?.map((room) => `('${room.room_id}')::varchar`);
 
     try {
-      //i just hate orms at this point
-      return await this.dataSource.query(`
-        SELECT room.room_id, room.room_name, room.room_description, room.created_at, room.room_picture from room
+      const roomInfo: room[] | [] = await this.dataSource.query(`
+        SELECT DISTINCT ON (room.room_id) room.room_id, room.room_name, room.room_description, room.created_at, room.room_picture from room
         LEFT JOIN users_in_room ON room.room_id = users_in_room.room_id
         LEFT JOIN room_messages ON users_in_room.room_id = room_messages.which_room 
         WHERE users_in_room.room_id IN (${getRooms}) AND users_in_room.user_id = (${userID})::integer;
         `);
+      if (!roomInfo?.length) return null;
+
+      //! this query is unnecesary large & complex, but it justs gets the last 50 messages of every room by counting the times the room_id was repeated
+      //! in the future, this will become a problem. It's just better to do two queries.
+      const messageInfo: Array<{ which_room: string }> = await this.dataSource
+        .query(`
+        SELECT users.user_name, users.profile_picture, room_messages.which_room, room_messages.date_sended, 
+        messages.message_content, messages.file_id, messages.message_id FROM 
+          (SELECT ROW_NUMBER() OVER (PARTITION BY which_room ORDER BY date_sended desc),*
+          FROM room_messages) room_messages
+	      LEFT JOIN messages ON room_messages.message_id = messages.message_id
+        LEFT JOIN users ON room_messages.sender_id = users.user_id 
+        WHERE room_messages.row_number <= ${MAX_MESSAGES_PER_REQ} AND room_messages.which_room 
+        IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)});`);
+
+      const mergeResults = roomInfo.map((room: room) => {
+        const messagesRoom =
+          messageInfo?.flatMap((msg) =>
+            msg.which_room == room.room_id ? msg : [],
+          ) || [];
+        return { roomInfo: room, messages: messagesRoom ?? [] };
+      });
+
+      return mergeResults;
     } catch {
       return null;
     }

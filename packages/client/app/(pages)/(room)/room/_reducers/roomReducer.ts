@@ -15,9 +15,19 @@ const roomStateActions = {
 		payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>
 	}) {
 		if (!payload) return state
+		const excludeRepeatedRoom: roomState[] = payload.flatMap((room) => {
+			const existRoom =
+				state?.length > 0
+					? state.some((exists) => {
+							return exists.roomInfo.room_id === room.roomInfo.room_id
+						})
+					: false
 
-		const testing: Array<roomState> = payload.map((room) => ({ roomInfo: room, messages: [] }))
-		return [...state, ...testing]
+			if (existRoom) return []
+			return { roomInfo: room.roomInfo, messages: room?.messages ?? [] }
+		})
+
+		return [...state, ...excludeRepeatedRoom]
 	},
 
 	[STATE_ACTIONS.ADD_MESSAGE]: function ({
@@ -63,7 +73,7 @@ const roomStateActions = {
 		const roomCode = searchRoom(state, roomInfo)
 		if (roomCode == undefined) return state
 
-		const findMessage = state[roomCode].messages.filter((stateMsg) => stateMsg.messageID !== message.messageID)
+		const findMessage = state[roomCode].messages.filter((stateMsg) => stateMsg.message_id !== message.message_id)
 		return [
 			...state.slice(0, roomCode),
 			{ ...state[roomCode], messages: findMessage },

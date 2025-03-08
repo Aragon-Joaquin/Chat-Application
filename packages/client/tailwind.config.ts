@@ -1,4 +1,7 @@
 import type { Config } from 'tailwindcss'
+type fileAccepted = '.jpg' | '.png' | '.webp' | '.ico'
+
+const getImage = (filename: string, filetype: fileAccepted) => `url('../public/images/${filename}${filetype}')`
 
 export default {
 	content: [
@@ -17,6 +20,9 @@ export default {
 			},
 			fontFamily: {
 				poppins: ['var(--font-poppins)']
+			},
+			backgroundImage: {
+				chatBackground: getImage('chat_bg', '.png')
 			}
 		}
 	},

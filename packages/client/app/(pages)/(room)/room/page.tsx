@@ -20,10 +20,12 @@ export default function RoomPage() {
 	return (
 		<main className="flex flex-col w-full h-full">
 			<HeaderRoom room={selectedRoom['roomInfo']} />
-			<main className="flex-1">
-				{selectedRoom?.messages.map((messageType) => {
-					return <MessagesRoom key={messageType.message_id} messages={messageType} />
-				})}
+			<main className="flex-1 bg-chatBackground bg-blend-lighten bg-white/90 bg-no-repeat bg-cover">
+				<div className="opacity-100 z-10">
+					{selectedRoom?.messages.map((messageType) => {
+						return <MessagesRoom key={messageType.message_id} messages={messageType} />
+					})}
+				</div>
 			</main>
 			<FooterRoom />
 		</main>

@@ -1,4 +1,4 @@
-import { RoomInfo } from '@/app/(pages)/(room)/room/_reducers/types'
+import { roomState } from '@/app/(pages)/(room)/room/_reducers/types'
 import { REQUEST_SHAPE } from './utils'
 
 type ROOM_ROUTES = '/' | '/roomhistory' | '/allRooms'
@@ -6,7 +6,7 @@ type ROOM_ROUTES = '/' | '/roomhistory' | '/allRooms'
 export interface ROOM_TYPES_RESPONSES {
 	'/': null
 	'/roomhistory': unknown
-	'/allRooms': Array<RoomInfo>
+	'/allRooms': Array<roomState>
 }
 
 export const ROOM_REQUEST: REQUEST_SHAPE<ROOM_ROUTES> = {

@@ -1,5 +1,4 @@
 import { ImageIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
-import { useWebsocket } from '../../_hooks/useWebsocket'
 import { FormEvent } from 'react'
 import { IconButton } from '@radix-ui/themes'
 import { useRoomContext } from '../../_hooks/consumeRoomContext'
@@ -7,7 +6,7 @@ import { useRoomContext } from '../../_hooks/consumeRoomContext'
 const MESSAGE_NAME = 'MESSAGE_SENDER' as const
 
 export function FooterRoom() {
-	const { HandleWSActions } = useWebsocket()
+	// const { HandleWSActions } = useWebsocket()
 	const {
 		selectedRoom: { selectedRoom }
 	} = useRoomContext()

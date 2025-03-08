@@ -7,18 +7,23 @@ export const STATE_ACTIONS = {
 }
 
 export type Messages = {
-	userProps: { user_name: string; profile_picture: string }
-	message_content: string
-	message_id: string
-	file_id?: string
+	message_id: `${string}-${string}-${string}-${string}-${string}`
+	which_room: string
+	date_sended: Date
+	message_content: string | null
+	file_id: string | null
+
+	//user sender props
+	user_name: string
+	profile_picture: string | null
 }
 
 export type RoomInfo = {
 	room_id: string
 	room_name: string
-	room_description?: string | null
 	created_at: Date
-	room_picture?: string | null
+	room_description: string | null
+	room_picture: string | null
 }
 
 export type roomState = {
@@ -30,7 +35,7 @@ type TYPES_NAMES<T extends keyof typeof STATE_ACTIONS> = Extract<keyof typeof ST
 
 export type PAYLOAD_TYPES =
 	| { type: TYPES_NAMES<'ADD_ROOM'>; payload: roomState['roomInfo'] }
-	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState['roomInfo']> }
+	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState> }
 	| {
 			type: TYPES_NAMES<'ADD_MESSAGE'>
 			payload: { roomInfo: roomState['roomInfo']; newMessage: roomState['messages'] }
