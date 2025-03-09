@@ -13,13 +13,16 @@ import { CustomDialog } from '@/app/_components/customDialog'
 import { SearchRooms } from './_components/DialogExtras'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { useRoomContext } from './_hooks/consumeRoomContext'
+import { createSocket } from './_hooks/utils/wsCalls'
 
 export default function RoomLayout({ children }: { children: ReactNode }) {
 	const { isPending, makeHTTPRequest, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
 	const {
-		RoomCtx: { roomState, AddMultipleRooms }
+		RoomCtx: { roomState, AddMultipleRooms },
+		webSocket: { setWsSocket, wsSocket }
 	} = useRoomContext()
 
+	//todo: try to reduce all of this useEffects in two or less
 	useEffect(() => {
 		makeHTTPRequest({
 			rootRoute: '/room',
@@ -28,6 +31,14 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 			HTTPmethod: 'GET'
 		})
 	}, [makeHTTPRequest])
+
+	useEffect(() => {
+		async function makeSocket() {
+			const socket = await createSocket()
+			setWsSocket(socket)
+		}
+		if (wsSocket == undefined) makeSocket()
+	}, [setWsSocket, wsSocket])
 
 	useEffect(() => {
 		if (responseData == null) return

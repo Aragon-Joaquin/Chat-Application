@@ -7,6 +7,7 @@ export type Messages = {
 
 	//user sender props
 	user_name: string
+	own_message: boolean
 	profile_picture: string | null
 }
 

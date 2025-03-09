@@ -1,9 +1,9 @@
 'use client'
 
 import { ReactNode, useCallback, useState } from 'react'
+import { ErrorContext } from './context'
 import { ErrorPopUp } from '../_components/errors/ErrorPopUp.component'
 import { BadRequest } from '../_errors'
-import { ErrorContext } from './context'
 
 export function GetErrorContext({ children }: { children: ReactNode }) {
 	const [UIError, setUIError] = useState<BadRequest | Error | null>(null)

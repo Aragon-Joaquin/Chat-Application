@@ -1,6 +1,6 @@
 'use client'
+import { BadRequest } from '@/app/_errors'
 import { createContext } from 'react'
-import { BadRequest } from '../_errors'
 
 interface ErrorContextInterface {
 	UIError: BadRequest | Error | null

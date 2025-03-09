@@ -11,6 +11,11 @@ export function useRoomContext() {
 		selectedRoom: {
 			selectedRoom: RoomCtx.selectedRoom,
 			setSelectedRoom: RoomCtx.setSelectedRoom
+		},
+		webSocket: {
+			wsSocket: RoomCtx.wsSocket,
+			setWsSocket: RoomCtx.setWsSocket,
+			handleWSActions: RoomCtx.HandleWSActions
 		}
 	}
 }

@@ -2,9 +2,10 @@ import type { Metadata } from 'next'
 import './globals.css'
 import '@radix-ui/themes/styles.css'
 import { Theme } from '@radix-ui/themes'
-import { GetErrorContext } from './_context/ErrorContext'
+
 import { Poppins } from 'next/font/google'
 import { ErrorBoundary } from './_errors/errorBoundary'
+import { GetErrorContext } from './_context/ErrorContext'
 
 export const metadata: Metadata = {
 	title: 'Chat Application',

@@ -1,12 +1,15 @@
 import { ImageIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
-import { FormEvent } from 'react'
+import { FormEvent, useRef } from 'react'
 import { IconButton } from '@radix-ui/themes'
 import { useRoomContext } from '../../_hooks/consumeRoomContext'
 
 const MESSAGE_NAME = 'MESSAGE_SENDER' as const
 
 export function FooterRoom() {
-	// const { HandleWSActions } = useWebsocket()
+	const inputRef = useRef<HTMLInputElement>(null)
+	const {
+		webSocket: { handleWSActions }
+	} = useRoomContext()
 	const {
 		selectedRoom: { selectedRoom }
 	} = useRoomContext()
@@ -16,10 +19,11 @@ export function FooterRoom() {
 
 		const data = new FormData(e.currentTarget).get(MESSAGE_NAME)
 		if (data == null || selectedRoom == undefined) return
-		// HandleWSActions<'SEND'>({
-		// 	action: 'SEND',
-		// 	payload: { messageString: String.raw`${data}`, roomID: selectedRoom['roomInfo']['room_id'] }
-		// })
+		if (inputRef.current != null) inputRef.current.value = ''
+		handleWSActions<'SEND'>({
+			action: 'sendMessage',
+			payload: { messageString: String.raw`${data}`, roomID: selectedRoom['roomInfo']['room_id'] }
+		})
 	}
 
 	return (
@@ -42,6 +46,7 @@ export function FooterRoom() {
 					placeholder="Start typing what you wanna say here!"
 					autoComplete="off"
 					name={MESSAGE_NAME}
+					ref={inputRef}
 					className="pl-4 pr-10 font-normal py-2 rounded-lg w-full border-2 border-transparent/10 focus:!outline-blue-300 focus:!bg-blue-200/20"
 				/>
 

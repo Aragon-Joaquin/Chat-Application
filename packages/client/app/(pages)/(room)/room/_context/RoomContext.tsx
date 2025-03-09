@@ -4,6 +4,7 @@ import { ReactNode, useCallback, useReducer, useState } from 'react'
 import { RoomContext } from './context'
 import { roomReducer } from '../_reducers/roomReducer'
 import { PICK_PAYLOAD, roomState } from '../_reducers/types'
+import { useWebsocket } from '../_hooks/useWebsocket'
 
 const initialRoomState: roomState[] = []
 
@@ -52,6 +53,7 @@ function useRoomReducer() {
 
 export function GetRoomContext({ children }: { children: ReactNode }) {
 	const reducerRoom = useRoomReducer()
+	const webSocket = useWebsocket()
 	const [selectedRoom, setSelectedRoom] = useState<roomState>()
 
 	//! could be done in a more 'performant way', like just pointing to the index of the array
@@ -69,6 +71,7 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		<RoomContext.Provider
 			value={{
 				...reducerRoom,
+				...webSocket,
 				selectedRoom,
 				setSelectedRoom: handleSetState
 			}}

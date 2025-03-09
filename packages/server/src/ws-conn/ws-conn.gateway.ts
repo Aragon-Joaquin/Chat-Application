@@ -42,6 +42,8 @@ export class WsConnGateway {
   ) {
     const { roomID, messageString } = payload;
 
+    console.log({ messageString, roomID });
+
     const JWT_Info = this.getJWTHeader(client);
 
     await this.wsConnService.FindUserInRoom(JWT_Info['id'], roomID);
