@@ -4,6 +4,7 @@ import '@radix-ui/themes/styles.css'
 import { Theme } from '@radix-ui/themes'
 import { GetErrorContext } from './_context/ErrorContext'
 import { Poppins } from 'next/font/google'
+import { ErrorBoundary } from './_errors/errorBoundary'
 
 export const metadata: Metadata = {
 	title: 'Chat Application',
@@ -25,11 +26,13 @@ export default function RootLayout({
 	return (
 		<html lang="en" className={`${poppins.variable}`}>
 			<body>
-				<GetErrorContext>
-					<Theme appearance="light" grayColor="mauve" panelBackground="translucent" hasBackground>
-						{children}
-					</Theme>
-				</GetErrorContext>
+				<ErrorBoundary>
+					<GetErrorContext>
+						<Theme appearance="light" grayColor="mauve" panelBackground="translucent" hasBackground>
+							{children}
+						</Theme>
+					</GetErrorContext>
+				</ErrorBoundary>
 			</body>
 		</html>
 	)

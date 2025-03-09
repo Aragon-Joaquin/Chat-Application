@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode, useCallback, useState } from 'react'
-import { ErrorPopUp } from '../_components/ErrorPopUp.component'
+import { ErrorPopUp } from '../_components/errors/ErrorPopUp.component'
 import { BadRequest } from '../_errors'
 import { ErrorContext } from './context'
 
