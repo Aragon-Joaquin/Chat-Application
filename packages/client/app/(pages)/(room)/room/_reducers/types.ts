@@ -1,29 +1,11 @@
+import { Messages, RoomInfo } from '@/app/_utils/tableTypes'
+
 export const STATE_ACTIONS = {
 	ADD_ROOM: 'ADD_ROOM',
 	ADD_MULTIPLE_ROOMS: 'ADD_MULTIPLE_ROOMS',
 	LEAVE_ROOM: 'LEAVE_ROOM',
 	ADD_MESSAGE: 'ADD_MESSAGE',
 	DELETED_MESSAGE: 'DELETED_MESSAGE'
-}
-
-export type Messages = {
-	message_id: `${string}-${string}-${string}-${string}-${string}`
-	which_room: string
-	date_sended: Date
-	message_content: string | null
-	file_id: string | null
-
-	//user sender props
-	user_name: string
-	profile_picture: string | null
-}
-
-export type RoomInfo = {
-	room_id: string
-	room_name: string
-	created_at: Date
-	room_description: string | null
-	room_picture: string | null
 }
 
 export type roomState = {

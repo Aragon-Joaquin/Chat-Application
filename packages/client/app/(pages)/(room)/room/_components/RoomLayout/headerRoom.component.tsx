@@ -5,7 +5,7 @@ import { ImageAndFallback } from '@app/_components/ImageAndFallback.component'
 
 export function HeaderRoom({ room }: { room: roomState['roomInfo'] }) {
 	return (
-		<header className="flex flex-row px-10 pl-20 items-center justify-between bg-neutral-100 w-full h-20 shadow-md">
+		<header className="flex flex-row px-10 pl-20 items-center justify-between bg-neutral-100 w-full h-20 shadow-md z-10">
 			<aside className="flex flex-row gap-x-4">
 				<div className="w-16 h-16 ">
 					<ImageAndFallback picture={room?.room_picture ?? ''} description={room.room_description ?? ''} />

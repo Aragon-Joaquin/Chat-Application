@@ -58,7 +58,7 @@ export default function RegisterPage() {
 							type={view ? 'text' : 'password'}
 							id={passwordID}
 							autoComplete="off"
-							className="controlField pr-10"
+							className="controlField !pr-10"
 						/>
 
 						<SVGEye />
@@ -75,7 +75,7 @@ export default function RegisterPage() {
 							required
 							type={view ? 'text' : 'password'}
 							id={pwdCompId}
-							className="controlField pr-10"
+							className="controlField !pr-10"
 							autoComplete="off"
 							onChange={() => resetComparingState(false)}
 						/>

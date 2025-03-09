@@ -22,3 +22,20 @@ export const ROUTES_HASHMAP = {
 	'/login': LOGIN_REQUEST,
 	'/room': ROOM_REQUEST
 }
+
+export const transformToDate = (date: Date | undefined): string => {
+	if (!date) return 'No date available'
+
+	const rawDate = new Date(date)
+		.toLocaleString('en-GB', {
+			timeZone: 'UTC',
+			day: 'numeric',
+			month: '2-digit',
+			year: '2-digit',
+			hour: 'numeric',
+			minute: '2-digit'
+		})
+		?.split(',')
+
+	return rawDate?.length ? `${rawDate[0]} ${rawDate[1]}` : 'No date available'
+}

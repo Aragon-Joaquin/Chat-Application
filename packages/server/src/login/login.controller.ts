@@ -4,6 +4,7 @@ import {
   Patch,
   Post,
   Req,
+  Get,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { LoginService } from './login.service';
 import { UserDto } from './dto/user.dto';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { Request } from 'express';
+import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('login')
 export class LoginController {
@@ -28,6 +30,23 @@ export class LoginController {
   @Post('/register')
   async register(@Body() body: UserDto) {
     return await this.loginService.RegisterUser(body);
+  }
+
+  @Get('/getUser')
+  @UseGuards(JWTAuthGuard)
+  async getUser(@Req() req: Request) {
+    const user = await this.loginService.FindOne({
+      where: {
+        user_id: req.user.id,
+        user_name: req.user.userName,
+      },
+    });
+
+    return JSON.stringify({
+      user_name: user.user_name,
+      user_id: user.user_id,
+      profile_picture: user?.profile_picture ?? '',
+    });
   }
 
   // change password

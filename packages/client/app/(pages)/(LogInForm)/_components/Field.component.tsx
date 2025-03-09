@@ -35,7 +35,7 @@ function FieldSVGComponentFunc({
 					required
 					type={view ? 'text' : type}
 					id={htmlID}
-					className="controlField pr-10"
+					className="controlField !pr-10"
 					autoComplete={'off'}
 				/>
 

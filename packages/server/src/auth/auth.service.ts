@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { users } from 'src/entities';
 import { LoginService } from 'src/login/login.service';
 import { getJWTSecret } from 'src/utils/getEnvVariables';
 import { comparePassword } from 'src/utils/hashingFuncs';
@@ -17,7 +18,7 @@ export class AuthService {
     private loginService: LoginService,
   ) {}
 
-  async LoginIfCredentials(name: string, password: string): Promise<any> {
+  async LoginIfCredentials(name: string, password: string): Promise<string> {
     if (!name || !password) return null;
 
     const user = await this.loginService.FindOne({

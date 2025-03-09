@@ -8,7 +8,7 @@ import { getJWT, setJWT } from '@/app/_utils/JWTMethods'
 import { FormEvent, useEffect, useState } from 'react'
 
 export function useSubmitCredentials() {
-	const { makeHTTPRequest, responseData } = useCallServer<LOGIN_TYPES_RESPONSES>()
+	const { makeHTTPRequest, responseData } = useCallServer<LOGIN_TYPES_RESPONSES['/']>()
 	const [hasToken, setHasToken] = useState<boolean>(false)
 	const {
 		ErrorContext: { setUIError }
@@ -32,12 +32,12 @@ export function useSubmitCredentials() {
 	}
 
 	useEffect(() => {
-		async function setJWTInCookies(token: string) {
+		async function setJWTInCookies(token: LOGIN_TYPES_RESPONSES['/']) {
 			if ((await getJWT()) != null) return
-			await setJWT(token)
+			await setJWT(token.access_token)
 			setHasToken(true)
 		}
-		if (responseData != null && 'access_token' in responseData) setJWTInCookies(responseData.access_token as string)
+		if (responseData != null && 'access_token' in responseData) setJWTInCookies(responseData)
 	}, [responseData])
 
 	return { submitCredentials, hasToken }
