@@ -1,10 +1,11 @@
 'use client'
 
-import { ReactNode, useCallback, useReducer, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 import { RoomContext } from './context'
 import { roomReducer } from '../_reducers/roomReducer'
 import { PICK_PAYLOAD, roomState } from '../_reducers/types'
 import { useWebsocket } from '../_hooks/useWebsocket'
+import { WS_ACTIONS, WS_ENDPOINTS_EVENTS } from '@chat-app/utils/globalConstants'
 
 const initialRoomState: roomState[] = []
 
@@ -52,28 +53,58 @@ function useRoomReducer() {
 }
 
 export function GetRoomContext({ children }: { children: ReactNode }) {
-	const reducerRoom = useRoomReducer()
-	const webSocket = useWebsocket()
+	const { roomState, AddRoom, AddMultipleRooms, AddMessage, LeaveRoom, DeleteMessage } = useRoomReducer()
+	const { wsSocket, setWsSocket, handleWSActions } = useWebsocket()
 	const [selectedRoom, setSelectedRoom] = useState<roomState>()
 
 	//! could be done in a more 'performant way', like just pointing to the index of the array
 	const handleSetState = useCallback(
 		(stateID: roomState['roomInfo']['room_id']) => {
-			const findRoomInState = reducerRoom?.roomState?.find((room) => room.roomInfo.room_id === stateID)
+			const findRoomInState = roomState?.find((room) => room.roomInfo.room_id === stateID)
 
 			if (findRoomInState == undefined) return setSelectedRoom(undefined)
 			setSelectedRoom(findRoomInState)
 		},
-		[reducerRoom?.roomState]
+		[roomState]
 	)
+
+	useEffect(() => {
+		if (wsSocket == undefined) return
+		console.log('Socket callback has been executed once again', wsSocket)
+		wsSocket.emit(WS_ACTIONS.JOIN_MULTIPLE)
+
+		function handler(data: string) {
+			const { message, roomID } = JSON.parse(data)
+			AddMessage({ roomInfo: roomID, newMessage: message })
+		}
+		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handler)
+
+		return () => {
+			wsSocket?.off(WS_ENDPOINTS_EVENTS.MESSAGE, handler)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [wsSocket])
 
 	return (
 		<RoomContext.Provider
 			value={{
-				...reducerRoom,
-				...webSocket,
-				selectedRoom,
-				setSelectedRoom: handleSetState
+				RoomCtx: {
+					roomState,
+					AddRoom,
+					AddMultipleRooms,
+					AddMessage,
+					LeaveRoom,
+					DeleteMessage
+				},
+				selectedRoom: {
+					selectedRoom: selectedRoom,
+					setSelectedRoom: handleSetState
+				},
+				webSocket: {
+					wsSocket,
+					setWsSocket,
+					handleWSActions
+				}
 			}}
 		>
 			{children}

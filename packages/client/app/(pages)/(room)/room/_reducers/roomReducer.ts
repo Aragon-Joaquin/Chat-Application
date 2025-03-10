@@ -3,7 +3,7 @@ import { searchRoom } from './utils/functions'
 
 const roomStateActions = {
 	[STATE_ACTIONS.ADD_ROOM]: function ({ state, payload }: { state: roomState[]; payload: PICK_PAYLOAD<'ADD_ROOM'> }) {
-		if (searchRoom(state, payload) == undefined) return state
+		if (searchRoom(state, payload['room_id']) == undefined) return state
 		return [...state, { roomInfo: payload, messages: [] }]
 	},
 
@@ -56,7 +56,7 @@ const roomStateActions = {
 		state: roomState[]
 		payload: PICK_PAYLOAD<'LEAVE_ROOM'>
 	}) {
-		const roomCode = searchRoom(state, payload)
+		const roomCode = searchRoom(state, payload['room_id'])
 		if (roomCode == undefined) return state
 
 		return state.filter((room) => room.roomInfo['room_id'] != state[roomCode].roomInfo['room_id'])
@@ -70,7 +70,7 @@ const roomStateActions = {
 		payload: PICK_PAYLOAD<'DELETED_MESSAGE'>
 	}) {
 		const { roomInfo, message } = payload
-		const roomCode = searchRoom(state, roomInfo)
+		const roomCode = searchRoom(state, roomInfo['room_id'])
 		if (roomCode == undefined) return state
 
 		const findMessage = state[roomCode].messages.filter((stateMsg) => stateMsg.message_id !== message.message_id)

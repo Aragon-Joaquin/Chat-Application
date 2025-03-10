@@ -1,5 +1,5 @@
 import { WS_ACTIONS } from '@chat-app/utils/globalConstants'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Socket } from 'socket.io-client'
 import { wsPayloads } from './utils/types'
 import { HASHMAP_WSACTIONS } from './utils/wsCalls'
@@ -12,18 +12,8 @@ export function useWebsocket() {
 		ErrorContext: { setUIError }
 	} = useConsumeContext()
 
-	useEffect(() => {
-		if (wsSocket == null) return
-		console.log('Socket callback has been executed once again', wsSocket)
-		wsSocket.emit(WS_ACTIONS.JOIN_MULTIPLE)
-
-		return () => {
-			wsSocket?.disconnect()
-		}
-	}, [wsSocket])
-
 	//*example: HandleWSActions<'LEAVE'>({ action: 'leaveRoom', payload: { roomID: '' } })
-	const HandleWSActions = useCallback(
+	const handleWSActions = useCallback(
 		<T extends keyof typeof WS_ACTIONS>(type: Extract<wsPayloads, { action: (typeof WS_ACTIONS)[T] }>) => {
 			if (wsSocket == null) return
 
@@ -40,6 +30,6 @@ export function useWebsocket() {
 	return {
 		wsSocket,
 		setWsSocket,
-		HandleWSActions
+		handleWSActions
 	}
 }

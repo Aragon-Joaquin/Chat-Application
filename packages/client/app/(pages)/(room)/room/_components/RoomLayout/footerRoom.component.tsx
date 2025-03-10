@@ -16,10 +16,11 @@ export function FooterRoom() {
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
+		const data = new FormData(e.currentTarget).get(MESSAGE_NAME)?.toString()
 
-		const data = new FormData(e.currentTarget).get(MESSAGE_NAME)
-		if (data == null || selectedRoom == undefined) return
+		if (data == '' || selectedRoom == undefined) return
 		if (inputRef.current != null) inputRef.current.value = ''
+
 		handleWSActions<'SEND'>({
 			action: 'sendMessage',
 			payload: { messageString: String.raw`${data}`, roomID: selectedRoom['roomInfo']['room_id'] }

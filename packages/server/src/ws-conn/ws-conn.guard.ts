@@ -1,5 +1,4 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginService } from 'src/login/login.service';
 

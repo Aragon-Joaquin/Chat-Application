@@ -20,7 +20,7 @@ export type PAYLOAD_TYPES =
 	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState> }
 	| {
 			type: TYPES_NAMES<'ADD_MESSAGE'>
-			payload: { roomInfo: roomState['roomInfo']; newMessage: roomState['messages'] }
+			payload: { roomInfo: roomState['roomInfo']['room_id']; newMessage: roomState['messages'] }
 	  }
 	| { type: TYPES_NAMES<'LEAVE_ROOM'>; payload: roomState['roomInfo'] }
 	| {

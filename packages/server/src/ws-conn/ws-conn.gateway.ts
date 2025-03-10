@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -42,15 +42,33 @@ export class WsConnGateway {
   ) {
     const { roomID, messageString } = payload;
 
-    console.log({ messageString, roomID });
+    if (messageString === '') return;
 
     const JWT_Info = this.getJWTHeader(client);
 
-    await this.wsConnService.FindUserInRoom(JWT_Info['id'], roomID);
+    const userInRoom = await this.wsConnService.FindUserInRoom(
+      JWT_Info['id'],
+      roomID,
+    );
 
-    client.broadcast
-      .to(roomID)
-      .emit(WS_ENDPOINTS_EVENTS.MESSAGE, String(messageString));
+    if (userInRoom == undefined)
+      throw new ForbiddenException("You're not in this room.");
+
+    this.wss.to(roomID).emit(
+      WS_ENDPOINTS_EVENTS.MESSAGE,
+      JSON.stringify({
+        message: String(messageString),
+        roomID,
+      }),
+    );
+
+    // client.broadcast.to(roomID).emit(
+    //   WS_ENDPOINTS_EVENTS.MESSAGE,
+    //   JSON.stringify({
+    //     message: String(messageString),
+    //     roomID,
+    //   }),
+    // );
   }
 
   @SubscribeMessage(WS_ACTIONS.JOIN)
