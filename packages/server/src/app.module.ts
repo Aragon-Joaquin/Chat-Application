@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EnvDBInfo } from './utils/getEnvVariables';
 import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
-import { WsConnGateway } from './ws-conn/ws-conn.gateway';
 import { WsConnModule } from './ws-conn/ws-conn.module';
 import { RoomModule } from './room/room.module';
 import { RoomMessagesModule } from './room-messages/room-messages.module';
@@ -49,6 +48,6 @@ import {
     }),
   ],
   controllers: [],
-  providers: [WsConnGateway],
+  providers: [],
 })
 export class AppModule {}
