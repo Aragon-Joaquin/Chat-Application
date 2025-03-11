@@ -1,12 +1,12 @@
 'use client'
 import { createContext, Dispatch, SetStateAction } from 'react'
-import { PICK_PAYLOAD, roomState } from '../_reducers/types'
+import { initialRoomState, PICK_PAYLOAD, roomState } from '../_reducers/types'
 import { Socket } from 'socket.io-client'
 import { wsPayloads } from '../_hooks/utils/types'
 import { WS_ACTIONS } from '@chat-app/utils/globalConstants'
 
 interface RoomCtx {
-	roomState: roomState[]
+	roomState: typeof initialRoomState
 	AddRoom: (payload: PICK_PAYLOAD<'ADD_ROOM'>) => void
 	AddMultipleRooms: (payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>) => void
 	AddMessage: (payload: PICK_PAYLOAD<'ADD_MESSAGE'>) => void

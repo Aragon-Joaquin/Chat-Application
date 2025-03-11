@@ -79,12 +79,12 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 				</section>
 
 				<main className="borderLayout overflow-y-auto h-screen">
-					{roomState?.length == 0 ? (
+					{roomState.size == 0 ? (
 						<NoChatsAvailable />
 					) : (
 						<ul className="flex flex-col gap-y-2">
-							{roomState?.map((roomState) => {
-								return <ChatBubble key={roomState.roomInfo.room_id} roomAllProps={roomState} />
+							{[...roomState.entries()].map(([key, value]) => {
+								return <ChatBubble key={key} roomAllProps={value} />
 							})}
 						</ul>
 					)}

@@ -1,88 +1,105 @@
-import { PAYLOAD_TYPES, PICK_PAYLOAD, roomState, STATE_ACTIONS } from './types'
-import { searchRoom } from './utils/functions'
+import { initialRoomState, PAYLOAD_TYPES, PICK_PAYLOAD, roomState, STATE_ACTIONS } from './types'
 
 const roomStateActions = {
-	[STATE_ACTIONS.ADD_ROOM]: function ({ state, payload }: { state: roomState[]; payload: PICK_PAYLOAD<'ADD_ROOM'> }) {
-		if (searchRoom(state, payload['room_id']) == undefined) return state
-		return [...state, { roomInfo: payload, messages: [] }]
+	[STATE_ACTIONS.ADD_ROOM]: function ({
+		state,
+		payload
+	}: {
+		state: typeof initialRoomState
+		payload: PICK_PAYLOAD<'ADD_ROOM'>
+	}) {
+		if (state.get(payload['room_id']) == undefined) return state
+		return new Map([...state, ...state.set(payload['room_id'], { roomInfo: payload, messages: [] })])
 	},
 
 	[STATE_ACTIONS.ADD_MULTIPLE_ROOMS]: function ({
 		state,
 		payload
 	}: {
-		state: roomState[]
+		state: typeof initialRoomState
 		payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>
 	}) {
-		if (!payload) return state
-		const excludeRepeatedRoom: roomState[] = payload.flatMap((room) => {
-			const existRoom =
-				state?.length > 0
-					? state.some((exists) => {
-							return exists.roomInfo.room_id === room.roomInfo.room_id
-						})
-					: false
+		if (!payload || !payload?.length) return state
 
-			if (existRoom) return []
-			return { roomInfo: room.roomInfo, messages: room?.messages ?? [] }
+		const filteredRoom: Map<string, roomState> = new Map()
+
+		payload.forEach((roomState) => {
+			const {
+				roomInfo: { room_id }
+			} = roomState
+			const getRoom = state?.get(room_id)
+			if (getRoom != undefined) return
+			filteredRoom.set(room_id, roomState)
 		})
 
-		return [...state, ...excludeRepeatedRoom]
+		return new Map([...state, ...filteredRoom])
 	},
 
 	[STATE_ACTIONS.ADD_MESSAGE]: function ({
 		state,
 		payload
 	}: {
-		state: roomState[]
+		state: typeof initialRoomState
 		payload: PICK_PAYLOAD<'ADD_MESSAGE'>
 	}) {
 		const { roomInfo, newMessage } = payload
-		const roomCode = searchRoom(state, roomInfo)
+		const roomCode = state.get(roomInfo)
 
 		if (roomCode == undefined) return state
 
-		return [
-			...state.slice(0, roomCode),
-			{ ...state[roomCode], messages: [...state[roomCode].messages, ...newMessage] },
-			...state.slice(roomCode, state.length)
-		]
+		return new Map([
+			...state,
+			...state.set(roomInfo, {
+				roomInfo: roomCode['roomInfo'],
+				messages: [...roomCode['messages'], { ...newMessage, messageStatus: 'loading' }]
+			})
+		])
 	},
 
 	[STATE_ACTIONS.LEAVE_ROOM]: function ({
 		state,
 		payload
 	}: {
-		state: roomState[]
+		state: typeof initialRoomState
 		payload: PICK_PAYLOAD<'LEAVE_ROOM'>
 	}) {
-		const roomCode = searchRoom(state, payload['room_id'])
+		const { room_id } = payload
+
+		const roomCode = state.get(room_id)
 		if (roomCode == undefined) return state
 
-		return state.filter((room) => room.roomInfo['room_id'] != state[roomCode].roomInfo['room_id'])
+		try {
+			const mappedRooms = new Map(state)
+			if (mappedRooms.delete(room_id)) return mappedRooms
+			return state
+		} catch {
+			return state
+		}
 	},
 
 	[STATE_ACTIONS.DELETED_MESSAGE]: function ({
 		state,
 		payload
 	}: {
-		state: roomState[]
+		state: typeof initialRoomState
 		payload: PICK_PAYLOAD<'DELETED_MESSAGE'>
 	}) {
 		const { roomInfo, message } = payload
-		const roomCode = searchRoom(state, roomInfo['room_id'])
+		const roomCode = state.get(roomInfo['room_id'])
+
 		if (roomCode == undefined) return state
 
-		const findMessage = state[roomCode].messages.filter((stateMsg) => stateMsg.message_id !== message.message_id)
-		return [
-			...state.slice(0, roomCode),
-			{ ...state[roomCode], messages: findMessage },
-			...state.slice(roomCode, state.length)
-		]
+		return new Map([
+			...state,
+			...state.set(roomInfo['room_id'], {
+				roomInfo: roomCode['roomInfo'],
+				messages: roomCode['messages'].filter((msg) => msg.message_id != message.message_id)
+			})
+		])
 	}
 }
 
-export function roomReducer(state: roomState[], action: PAYLOAD_TYPES) {
+export function roomReducer(state: typeof initialRoomState, action: PAYLOAD_TYPES) {
 	const { type, payload } = action
 	const grabActionFunc = roomStateActions[type]
 

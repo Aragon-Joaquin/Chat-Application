@@ -10,8 +10,11 @@ export const STATE_ACTIONS = {
 
 export type roomState = {
 	roomInfo: RoomInfo
-	messages: Messages[]
+	//! messageStatus its for client-side
+	messages: (Messages & { messageStatus?: 'sended' | 'loading' | 'error' })[]
 }
+
+export const initialRoomState = new Map<RoomInfo['room_id'], roomState>()
 
 type TYPES_NAMES<T extends keyof typeof STATE_ACTIONS> = Extract<keyof typeof STATE_ACTIONS, T>
 
@@ -20,7 +23,7 @@ export type PAYLOAD_TYPES =
 	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState> }
 	| {
 			type: TYPES_NAMES<'ADD_MESSAGE'>
-			payload: { roomInfo: roomState['roomInfo']['room_id']; newMessage: roomState['messages'] }
+			payload: { roomInfo: roomState['roomInfo']['room_id']; newMessage: Messages }
 	  }
 	| { type: TYPES_NAMES<'LEAVE_ROOM'>; payload: roomState['roomInfo'] }
 	| {

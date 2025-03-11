@@ -3,11 +3,9 @@
 import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 import { RoomContext } from './context'
 import { roomReducer } from '../_reducers/roomReducer'
-import { PICK_PAYLOAD, roomState } from '../_reducers/types'
+import { initialRoomState, PICK_PAYLOAD, roomState } from '../_reducers/types'
 import { useWebsocket } from '../_hooks/useWebsocket'
 import { WS_ACTIONS, WS_ENDPOINTS_EVENTS } from '@chat-app/utils/globalConstants'
-
-const initialRoomState: roomState[] = []
 
 function useRoomReducer() {
 	const [roomState, dispatch] = useReducer(roomReducer, initialRoomState)
@@ -60,7 +58,7 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 	//! could be done in a more 'performant way', like just pointing to the index of the array
 	const handleSetState = useCallback(
 		(stateID: roomState['roomInfo']['room_id']) => {
-			const findRoomInState = roomState?.find((room) => room.roomInfo.room_id === stateID)
+			const findRoomInState = roomState.get(stateID)
 
 			if (findRoomInState == undefined) return setSelectedRoom(undefined)
 			setSelectedRoom(findRoomInState)
@@ -73,14 +71,15 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		console.log('Socket callback has been executed once again', wsSocket)
 		wsSocket.emit(WS_ACTIONS.JOIN_MULTIPLE)
 
-		function handler(data: string) {
+		function handlerMessage(data: string) {
 			const { message, roomID } = JSON.parse(data)
 			AddMessage({ roomInfo: roomID, newMessage: message })
 		}
-		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handler)
+		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
 
 		return () => {
-			wsSocket?.off(WS_ENDPOINTS_EVENTS.MESSAGE, handler)
+			wsSocket?.disconnect()
+			wsSocket?.off(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [wsSocket])
