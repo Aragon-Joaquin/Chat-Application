@@ -14,7 +14,7 @@ export function MessagesRoom({ messages }: { messages: Messages }) {
 			</div>
 
 			<span
-				className={`flex flex-col bg-neutral-200 p-2 rounded-md relative mt-3 m-1 max-w-[50%] min-w-24
+				className={`flex flex-col bg-neutral-200 p-2 rounded-md relative mt-3 m-1 max-w-[50%]
 			before:content-[''] before:absolute before:w-0 before:h-0 before:border-8 before:border-transparent before:border-t-neutral-200 before:top-0
 			${own_message ? 'rounded-tr-none before:right-0 before:translate-x-full before:border-l-neutral-200' : 'rounded-tl-none before:left-0 before:-translate-x-full before:border-r-neutral-200'}`}
 			>
@@ -26,13 +26,8 @@ export function MessagesRoom({ messages }: { messages: Messages }) {
 				>
 					{own_message ? 'You' : user_name}
 				</Heading>
-				<Text as="p" className="text-black font-sans">{String.raw`${message_content ?? ''}`}</Text>
-				<Text
-					as="p"
-					size="1"
-					color="gray"
-					className={`mt-1 w-full flex justify-end ${own_message && '!justify-start'}`}
-				>
+				<Text as="p" className={`text-black font-sans text-pretty`}>{String.raw`${message_content ?? ''}`}</Text>
+				<Text as="label" size="1" color="gray" className={`mt-1 flex justify-end ${own_message && '!justify-start'}`}>
 					{transformToDate(date_sended)}
 				</Text>
 			</span>

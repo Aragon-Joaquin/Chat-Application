@@ -14,5 +14,5 @@ export class messages {
   // for now it's only one file per message.
   // i have no idea how to do it, unless i make another table called Messages_Files.
   @OneToOne(() => file_storage, (entity) => entity.file_id, { nullable: true })
-  file_id: file_storage;
+  file_id: file_storage['file_id'];
 }

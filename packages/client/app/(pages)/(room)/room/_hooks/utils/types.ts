@@ -6,7 +6,10 @@ export type wsPayloads =
 	| { action: SelectWSAction<'JOIN'>; payload: { roomID: string; roomPassword: string | '' } }
 	| { action: SelectWSAction<'LEAVE'>; payload: { roomID: string } }
 	| { action: SelectWSAction<'DELETE'>; payload: { messageID: string; roomID: string } }
-	| { action: SelectWSAction<'SEND'>; payload: { messageString: string; roomID: string; file?: string } }
+	| {
+			action: SelectWSAction<'SEND'>
+			payload: { messageString: string; roomID: string; own_message: boolean; file?: string }
+	  }
 
 export type PICK_WS_PAYLOAD<T extends keyof typeof WS_ACTIONS> = Extract<
 	wsPayloads,

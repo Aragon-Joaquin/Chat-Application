@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
-import { messages, room, users_in_room } from 'src/entities';
+import { messages, room, users, users_in_room } from 'src/entities';
 import { RoomMessagesService } from 'src/room-messages/room-messages.service';
 import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { RoomService } from 'src/room/room.service';
 import { UsersRoomsService } from 'src/users-rooms/users-rooms.service';
 import { JWT_DECODED_INFO } from 'src/utils/types';
-import { DataSource } from 'typeorm';
+import { DataSource, InsertResult } from 'typeorm';
 import { MAX_MESSAGES_PER_REQ } from 'src/utils/constants';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class WsConnService {
@@ -20,9 +21,22 @@ export class WsConnService {
     private dataSource: DataSource,
   ) {}
 
+  //! utils ⬇
   GetRoomsOfUser = async (user: JWT_DECODED_INFO['id']) =>
     await this.usersRoomsService.GetUsersRooms(user);
 
+  /**
+   * @returns True if it has exceeded the maximum amount of rooms the user can join. False otherwise
+   */
+  async hasExceededMaxRooms(token: JWT_DECODED_INFO['id']): Promise<boolean> {
+    const userRooms = await this.dataSource.manager.countBy(users_in_room, {
+      user_id: token,
+    });
+
+    return userRooms >= MAXIMUM_ROOMS_PER_USER ? true : false;
+  }
+
+  //! rooms methods ⬇
   async JoinToNewRoom(
     id: string,
     userInfo: JWT_DECODED_INFO,
@@ -64,6 +78,7 @@ export class WsConnService {
     return await this.usersRoomsService.GetUsersOneRoom(userID, roomID);
   }
 
+  //! messages methods ⬇
   async DeleteMessageInRoom(
     userID: JWT_DECODED_INFO['id'],
     roomID: room['room_id'],
@@ -78,15 +93,47 @@ export class WsConnService {
     return await this.roomMsgs.DeleteMessageInRoom(userExists, message);
   }
 
-  /**
-   * @returns True if it has exceeded the maximum amount of rooms the user can join. False otherwise
-   */
-  async hasExceededMaxRooms(token: JWT_DECODED_INFO['id']): Promise<boolean> {
-    const userRooms = await this.dataSource.manager.countBy(users_in_room, {
-      user_id: token,
-    });
+  async CreateMessageToRoom(
+    messageProps: Pick<messages, 'message_content' | 'file_id'>,
+    roomID: room['room_id'],
+    userID: users['user_id'],
+  ) {
+    const { message_content, file_id } = messageProps;
+    if (message_content == undefined && file_id == undefined) return;
 
-    return userRooms >= MAXIMUM_ROOMS_PER_USER ? true : false;
+    try {
+      const messageCreated = await this.dataSource
+        .createQueryBuilder()
+        .insert()
+        .into(messages)
+        .values({
+          ...(message_content != undefined && {
+            message_content: message_content,
+          }),
+          ...(file_id != undefined && {
+            file_id: file_id,
+          }),
+        })
+        .returning('*')
+        .execute();
+
+      const roomMessage = await this.roomMsgs.InsertMessageInRoom(
+        messageCreated.raw[0].message_id,
+        userID,
+        roomID,
+      );
+
+      console.log(roomMessage.raw[0]);
+
+      return {
+        message_content: messageCreated.raw[0]?.message_content,
+        file_id: messageCreated.raw[0]?.file_id,
+        message_id: messageCreated.raw[0]?.message_id,
+        date_sended: roomMessage.raw[0]?.date_sended,
+      };
+    } catch {
+      return;
+    }
   }
 
   async GetRoomMessages(
@@ -107,8 +154,8 @@ export class WsConnService {
         `);
       if (!roomInfo?.length) return null;
 
-      //! this query is unnecesary large & complex, but it justs gets the last 50 messages of every room by counting the times the room_id was repeated
-      //! in the future, this will become a problem. It's just better to do two queries.
+      //* this query is unnecesary large & complex, but it justs gets the last 50 messages of every room by counting the times the room_id was repeated
+      //* in the future, this will become a problem. It's just better to do two queries.
       const messageInfo: Array<{ which_room: string }> = await this.dataSource
         .query(`
         SELECT users.user_name, users.profile_picture, room_messages.which_room, room_messages.date_sended, 

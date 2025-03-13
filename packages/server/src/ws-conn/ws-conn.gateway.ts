@@ -1,4 +1,4 @@
-import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { ForbiddenException, HttpStatus, UseGuards } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -15,6 +15,8 @@ import { WsConnGuard } from './ws-conn.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { messages } from 'src/entities';
 import { WsConnService } from './ws-conn.service';
+import { createErrorMessage } from './utils';
+import { UUID_TYPE } from 'src/utils/types';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -38,11 +40,23 @@ export class WsConnGateway {
   @SubscribeMessage(WS_ACTIONS.SEND)
   async handleMessage(
     client: Socket,
-    payload: { messageString: string; roomID: string; file?: string },
+    payload: {
+      messageString: string;
+      messageID?: string;
+      roomID: string;
+      own_message: boolean;
+      file?: UUID_TYPE;
+    },
   ) {
-    const { roomID, messageString } = payload;
+    const { roomID, messageString, own_message, messageID, file } = payload;
 
-    if (messageString === '') return;
+    if (messageString === '' || own_message == null)
+      return this.wss.in(client.id).emit(
+        WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
+        createErrorMessage('Message not defined', HttpStatus.BAD_REQUEST, {
+          message_id: messageID,
+        }),
+      );
 
     const JWT_Info = this.getJWTHeader(client);
 
@@ -52,23 +66,29 @@ export class WsConnGateway {
     );
 
     if (userInRoom == undefined)
-      throw new ForbiddenException("You're not in this room.");
+      return this.wss
+        .in(client.id)
+        .emit(
+          WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
+          createErrorMessage("You're not in this room", HttpStatus.FORBIDDEN),
+        );
+
+    //! create message in db
+    const newMessage = await this.wsConnService.CreateMessageToRoom(
+      { message_content: messageString, file_id: file },
+      roomID,
+      JWT_Info['id'],
+    );
 
     this.wss.to(roomID).emit(
       WS_ENDPOINTS_EVENTS.MESSAGE,
       JSON.stringify({
-        message: String(messageString),
+        new_message: newMessage,
         roomID,
+        own_message,
+        client_id: messageID,
       }),
     );
-
-    // client.broadcast.to(roomID).emit(
-    //   WS_ENDPOINTS_EVENTS.MESSAGE,
-    //   JSON.stringify({
-    //     message: String(messageString),
-    //     roomID,
-    //   }),
-    // );
   }
 
   @SubscribeMessage(WS_ACTIONS.JOIN)

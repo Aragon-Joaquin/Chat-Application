@@ -4,25 +4,25 @@ import { NoChatSelected } from './_components/NoChatSelected.component'
 import { useRoomContext } from './_hooks/consumeRoomContext'
 import { FooterRoom, HeaderRoom, MessagesRoom } from './_components/RoomLayout'
 
-/*
-! im thinking instead of using a dynamic segment, i preffer making a state pointing to which roomid render
-! if its too render-expensive, then i'll make a context only for this function cuz if i use the global room context
-! it would probably render the layout as well.
-*/
-
 export default function RoomPage() {
 	const {
-		selectedRoom: { selectedRoom }
+		selectedRoom: { selectedKeyRoom },
+		RoomCtx: { roomState }
 	} = useRoomContext()
 
-	if (selectedRoom == undefined) return <NoChatSelected />
+	//const mainRef = useRef<HTMLElement>(null)
+	//mainRef?.current?.scrollTo({ behavior: 'instant', left: 0, top: mainRef?.current.offsetHeight })
+
+	if (selectedKeyRoom == undefined) return <NoChatSelected />
+
+	const actualRoom = roomState.get(selectedKeyRoom!)!
 
 	return (
-		<main className="flex flex-col w-full h-full">
-			<HeaderRoom room={selectedRoom['roomInfo']} />
-			<main className="flex-1 bg-chatBackground bg-blend-lighten bg-white/90 bg-no-repeat bg-cover bg-center">
-				<div className="opacity-100 p-4 w-full overflow-y-auto">
-					{selectedRoom?.messages.map((messageType) => {
+		<main className="relative flex flex-col w-full h-full">
+			<HeaderRoom room={actualRoom['roomInfo']} />
+			<main className="h-full mb-16 overflow-y-auto bg-chatBackground bg-blend-lighten bg-white/90 bg-no-repeat bg-cover bg-center [scrollbar-width:thin]">
+				<div className="opacity-100 p-4 w-full h-full">
+					{actualRoom?.messages.map((messageType) => {
 						return <MessagesRoom key={messageType.message_id} messages={messageType} />
 					})}
 				</div>

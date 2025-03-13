@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ROLES } from '@chat-app/utils/globalConstants';
 import {
   messages,
@@ -64,5 +68,21 @@ export class RoomMessagesService {
     });
 
     return message;
+  }
+
+  async InsertMessageInRoom(
+    messageID: messages['message_id'],
+    userID: users['user_id'],
+    roomID: room['room_id'],
+  ) {
+    try {
+      return await this.roomMsgsRepo.insert({
+        which_room: roomID,
+        message_id: messageID,
+        sender_id: userID,
+      });
+    } catch {
+      throw new InternalServerErrorException('Something went wrong.');
+    }
   }
 }

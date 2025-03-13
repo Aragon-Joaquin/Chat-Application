@@ -1,13 +1,13 @@
 export type Messages = {
-	message_id: `${string}-${string}-${string}-${string}-${string}`
+	message_id: `${string}-${string}-${string}-${string}-${string}` | string
 	which_room: string
-	date_sended: Date
+	date_sended: Date | string
 	message_content: string | null
 	file_id: string | null
 
-	//user sender props
-	user_name: string
-	own_message: boolean
+	//could use sender_info: {user_name: string} | {own_message: boolean} but it requires me to modify all references of the state
+	user_name?: string
+	own_message?: boolean
 	profile_picture: string | null
 }
 

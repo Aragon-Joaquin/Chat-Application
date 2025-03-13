@@ -13,7 +13,8 @@ export const WS_ENDPOINTS_EVENTS = {
 	MESSAGE: 'sendMessage',
 	JOINED_ROOM: 'joinedRoom',
 	LEAVED_ROOM: 'leavedRoom',
-	DELETE_MESSAGE: 'deleteMessage'
+	DELETE_MESSAGE: 'deleteMessage',
+	ERROR_CHANNEL: 'errorChannel'
 } as const
 
 export const ROLES = {

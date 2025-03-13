@@ -1,4 +1,5 @@
 'use client'
+
 import { createContext, Dispatch, SetStateAction } from 'react'
 import { initialRoomState, PICK_PAYLOAD, roomState } from '../_reducers/types'
 import { Socket } from 'socket.io-client'
@@ -10,12 +11,14 @@ interface RoomCtx {
 	AddRoom: (payload: PICK_PAYLOAD<'ADD_ROOM'>) => void
 	AddMultipleRooms: (payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>) => void
 	AddMessage: (payload: PICK_PAYLOAD<'ADD_MESSAGE'>) => void
+	AddOwnMessage: (payload: PICK_PAYLOAD<'ADD_OWN_MESSAGE'>) => void
+	ModifyMessage: (payload: PICK_PAYLOAD<'MODIFY_MESSAGE'>) => void
 	LeaveRoom: (payload: PICK_PAYLOAD<'LEAVE_ROOM'>) => void
 	DeleteMessage: (payload: PICK_PAYLOAD<'DELETED_MESSAGE'>) => void
 }
 interface selectedRoom {
-	selectedRoom: roomState | undefined
-	setSelectedRoom: (stateID: roomState['roomInfo']['room_id']) => void
+	selectedKeyRoom: string | undefined
+	setSelectedKeyRoom: (stateID: roomState['roomInfo']['room_id']) => void
 }
 
 interface webSocket {

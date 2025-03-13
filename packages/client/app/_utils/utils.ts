@@ -23,7 +23,7 @@ export const ROUTES_HASHMAP = {
 	'/room': ROOM_REQUEST
 }
 
-export const transformToDate = (date: Date | undefined): string => {
+export const transformToDate = (date: Date | string | undefined): string => {
 	if (!date) return 'No date available'
 
 	const rawDate = new Date(date)

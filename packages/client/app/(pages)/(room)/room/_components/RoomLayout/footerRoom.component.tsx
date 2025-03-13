@@ -1,3 +1,5 @@
+'use client'
+
 import { ImageIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { FormEvent, useRef } from 'react'
 import { IconButton } from '@radix-ui/themes'
@@ -8,27 +10,30 @@ const MESSAGE_NAME = 'MESSAGE_SENDER' as const
 export function FooterRoom() {
 	const inputRef = useRef<HTMLInputElement>(null)
 	const {
-		webSocket: { handleWSActions }
-	} = useRoomContext()
-	const {
-		selectedRoom: { selectedRoom }
+		webSocket: { handleWSActions },
+		RoomCtx: { AddOwnMessage, roomState },
+		selectedRoom: { selectedKeyRoom }
 	} = useRoomContext()
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		const data = new FormData(e.currentTarget).get(MESSAGE_NAME)?.toString()
 
-		if (data == '' || selectedRoom == undefined) return
+		if (data == '' || selectedKeyRoom == undefined) return
 		if (inputRef.current != null) inputRef.current.value = ''
+
+		const actualRoom = roomState.get(selectedKeyRoom)!
+
+		AddOwnMessage({ roomInfo: actualRoom['roomInfo']['room_id'], ownMessage: { message_content: `${data}` } })
 
 		handleWSActions<'SEND'>({
 			action: 'sendMessage',
-			payload: { messageString: String.raw`${data}`, roomID: selectedRoom['roomInfo']['room_id'] }
+			payload: { messageString: String.raw`${data}`, roomID: actualRoom['roomInfo']['room_id'], own_message: true }
 		})
 	}
 
 	return (
-		<footer className="flex flex-row justify-center gap-x-2 bg-neutral-100 border-t-[1px] border-transparent/10 bottom-0 w-full h-16 items-center">
+		<footer className="absolute bottom-0 right-0 flex flex-row justify-center gap-x-2 bg-neutral-100 border-t-[1px] border-transparent/10 w-full h-16 items-center">
 			<IconButton
 				className="!shadow-none"
 				type="submit"
