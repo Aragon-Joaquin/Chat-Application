@@ -49,7 +49,7 @@ export class WsConnGateway {
     },
   ) {
     const { roomID, messageString, own_message, messageID, file } = payload;
-
+    console.log(payload);
     if (messageString === '' || own_message == null)
       return this.wss.in(client.id).emit(
         WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,

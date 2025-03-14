@@ -1,4 +1,5 @@
-import { initialRoomState, PAYLOAD_TYPES, PICK_PAYLOAD, roomState, STATE_ACTIONS, UUID_CLIENT_GENERATED } from './types'
+import { initialRoomState, PAYLOAD_TYPES, PICK_PAYLOAD, roomState, STATE_ACTIONS } from './types'
+import { CREATE_MESSAGE_OBJ_WITH_FALLBACK } from './utils'
 
 const roomStateActions = {
 	[STATE_ACTIONS.ADD_ROOM]: function ({
@@ -41,23 +42,22 @@ const roomStateActions = {
 		state: typeof initialRoomState
 		payload: PICK_PAYLOAD<'ADD_OWN_MESSAGE'>
 	}) {
-		const { roomInfo, ownMessage } = payload
+		const { roomInfo, ownMessage, client_id } = payload
 		const roomCode = state.get(roomInfo)
 
-		if (roomCode == undefined) return state
+		if (roomCode == undefined || client_id == undefined) return state
 		return new Map(state).set(roomInfo, {
 			roomInfo: roomCode['roomInfo'],
 			messages: [
 				...roomCode['messages'],
 				{
-					message_content: ownMessage.message_content,
-					date_sended: '',
-					message_id: `${crypto.randomUUID()}${UUID_CLIENT_GENERATED}`,
-					file_id: null,
-					messageStatus: 'loading',
-					own_message: true,
-					profile_picture: null,
-					which_room: roomInfo
+					...CREATE_MESSAGE_OBJ_WITH_FALLBACK({
+						...ownMessage,
+						message_id: client_id,
+						which_room: roomInfo,
+						own_message: true
+					}),
+					messageStatus: 'loading'
 				}
 			]
 		})
@@ -70,23 +70,21 @@ const roomStateActions = {
 		state: typeof initialRoomState
 		payload: PICK_PAYLOAD<'MODIFY_MESSAGE'>
 	}) {
-		const {
-			message: { message_id, messageStatus, own_message, message_content, date_sended },
-			roomInfo,
-			client_id
-		} = payload
+		const { message, roomInfo, client_id } = payload
 		const roomCode = state.get(roomInfo)
 
 		if (roomCode == undefined) return state
 
-		const findMessageByID = !roomCode['messages'].length
-			? undefined
-			: roomCode['messages'].findIndex((msgInfo) => {
-					if (own_message == true) return msgInfo.message_id === client_id
-					return msgInfo.message_id === message_id
-				})
+		const findMessageByID =
+			roomCode['messages'].length == 0
+				? undefined
+				: (roomCode['messages']?.findIndex((msgInfo) => {
+						console.log(msgInfo.message_id === client_id)
+						if (message.own_message == true) return msgInfo.message_id === client_id
+						return msgInfo.message_id === message.message_id
+					}) ?? undefined)
 
-		if (findMessageByID == undefined) return state
+		if (findMessageByID == undefined || findMessageByID < 0) return state
 
 		return new Map(state).set(roomInfo, {
 			roomInfo: roomCode['roomInfo'],
@@ -94,11 +92,10 @@ const roomStateActions = {
 				...roomCode['messages'].slice(0, findMessageByID),
 				{
 					...roomCode['messages'][findMessageByID],
-					...(message_content != null && { message_content }),
-					...(messageStatus != null && { messageStatus }),
-					...(date_sended != null && { date_sended })
+					...CREATE_MESSAGE_OBJ_WITH_FALLBACK(message),
+					...(message.messageStatus != null && { messageStatus: message.messageStatus })
 				},
-				...roomCode['messages'].slice(findMessageByID, roomCode['messages'].length)
+				...roomCode['messages'].slice(findMessageByID + 1, roomCode['messages'].length)
 			]
 		})
 	},
@@ -116,7 +113,7 @@ const roomStateActions = {
 
 		return new Map(state).set(roomInfo, {
 			roomInfo: roomCode['roomInfo'],
-			messages: [...roomCode['messages'], { ...newMessage }]
+			messages: [...roomCode['messages'], { ...CREATE_MESSAGE_OBJ_WITH_FALLBACK(newMessage), messageStatus: 'sended' }]
 		})
 	},
 

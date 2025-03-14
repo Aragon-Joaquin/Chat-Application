@@ -1,3 +1,4 @@
+import { CLIENT_UUID_TYPE } from '@/app/_utils/utils'
 import { WS_ACTIONS } from '@chat-app/utils/globalConstants'
 
 type SelectWSAction<T extends keyof typeof WS_ACTIONS> = (typeof WS_ACTIONS)[T]
@@ -8,7 +9,13 @@ export type wsPayloads =
 	| { action: SelectWSAction<'DELETE'>; payload: { messageID: string; roomID: string } }
 	| {
 			action: SelectWSAction<'SEND'>
-			payload: { messageString: string; roomID: string; own_message: boolean; file?: string }
+			payload: {
+				messageString: string
+				roomID: string
+				own_message: boolean
+				file?: string
+				client_id: CLIENT_UUID_TYPE
+			}
 	  }
 
 export type PICK_WS_PAYLOAD<T extends keyof typeof WS_ACTIONS> = Extract<

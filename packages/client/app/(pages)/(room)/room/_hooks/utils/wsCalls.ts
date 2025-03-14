@@ -18,6 +18,7 @@ export const HASHMAP_WSACTIONS = {
 		socket.emit(WS_ACTIONS.SEND, {
 			messageString: payload.messageString ?? '',
 			roomID: payload.roomID ?? '',
+			messageID: payload.client_id ?? '',
 			own_message: payload.own_message ?? false,
 			...(payload?.file != undefined && { file: payload.file })
 		})

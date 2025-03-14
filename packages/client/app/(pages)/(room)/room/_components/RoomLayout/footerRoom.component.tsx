@@ -4,6 +4,7 @@ import { ImageIcon, PaperPlaneIcon } from '@radix-ui/react-icons'
 import { FormEvent, useRef } from 'react'
 import { IconButton } from '@radix-ui/themes'
 import { useRoomContext } from '../../_hooks/consumeRoomContext'
+import { CREATE_CLIENT_UUID } from '@/app/_utils/utils'
 
 const MESSAGE_NAME = 'MESSAGE_SENDER' as const
 
@@ -23,12 +24,21 @@ export function FooterRoom() {
 		if (inputRef.current != null) inputRef.current.value = ''
 
 		const actualRoom = roomState.get(selectedKeyRoom)!
-
-		AddOwnMessage({ roomInfo: actualRoom['roomInfo']['room_id'], ownMessage: { message_content: `${data}` } })
+		const createdID = CREATE_CLIENT_UUID()
+		AddOwnMessage({
+			roomInfo: actualRoom['roomInfo']['room_id'],
+			ownMessage: { message_content: `${data}` },
+			client_id: createdID
+		})
 
 		handleWSActions<'SEND'>({
 			action: 'sendMessage',
-			payload: { messageString: String.raw`${data}`, roomID: actualRoom['roomInfo']['room_id'], own_message: true }
+			payload: {
+				messageString: String.raw`${data}`,
+				roomID: actualRoom['roomInfo']['room_id'],
+				own_message: true,
+				client_id: createdID
+			}
 		})
 	}
 

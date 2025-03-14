@@ -161,7 +161,7 @@ export class WsConnService {
         SELECT users.user_name, users.profile_picture, room_messages.which_room, room_messages.date_sended, 
         messages.message_content, messages.file_id, messages.message_id, case when room_messages.sender_id = ${userID}::integer then TRUE else FALSE end AS own_message
         FROM 
-          (SELECT ROW_NUMBER() OVER (PARTITION BY which_room ORDER BY date_sended desc),*
+          (SELECT ROW_NUMBER() OVER (PARTITION BY which_room ORDER BY date_sended DESC),*
           FROM room_messages) room_messages
 	      LEFT JOIN messages ON room_messages.message_id = messages.message_id
         LEFT JOIN users ON room_messages.sender_id = users.user_id 

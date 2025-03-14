@@ -1,6 +1,7 @@
 //! d.ts === files are declaration files that contain only type information.
 import { WS_PORT } from '@chat-app/utils/globalConstants'
 import { LOGIN_REQUEST, ROOM_REQUEST } from './bodyRequests'
+import { UUID_CLIENT_GENERATED } from '../(pages)/(room)/room/_reducers/types'
 
 export const GET_BACKEND_URL = 'http://localhost' as const
 
@@ -39,3 +40,7 @@ export const transformToDate = (date: Date | string | undefined): string => {
 
 	return rawDate?.length ? `${rawDate[0]} ${rawDate[1]}` : 'No date available'
 }
+
+export type CLIENT_UUID_TYPE = `${string}${typeof UUID_CLIENT_GENERATED}`
+
+export const CREATE_CLIENT_UUID = (): CLIENT_UUID_TYPE => `${crypto.randomUUID()}${UUID_CLIENT_GENERATED}`

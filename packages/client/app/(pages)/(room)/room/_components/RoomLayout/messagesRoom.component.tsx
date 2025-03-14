@@ -2,13 +2,26 @@ import { Heading, Text } from '@radix-ui/themes'
 import { ImageAndFallback } from '@app/_components/ImageAndFallback.component'
 import { transformToDate } from '@/app/_utils/utils'
 import { Messages } from '@/app/_utils/tableTypes'
+import { messageStatus } from '../../_reducers/types'
+import { ClockIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 
-export function MessagesRoom({ messages }: { messages: Messages }) {
-	const { profile_picture, user_name, message_content, own_message, file_id, message_id, which_room, date_sended } =
-		messages
+export function MessagesRoom({ messages }: { messages: Messages & messageStatus }) {
+	const {
+		profile_picture,
+		user_name,
+		message_content,
+		own_message,
+		file_id,
+		message_id,
+		which_room,
+		date_sended,
+		messageStatus
+	} = messages
 
 	return (
-		<span className={`flex flex-row gap-x-4 ${own_message && '!flex-row-reverse'}`}>
+		<span
+			className={`flex flex-row gap-x-4 ${own_message && '!flex-row-reverse'} ${messageStatus === 'loading' && 'bg-red-600/60 p-2 rounded-md'}`}
+		>
 			<div className="min-h-12 min-w-12 w-12 h-12">
 				<ImageAndFallback picture={profile_picture ?? ''} altName={user_name} description={`Image of ${user_name}`} />
 			</div>
@@ -30,6 +43,16 @@ export function MessagesRoom({ messages }: { messages: Messages }) {
 				<Text as="label" size="1" color="gray" className={`mt-1 flex justify-end ${own_message && '!justify-start'}`}>
 					{transformToDate(date_sended)}
 				</Text>
+				{messageStatus != undefined && (
+					<div
+						className={`${messageStatus === 'sended' && 'hidden'} absolute bottom-0 right-2 !-translate-y-1/2 hover:cursor-pointer`}
+						color={`${messageStatus === 'error' ? 'tomato' : 'indigo'}`}
+						title={`${messageStatus === 'error' ? "Message couldn't be send." : 'Loading...'}`}
+					>
+						{messageStatus === 'loading' && <ClockIcon color="blue" />}
+						{messageStatus === 'error' && <ExclamationTriangleIcon color="red" />}
+					</div>
+				)}
 			</span>
 		</span>
 	)

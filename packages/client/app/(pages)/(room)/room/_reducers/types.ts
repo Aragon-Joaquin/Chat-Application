@@ -1,4 +1,5 @@
 import { Messages, RoomInfo } from '@/app/_utils/tableTypes'
+import { CLIENT_UUID_TYPE } from '@/app/_utils/utils'
 
 // this is a ID just to identify it in the client, when it goes through the server the id will change
 export const UUID_CLIENT_GENERATED = '_client-side' as const
@@ -13,7 +14,7 @@ export const STATE_ACTIONS = {
 	DELETED_MESSAGE: 'DELETED_MESSAGE'
 }
 
-type messageStatus = { messageStatus?: 'sended' | 'loading' | 'error' }
+export type messageStatus = { messageStatus?: 'sended' | 'loading' | 'error' }
 
 export type roomState = {
 	roomInfo: RoomInfo
@@ -30,20 +31,21 @@ export type PAYLOAD_TYPES =
 	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<roomState> }
 	| {
 			type: TYPES_NAMES<'ADD_MESSAGE'>
-			payload: { roomInfo: roomState['roomInfo']['room_id']; newMessage: Messages }
+			payload: { roomInfo: roomState['roomInfo']['room_id']; newMessage: Partial<Messages> }
 	  }
 	| {
 			type: TYPES_NAMES<'ADD_OWN_MESSAGE'>
 			payload: {
 				roomInfo: roomState['roomInfo']['room_id']
 				ownMessage: Pick<Messages, 'message_content'> //& messageStatus
+				client_id: CLIENT_UUID_TYPE
 			}
 	  }
 	| {
 			type: TYPES_NAMES<'MODIFY_MESSAGE'>
 			payload: {
 				roomInfo: roomState['roomInfo']['room_id']
-				message: Partial<Messages & messageStatus>
+				message: Partial<Messages> & messageStatus
 				client_id?: string
 			}
 	  }
