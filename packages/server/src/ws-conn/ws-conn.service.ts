@@ -161,12 +161,12 @@ export class WsConnService {
         SELECT users.user_name, users.profile_picture, room_messages.which_room, room_messages.date_sended, 
         messages.message_content, messages.file_id, messages.message_id, case when room_messages.sender_id = ${userID}::integer then TRUE else FALSE end AS own_message
         FROM 
-          (SELECT ROW_NUMBER() OVER (PARTITION BY which_room ORDER BY date_sended DESC),*
+          (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
           FROM room_messages) room_messages
 	      LEFT JOIN messages ON room_messages.message_id = messages.message_id
         LEFT JOIN users ON room_messages.sender_id = users.user_id 
         WHERE room_messages.row_number <= ${MAX_MESSAGES_PER_REQ} AND room_messages.which_room 
-        IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)});`);
+        IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) ORDER BY date_sended ASC;`);
 
       const mergeResults = roomInfo.map((room: room) => {
         const messagesRoom =
