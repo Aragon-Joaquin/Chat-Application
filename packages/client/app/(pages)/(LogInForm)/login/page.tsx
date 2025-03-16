@@ -4,7 +4,6 @@ import { Heading, Text } from '@radix-ui/themes'
 import { FieldSVGComponent } from '../_components/Field.component'
 import { Control, Field, Root, Submit } from '@radix-ui/react-form'
 import { BottomText } from '../_components/BottomText.component'
-import { useCallServer } from '@/app/_hooks/useCallServer'
 import { FieldHeader } from '../_components/inputSection/FieldHeader.component'
 import { FormEvent, useEffect, useId } from 'react'
 import { useSubmitCredentials } from '../_hooks/submitCredentials'
@@ -14,8 +13,7 @@ const USER_FIELDNAME = 'username' as const
 const PASSWORD_FIELDNAME = 'password' as const
 
 export default function Login() {
-	const { isPending } = useCallServer()
-	const { submitCredentials, hasToken } = useSubmitCredentials()
+	const { submitCredentials, hasToken, isPending } = useSubmitCredentials()
 	const htmlID = useId()
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {

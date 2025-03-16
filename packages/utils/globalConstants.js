@@ -8,7 +8,8 @@ exports.WS_ACTIONS = {
     JOIN: 'joinRoom',
     JOIN_MULTIPLE: 'joinRooms',
     SEND: 'sendMessage',
-    DELETE: 'deleteMessage'
+    DELETE: 'deleteMessage',
+    CREATE: 'createRoom'
 };
 exports.WS_ENDPOINTS_EVENTS = {
     MESSAGE: 'sendMessage',

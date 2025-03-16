@@ -4,14 +4,13 @@ import { Button, VisuallyHidden } from '@radix-ui/themes'
 import { memo, ReactNode } from 'react'
 
 interface DialogProps {
-	iconComponent: ReactNode
+	iconComponent?: ReactNode
 	iconName: string
 	title?: string
 	description?: string
 	mainComponent: ReactNode
 }
 
-//! i gotta fix the VisuallyHidden thingy without making to much mess, this is a patch just to avoid the screenReader error
 function DialogComponent({ iconComponent, iconName, title, description, mainComponent }: DialogProps) {
 	return (
 		<Root>

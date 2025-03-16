@@ -1,8 +1,10 @@
 import { Root, Field, Label, Control, Message, Submit } from '@radix-ui/react-form'
-import { FormEvent, HTMLInputTypeAttribute, useId } from 'react'
-import { useCallServer } from '../_hooks/useCallServer'
-import { callServer } from '../_utils/callServer'
+import { FormEvent, HTMLInputTypeAttribute, useId, useState } from 'react'
 import { getAllFormsData, getFieldsFromInputs } from '../_utils/FormData'
+
+import { useRoomContext } from '../(pages)/(room)/room/_hooks/consumeRoomContext'
+import { WS_ACTIONS } from '@chat-app/utils/globalConstants'
+import { wsPayloads } from '../(pages)/(room)/room/_hooks/utils/types'
 
 interface SimpleFormProps {
 	fieldName: string
@@ -11,24 +13,33 @@ interface SimpleFormProps {
 	requiredField?: boolean
 }
 
-export function SimpleForm({
-	arrayOfFields,
-	httpReq
-}: {
-	arrayOfFields: SimpleFormProps[]
-	httpReq: Parameters<typeof callServer>[0]
-}) {
-	const { makeHTTPRequest, isPending } = useCallServer()
+type makeCallProps = keyof typeof WS_ACTIONS
+
+export function SimpleForm({ arrayOfFields, makeCall }: { arrayOfFields: SimpleFormProps[]; makeCall: makeCallProps }) {
+	const [isPending, setIsPending] = useState<boolean>(false)
+	const {
+		webSocket: { handleWSActions }
+	} = useRoomContext()
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		setIsPending(true)
 		e.preventDefault()
-		const formData = getAllFormsData({
-			fields: getFieldsFromInputs(e),
-			currentTargets: e?.currentTarget,
-			acceptNulls: true
-		})
+		try {
+			const formData = getAllFormsData({
+				fields: getFieldsFromInputs(e),
+				currentTargets: e?.currentTarget,
+				acceptNulls: true
+			})
 
-		makeHTTPRequest({ ...httpReq, bodyFields: formData ?? [] })
+			console.log({ formData, handleWSActions })
+
+			//@ts-expect-error: i wont be fixing the dynamic types of this
+			//handleWSActions<>({ action: makeCall, payload: { ...formData } })
+		} finally {
+			setIsPending(false)
+		}
+
+		//makeHTTPRequest({ ...makeCall.httpReq, bodyFields: formData ?? [] })
 	}
 
 	return (

@@ -10,6 +10,7 @@ import { JWT_DECODED_INFO } from 'src/utils/types';
 import { DataSource, InsertResult } from 'typeorm';
 import { MAX_MESSAGES_PER_REQ } from 'src/utils/constants';
 import { WsException } from '@nestjs/websockets';
+import { RoomDto } from 'src/room/dto/room.dto';
 
 @Injectable()
 export class WsConnService {
@@ -76,6 +77,21 @@ export class WsConnService {
     roomID: room['room_id'],
   ) {
     return await this.usersRoomsService.GetUsersOneRoom(userID, roomID);
+  }
+
+  async CreateAndJoinRoom(roomBody: RoomDto, user: JWT_DECODED_INFO) {
+    if (roomBody['room_name'] == undefined) return null;
+
+    const roomCreated: Array<{ room_id: string }> = (
+      await this.roomService.CreateRoom(roomBody)
+    ).raw;
+    if (roomCreated == undefined) return null;
+
+    await this.usersRoomsService.JoinRoomONCreation(
+      roomCreated[0]?.room_id,
+      user,
+    );
+    return roomCreated[0].room_id;
   }
 
   //! messages methods ⬇

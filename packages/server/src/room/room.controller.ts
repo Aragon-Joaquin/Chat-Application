@@ -2,49 +2,21 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
-  Post,
   Request,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { RoomService } from './room.service';
-import { RoomDto } from './dto/room.dto';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RoomHistoryDto } from './dto/roomHistory.dto';
 import { WsConnService } from 'src/ws-conn/ws-conn.service';
 import { Request as RequestType } from 'express';
-import { UsersRoomsService } from 'src/users-rooms/users-rooms.service';
+
 @Controller('room')
 @UseGuards(JWTAuthGuard)
 export class RoomController {
-  constructor(
-    private roomService: RoomService,
-    private usersRoomsService: UsersRoomsService,
-    private wsConn: WsConnService,
-  ) {}
+  constructor(private wsConn: WsConnService) {}
 
-  @Post()
-  @UseGuards(JWTAuthGuard)
-  async createRoom(
-    @Body(new ValidationPipe()) body: RoomDto,
-    @Request() req: RequestType,
-  ) {
-    const roomCreated = (await this.roomService.CreateRoom(body)).raw;
-    //! i think it's impossible to reach this scope but if anything happens, this error would save my life
-    if (!roomCreated)
-      throw new HttpException(
-        'Couldnt join room',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-
-    await this.usersRoomsService.JoinRoomONCreation(
-      roomCreated[0]?.room_id,
-      req?.user,
-    );
-    return roomCreated;
-  }
+  // createRoom method is useless here since the user needs to join the room in the socket as well
 
   @Get('roomhistory')
   async getRoomHistory(

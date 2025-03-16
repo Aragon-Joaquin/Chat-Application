@@ -49,7 +49,7 @@ export class WsConnGateway {
     },
   ) {
     const { roomID, messageString, own_message, messageID, file } = payload;
-    console.log(payload);
+
     if (messageString === '' || own_message == null)
       return this.wss.in(client.id).emit(
         WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
@@ -91,10 +91,38 @@ export class WsConnGateway {
     );
   }
 
+  @SubscribeMessage(WS_ACTIONS.CREATE)
+  async handleCreateRoom(
+    client: Socket,
+    payload: { roomName: string; roomPassword?: string },
+  ) {
+    const { roomName, roomPassword } = payload;
+
+    const JWT_Info = this.getJWTHeader(client);
+
+    const roomAndJoin = await this.wsConnService.CreateAndJoinRoom(
+      { room_name: roomName, room_password: roomPassword },
+      JWT_Info,
+    );
+
+    if (roomAndJoin == undefined)
+      return this.wss
+        .in(client.id)
+        .emit(
+          WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
+          createErrorMessage(
+            'RoomName cannot be empty',
+            HttpStatus.BAD_REQUEST,
+          ),
+        );
+
+    await client.join(roomAndJoin);
+  }
+
   @SubscribeMessage(WS_ACTIONS.JOIN)
   async handleJoinRoom(
     client: Socket,
-    payload: { roomID: string; roomPassword: string },
+    payload: { roomID: string; roomPassword?: string },
   ) {
     const { roomID, roomPassword } = payload;
     const JWT_Info = this.getJWTHeader(client);

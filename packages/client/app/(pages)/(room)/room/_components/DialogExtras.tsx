@@ -24,10 +24,10 @@ export function SearchRooms() {
 				/>
 
 				<SimpleForm
-					httpReq={{ rootRoute: '/room', subroute: '/', HTTPmethod: 'GET', passJWT: true }}
+					makeCall="JOIN"
 					arrayOfFields={[
-						{ fieldName: 'room_name', labelName: 'Room Code', inputType: 'text', requiredField: true },
-						{ fieldName: 'room_password', labelName: 'Password', inputType: 'password' }
+						{ fieldName: 'roomID', labelName: 'Room Code/ID', inputType: 'text', requiredField: true },
+						{ fieldName: 'roomPassword', labelName: 'Password', inputType: 'password' }
 					]}
 				/>
 			</Content>
@@ -35,10 +35,10 @@ export function SearchRooms() {
 				<ContentSimplifier title="Create Room" description="Create a room to start chatting! (password is optional)" />
 
 				<SimpleForm
-					httpReq={{ rootRoute: '/room', subroute: '/', HTTPmethod: 'POST', passJWT: true }}
+					makeCall="CREATE"
 					arrayOfFields={[
-						{ fieldName: 'room_name', labelName: 'Room Name', inputType: 'text', requiredField: true },
-						{ fieldName: 'room_password', labelName: 'Room Password (optional)', inputType: 'password' }
+						{ fieldName: 'roomName', labelName: 'Room Name', inputType: 'text', requiredField: true },
+						{ fieldName: 'roomPassword', labelName: 'Room Password (optional)', inputType: 'password' }
 					]}
 				/>
 			</Content>

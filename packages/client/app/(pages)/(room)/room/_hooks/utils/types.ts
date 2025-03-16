@@ -5,6 +5,7 @@ type SelectWSAction<T extends keyof typeof WS_ACTIONS> = (typeof WS_ACTIONS)[T]
 
 export type wsPayloads =
 	| { action: SelectWSAction<'JOIN'>; payload: { roomID: string; roomPassword: string | '' } }
+	| { action: SelectWSAction<'CREATE'>; payload: { roomName: string; roomPassword?: string } }
 	| { action: SelectWSAction<'LEAVE'>; payload: { roomID: string } }
 	| { action: SelectWSAction<'DELETE'>; payload: { messageID: string; roomID: string } }
 	| {

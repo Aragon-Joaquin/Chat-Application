@@ -1,19 +1,20 @@
 'use client'
 
 import './room.css'
-import { MagnifyingGlassIcon, PlusIcon } from '@radix-ui/react-icons'
+import { PlusIcon } from '@radix-ui/react-icons'
 import { Heading } from '@radix-ui/themes'
 import Link from 'next/link'
 import { ReactNode, useEffect } from 'react'
 import { NoChatsAvailable } from './_components/noChatsAvailable.component'
 import { ChatBubble } from './_components/chatBubble.component'
-import { Root, Slot } from '@radix-ui/themes/components/text-field'
+
 import { ROOM_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
 import { CustomDialog } from '@/app/_components/customDialog'
 import { SearchRooms } from './_components/DialogExtras'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { useRoomContext } from './_hooks/consumeRoomContext'
 import { createSocket } from './_hooks/utils/wsCalls'
+import { SearchBox } from './_components/SearchBox.component'
 
 export default function RoomLayout({ children }: { children: ReactNode }) {
 	const { isPending, makeHTTPRequest, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
@@ -49,8 +50,8 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 	if (isPending) return <>Loading...</>
 
 	return (
-		<main className="flex flex-row h-screen w-screen overflow-hidden">
-			<aside className="asideLayout w-1/3 shadow-lg border-r-[1px] border-r-transparent/10 max-w-[400px]">
+		<main className="flex flex-row h-screen w-screen ">
+			<aside className="flex flex-col asideLayout w-1/3 shadow-lg border-r-[1px] border-r-transparent/10 overflow-y-hidden">
 				<nav className="py-3 flex flex-col items-center bg-slate-200">
 					<Heading className="!font-poppins" size="4" as="h3" weight="bold">
 						ChatApp by{' '}
@@ -71,14 +72,10 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 				</Heading>
 
 				<section className="bg-slate-200 p-2">
-					<Root size="3" placeholder="Search chats." variant="surface" radius="large">
-						<Slot>
-							<MagnifyingGlassIcon />
-						</Slot>
-					</Root>
+					<SearchBox placeholder="Search chats." />
 				</section>
 
-				<main className="borderLayout overflow-y-auto h-screen">
+				<main className="borderLayout overflow-y-auto !border-b-0 h-full">
 					{roomState.size == 0 ? (
 						<NoChatsAvailable />
 					) : (

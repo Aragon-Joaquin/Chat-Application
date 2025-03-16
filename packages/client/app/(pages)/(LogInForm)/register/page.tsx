@@ -1,27 +1,31 @@
 'use client'
 
 import { Heading, Text } from '@radix-ui/themes'
-import { FormEvent, useId } from 'react'
+import { FormEvent, useEffect, useId } from 'react'
 import { useSubmitCredentials } from '../_hooks/submitCredentials'
 import { Control, Field, Root, Submit } from '@radix-ui/react-form'
 import { BottomText } from '../_components/BottomText.component'
-import { useCallServer } from '@/app/_hooks/useCallServer'
+
 import { FieldHeader, FieldHeaderCompare } from '../_components/inputSection/FieldHeader.component'
 import { useFieldContext } from '../_hooks/useFieldContext'
 import { SVGEye } from '../_components/Field.component'
+import { redirect } from 'next/navigation'
 
 const USER_FIELDNAME = 'userName' as const
 const PASSWORD_FIELDNAME = 'userPassword' as const
 const PASSWORD_FIELDNAME_CLARIFICATION = 'passwordConfirm' as const
 
 export default function RegisterPage() {
-	const { submitCredentials } = useSubmitCredentials()
-	const { isPending } = useCallServer()
+	const { submitCredentials, isPending, responseData } = useSubmitCredentials()
 	const { passwordField, pwdCompare, view, resetComparingState } = useFieldContext()
 
 	const userName = useId()
 	const passwordID = useId()
 	const pwdCompId = useId()
+
+	useEffect(() => {
+		if (responseData != undefined) redirect('login')
+	}, [responseData])
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
@@ -85,7 +89,7 @@ export default function RegisterPage() {
 				</Field>
 			</div>
 
-			<Submit type="submit" className={`submitButton ${isPending && 'bg-zinc-900/80'}`} disabled={isPending}>
+			<Submit type="submit" className={`submitButton ${isPending && '!bg-zinc-900/70'}`} disabled={isPending}>
 				{!isPending ? 'Login' : 'Loading... (making a animation later)'}
 			</Submit>
 			<div className="footerForm">
