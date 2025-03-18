@@ -1,4 +1,9 @@
-import { ForbiddenException, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -17,6 +22,7 @@ import { messages } from 'src/entities';
 import { WsConnService } from './ws-conn.service';
 import { createErrorMessage } from './utils';
 import { UUID_TYPE } from 'src/utils/types';
+import { error } from 'console';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -34,9 +40,26 @@ export class WsConnGateway {
     private wsConnService: WsConnService,
   ) {}
 
+  //! utils ⬇
+  returnCustomError = (
+    clientID: Socket['id'],
+    errorMessage: Parameters<typeof createErrorMessage>,
+  ) =>
+    this.wss
+      .in(clientID)
+      .emit(
+        WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
+        createErrorMessage(
+          errorMessage[0] ?? 'Unknown',
+          errorMessage[1] ?? HttpStatus.NOT_IMPLEMENTED,
+          errorMessage[2],
+        ),
+      );
+
   getJWTHeader = (client: Socket) =>
     this.authService.DecodeJWT(client?.handshake?.auth['Authorization']);
 
+  //! endpoints ⬇
   @SubscribeMessage(WS_ACTIONS.SEND)
   async handleMessage(
     client: Socket,
@@ -51,12 +74,11 @@ export class WsConnGateway {
     const { roomID, messageString, own_message, messageID, file } = payload;
 
     if (messageString === '' || own_message == null)
-      return this.wss.in(client.id).emit(
-        WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
-        createErrorMessage('Message not defined', HttpStatus.BAD_REQUEST, {
-          message_id: messageID,
-        }),
-      );
+      return this.returnCustomError(client.id, [
+        'Message not defined',
+        HttpStatus.BAD_REQUEST,
+        { message_id: messageID },
+      ]);
 
     const JWT_Info = this.getJWTHeader(client);
 
@@ -66,12 +88,10 @@ export class WsConnGateway {
     );
 
     if (userInRoom == undefined)
-      return this.wss
-        .in(client.id)
-        .emit(
-          WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
-          createErrorMessage("You're not in this room", HttpStatus.FORBIDDEN),
-        );
+      return this.returnCustomError(client.id, [
+        "You're not in this room",
+        HttpStatus.FORBIDDEN,
+      ]);
 
     //! create message in db
     const newMessage = await this.wsConnService.CreateMessageToRoom(
@@ -105,18 +125,16 @@ export class WsConnGateway {
       JWT_Info,
     );
 
-    if (roomAndJoin == undefined)
-      return this.wss
-        .in(client.id)
-        .emit(
-          WS_ENDPOINTS_EVENTS.ERROR_CHANNEL,
-          createErrorMessage(
-            'RoomName cannot be empty',
-            HttpStatus.BAD_REQUEST,
-          ),
-        );
+    if (roomAndJoin == undefined || roomAndJoin.room_id == undefined)
+      return this.returnCustomError(client.id, [
+        'RoomName cannot be empty',
+        HttpStatus.BAD_REQUEST,
+      ]);
 
-    await client.join(roomAndJoin);
+    await client.join(roomAndJoin.room_id);
+    this.wss
+      .to(client.id)
+      .emit(WS_ENDPOINTS_EVENTS.CREATE_ROOM, JSON.stringify(roomAndJoin));
   }
 
   @SubscribeMessage(WS_ACTIONS.JOIN)
@@ -127,16 +145,34 @@ export class WsConnGateway {
     const { roomID, roomPassword } = payload;
     const JWT_Info = this.getJWTHeader(client);
 
-    // this cannot be Promised.all() since it need to verify first if the credentials are okay
-    await this.wsConnService.JoinToNewRoom(roomID, JWT_Info, roomPassword);
-    await client.join(roomID);
-
-    this.wss
-      .in(roomID)
-      .emit(
-        WS_ENDPOINTS_EVENTS.JOINED_ROOM,
-        `${JWT_Info.userName} joined the room.`,
+    try {
+      const roomExists = await this.wsConnService.JoinToNewRoom(
+        roomID,
+        JWT_Info,
+        roomPassword,
       );
+
+      if (roomExists == undefined)
+        return this.returnCustomError(client.id, [
+          'Room does not exists with that ID',
+          HttpStatus.BAD_REQUEST,
+        ]);
+
+      await client.join(roomID);
+
+      this.wss
+        .in(roomID)
+        .emit(
+          WS_ENDPOINTS_EVENTS.JOINED_ROOM,
+          `${JWT_Info.userName} joined the room.`,
+        );
+    } catch (error) {
+      if (error instanceof BadRequestException)
+        return this.returnCustomError(client.id, [
+          error.message ?? 'Unknown error.',
+          HttpStatus.BAD_REQUEST,
+        ]);
+    }
   }
 
   @SubscribeMessage(WS_ACTIONS.JOIN_MULTIPLE)
@@ -144,6 +180,7 @@ export class WsConnGateway {
     const JWT_Info = this.getJWTHeader(client);
     const rooms = await this.wsConnService.GetRoomsOfUser(JWT_Info.id);
 
+    if (!rooms.length) return;
     await client.join([...rooms.map((room) => room.room_id)]);
   }
 

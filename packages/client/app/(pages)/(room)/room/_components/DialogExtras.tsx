@@ -24,7 +24,7 @@ export function SearchRooms() {
 				/>
 
 				<SimpleForm
-					makeCall="JOIN"
+					makeCall="joinRoom"
 					arrayOfFields={[
 						{ fieldName: 'roomID', labelName: 'Room Code/ID', inputType: 'text', requiredField: true },
 						{ fieldName: 'roomPassword', labelName: 'Password', inputType: 'password' }
@@ -35,7 +35,7 @@ export function SearchRooms() {
 				<ContentSimplifier title="Create Room" description="Create a room to start chatting! (password is optional)" />
 
 				<SimpleForm
-					makeCall="CREATE"
+					makeCall="createRoom"
 					arrayOfFields={[
 						{ fieldName: 'roomName', labelName: 'Room Name', inputType: 'text', requiredField: true },
 						{ fieldName: 'roomPassword', labelName: 'Room Password (optional)', inputType: 'password' }

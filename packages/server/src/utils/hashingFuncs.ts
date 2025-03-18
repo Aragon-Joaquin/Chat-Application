@@ -14,12 +14,13 @@ export const hashPassword = async (string: string) => {
  * @returns TRUE if it's the same
  */
 export const comparePassword = async ({
-  userPassword,
-  originalPassword,
+  userPassword = '',
+  originalPassword = '',
 }: {
   userPassword: string;
   originalPassword: string;
 }) => {
+  if (userPassword == '' || originalPassword == '') return false;
   return await argon2.verify(originalPassword, userPassword, {
     secret: Buffer.from(HASH_SECRET),
   });

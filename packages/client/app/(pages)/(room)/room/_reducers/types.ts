@@ -49,7 +49,7 @@ export type PAYLOAD_TYPES =
 				client_id?: string
 			}
 	  }
-	| { type: TYPES_NAMES<'LEAVE_ROOM'>; payload: roomState['roomInfo'] }
+	| { type: TYPES_NAMES<'LEAVE_ROOM'>; payload: { room_id: roomState['roomInfo']['room_id'] } }
 	| {
 			type: TYPES_NAMES<'DELETED_MESSAGE'>
 			//! i'll omit 'userName' if i need it in a future

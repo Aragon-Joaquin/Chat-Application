@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { memo } from 'react'
 interface ImageAndFallback {
 	picture: string | ''
 	altName?: string
@@ -6,7 +7,7 @@ interface ImageAndFallback {
 	className?: string
 }
 
-export function ImageAndFallback({ picture, altName, description, className }: ImageAndFallback) {
+function ImageAndFallbackNoMemo({ picture, altName, description, className }: ImageAndFallback) {
 	if (picture == undefined || picture == '')
 		return <div className="w-full h-full rounded-full border-2 bg-neutral-300  border-neutral-400" />
 
@@ -19,3 +20,5 @@ export function ImageAndFallback({ picture, altName, description, className }: I
 		/>
 	)
 }
+
+export const ImageAndFallback = memo(ImageAndFallbackNoMemo)

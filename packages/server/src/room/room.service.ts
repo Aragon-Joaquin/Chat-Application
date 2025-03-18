@@ -27,21 +27,35 @@ export class RoomService {
     const { room_name, room_password } = body;
     const pwd = room_password ? await hashPassword(room_password) : '';
     try {
-      return await this.roomRepository.insert({
-        room_name,
-        room_password: pwd,
-      });
+      return await this.roomRepository
+        .createQueryBuilder()
+        .insert()
+        .into(room)
+        .values({
+          room_name,
+          room_password: pwd,
+        })
+        .returning('room_id,room_name,room_description,created_at,room_picture')
+        .execute();
     } catch (error) {
       if ('constraint' in error && error.constraint === 'room_pkey') {
         const getCount: Array<{ actual_count: string }> =
           await this.roomRepository.query(
             `SELECT lpad(nextval('ROOMID_ONERROR')::varchar, 6, '0') AS actual_count;`,
           );
-        return await this.roomRepository.insert({
-          room_id: getCount.at(0).actual_count,
-          room_name,
-          room_password: pwd,
-        });
+        return await this.roomRepository
+          .createQueryBuilder()
+          .insert()
+          .into(room)
+          .values({
+            room_id: getCount.at(0).actual_count,
+            room_name,
+            room_password: pwd,
+          })
+          .returning(
+            'room_id,room_name,room_description,created_at,room_picture',
+          )
+          .execute();
       }
       throw new HttpException(
         'Something went wrong while creating the room.',

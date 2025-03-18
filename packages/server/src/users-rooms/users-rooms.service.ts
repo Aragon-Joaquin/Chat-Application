@@ -36,14 +36,31 @@ export class UsersRoomsService {
   async VerifyAndJoinRoom(
     room: room,
     user: JWT_DECODED_INFO,
-    password?: string,
+    password: string,
   ) {
+    const isUserInRoom = this.usersRoomsService.findOne({
+      where: {
+        user_id: user.id,
+        room_id: room.room_id,
+      },
+    });
+
+    if (isUserInRoom)
+      throw new BadRequestException('You are already in this room!');
+
+    if (room.room_password == '' || room.room_password == undefined) {
+      return await this.usersRoomsService.insert({
+        room_id: room.room_id,
+        user_id: user.id,
+        role_id: { role_name: typesOfRoles.USER },
+      });
+    }
+
     if (
       !comparePassword({
         userPassword: password,
         originalPassword: room.room_password,
-      }) &&
-      room.room_password != ''
+      })
     )
       throw new BadRequestException("Passwords don't match.");
 

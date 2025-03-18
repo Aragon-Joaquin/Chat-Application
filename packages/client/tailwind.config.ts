@@ -23,6 +23,15 @@ export default {
 			},
 			backgroundImage: {
 				chatBackground: getImage('chat_bg', '.png')
+			},
+			keyframes: {
+				wiggle_keyframes: {
+					'0%': { transform: 'translateY(-10%);' },
+					'100%': { transform: 'translateY(10%);' }
+				}
+			},
+			animation: {
+				wiggle: 'wiggle_keyframes 1s ease-in-out alternate infinite'
 			}
 		}
 	},

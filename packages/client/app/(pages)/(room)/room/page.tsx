@@ -13,12 +13,10 @@ export default function RoomPage() {
 
 	const mainRef = useRef<HTMLElement>(null)
 
-	if (selectedKeyRoom == undefined) return <NoChatSelected />
+	const actualRoom = roomState.get(selectedKeyRoom ?? '')
+	if (actualRoom == undefined) return <NoChatSelected />
 
-	const actualRoom = roomState.get(selectedKeyRoom)!
-	console.log(actualRoom)
-
-	// i have no idea how to make it to scroll down
+	// i have no idea how to make it to scroll down other than this
 	setTimeout(() => mainRef?.current?.scrollTo({ behavior: 'instant', left: 0, top: mainRef?.current.scrollHeight }), 0)
 
 	return (

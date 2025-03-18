@@ -15,6 +15,7 @@ export const WS_ENDPOINTS_EVENTS = {
 	JOINED_ROOM: 'joinedRoom',
 	LEAVED_ROOM: 'leavedRoom',
 	DELETE_MESSAGE: 'deleteMessage',
+	CREATE_ROOM: 'createdRoom',
 	ERROR_CHANNEL: 'errorChannel'
 } as const
 

@@ -9,7 +9,7 @@ const roomStateActions = {
 		state: typeof initialRoomState
 		payload: PICK_PAYLOAD<'ADD_ROOM'>
 	}) {
-		if (state.get(payload['room_id']) == undefined) return state
+		if (state.get(payload['room_id']) != undefined) return state
 		return new Map(state).set(payload['room_id'], { roomInfo: payload, messages: [] })
 	},
 

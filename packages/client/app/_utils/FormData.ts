@@ -35,3 +35,13 @@ export function getFieldsFromInputs(values: FormEvent<HTMLFormElement>) {
 		})
 		.filter((value) => value)
 }
+
+export function FDResultsToObject(formData: string[], fields: string[]) {
+	const payloadObject: Record<string, string | number> = {}
+
+	formData.forEach((valueFromField, idx) => {
+		return Object.assign(payloadObject, { [fields[idx]]: valueFromField ?? '' })
+	})
+
+	return payloadObject
+}

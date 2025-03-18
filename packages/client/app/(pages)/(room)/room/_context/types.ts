@@ -1,11 +1,6 @@
+import { BadRequestType } from '@/app/_errors'
 import { Messages } from '@/app/_utils/tableTypes'
-import { WS_ENDPOINTS_EVENTS } from '@chat-app/utils/globalConstants'
-
-type KEYS_ENDPOINTS = {
-	[key in keyof typeof WS_ENDPOINTS_EVENTS]: object
-}
-
-export interface WS_ENDPOINTS_TYPES extends KEYS_ENDPOINTS {
+export interface WS_ENDPOINTS_TYPES {
 	sendMessage: {
 		new_message: {
 			message_content: Messages['message_content']
@@ -16,5 +11,16 @@ export interface WS_ENDPOINTS_TYPES extends KEYS_ENDPOINTS {
 		roomID: string
 		own_message: boolean
 		client_id: string
+	}
+
+	//! error_content is just additional non-UI information to handle in client
+	errorChannel: { error_name: string; error_code: BadRequestType; error_content?: Record<string, unknown> }
+
+	createdRoom: {
+		room_id: string
+		room_name: string
+		room_description: string | null
+		created_at: Date
+		room_picture: string | null
 	}
 }

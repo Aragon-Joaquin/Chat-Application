@@ -3,16 +3,23 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { roomState } from '../_reducers/types'
 import { useWebsocket } from '../_hooks/useWebsocket'
-import { WS_ACTIONS, WS_ENDPOINTS_EVENTS } from '@chat-app/utils/globalConstants'
 import { useRoomReducer } from './hooks/dispatchReducer.hook'
 import { RoomContext } from './context'
+import { WS_ACTIONS, WS_ENDPOINTS_EVENTS } from '@chat-app/utils/globalConstants'
 import { WS_ENDPOINTS_TYPES } from './types'
+import { BadRequest } from '@/app/_errors'
+import { useConsumeContext } from '@/app/_hooks/consumeContext'
+import { AnnouncerNav } from '@/app/_components/AnnouncerNav'
 
 export function GetRoomContext({ children }: { children: ReactNode }) {
 	const { roomState, AddRoom, AddMultipleRooms, AddMessage, AddOwnMessage, ModifyMessage, LeaveRoom, DeleteMessage } =
 		useRoomReducer()
 	const { wsSocket, setWsSocket, handleWSActions } = useWebsocket()
 	const [selectedKeyRoom, setSelectedKeyRoom] = useState<string>()
+
+	const {
+		ErrorContext: { setUIError }
+	} = useConsumeContext()
 
 	//! set selectedRoom state
 	const handleSetState = useCallback(
@@ -32,7 +39,6 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 
 		function handlerMessage(data: string) {
 			const { new_message, own_message, roomID, client_id }: WS_ENDPOINTS_TYPES['sendMessage'] = JSON.parse(data)
-			console.log(JSON.parse(data))
 
 			if (own_message == true)
 				return ModifyMessage({
@@ -51,17 +57,27 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 			})
 		}
 		function handlerErrors(data: string) {
-			const { error_name, error_code, error_content } = JSON.parse(data)
-			console.log(error_name, error_code, error_content)
+			const { error_name, error_code }: WS_ENDPOINTS_TYPES['errorChannel'] = JSON.parse(data)
+			setUIError(new BadRequest(error_name, error_code))
+		}
+
+		function handlerJoin(data: string) {
+			const { room_description, room_id, room_name, created_at, room_picture }: WS_ENDPOINTS_TYPES['createdRoom'] =
+				JSON.parse(data)
+
+			AddRoom({ room_description, room_id, room_name, room_picture, created_at })
 		}
 
 		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
 		wsSocket.on(WS_ENDPOINTS_EVENTS.ERROR_CHANNEL, handlerErrors)
+		wsSocket.on(WS_ENDPOINTS_EVENTS.CREATE_ROOM, handlerJoin)
+		wsSocket.on(WS_ENDPOINTS_EVENTS.JOINED_ROOM, handlerJoin)
+		wsSocket.on('disconnect', () => {
+			setUIError(new Error('WebSocket has been disconnected. Please reload the page again. '))
+		})
 
 		return () => {
 			wsSocket?.disconnect()
-			wsSocket?.off(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
-			wsSocket?.on(WS_ENDPOINTS_EVENTS.ERROR_CHANNEL, handlerErrors)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [wsSocket])
@@ -91,6 +107,13 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 			}}
 		>
 			{children}
+
+			{wsSocket?.disconnected === true && (
+				<AnnouncerNav
+					color="Error"
+					titleName="WebSocket has been disconnected. Please reload the page or you won't be able to chat until so. "
+				/>
+			)}
 		</RoomContext.Provider>
 	)
 }

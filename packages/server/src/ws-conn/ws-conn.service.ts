@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
 import { messages, room, users, users_in_room } from 'src/entities';
@@ -47,11 +47,15 @@ export class WsConnService {
       where: { room_id: id },
     });
 
-    return await this.usersRoomsService.VerifyAndJoinRoom(
+    if (!roomExisting) return null;
+
+    await this.usersRoomsService.VerifyAndJoinRoom(
       roomExisting,
       userInfo,
       password,
     );
+
+    return roomExisting;
   }
 
   async LeaveRoom(user: JWT_DECODED_INFO['id'], roomID: string) {
@@ -82,16 +86,21 @@ export class WsConnService {
   async CreateAndJoinRoom(roomBody: RoomDto, user: JWT_DECODED_INFO) {
     if (roomBody['room_name'] == undefined) return null;
 
-    const roomCreated: Array<{ room_id: string }> = (
+    const roomCreated: Omit<room, 'room_password'> = (
       await this.roomService.CreateRoom(roomBody)
-    ).raw;
+    ).raw[0];
+
     if (roomCreated == undefined) return null;
 
-    await this.usersRoomsService.JoinRoomONCreation(
-      roomCreated[0]?.room_id,
-      user,
-    );
-    return roomCreated[0].room_id;
+    try {
+      await this.usersRoomsService.JoinRoomONCreation(
+        roomCreated.room_id,
+        user,
+      );
+      return roomCreated;
+    } catch {
+      return null;
+    }
   }
 
   //! messages methods ⬇

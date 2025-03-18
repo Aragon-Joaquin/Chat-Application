@@ -4,7 +4,7 @@ import './room.css'
 import { PlusIcon } from '@radix-ui/react-icons'
 import { Heading } from '@radix-ui/themes'
 import Link from 'next/link'
-import { ReactNode, useEffect } from 'react'
+import { memo, ReactNode, useEffect } from 'react'
 import { NoChatsAvailable } from './_components/noChatsAvailable.component'
 import { ChatBubble } from './_components/chatBubble.component'
 
@@ -15,8 +15,10 @@ import { useCallServer } from '@/app/_hooks/useCallServer'
 import { useRoomContext } from './_hooks/consumeRoomContext'
 import { createSocket } from './_hooks/utils/wsCalls'
 import { SearchBox } from './_components/SearchBox.component'
+import { LoadingFallback } from '@/app/_components/LoadingFallback'
+import { roomState } from './_reducers/types'
 
-export default function RoomLayout({ children }: { children: ReactNode }) {
+export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 	const { isPending, makeHTTPRequest, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
 	const {
 		RoomCtx: { roomState, AddMultipleRooms },
@@ -47,11 +49,11 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [responseData])
 
-	if (isPending) return <>Loading...</>
+	if (isPending) return <LoadingFallback />
 
 	return (
 		<main className="flex flex-row h-screen w-screen ">
-			<aside className="flex flex-col asideLayout w-1/3 shadow-lg border-r-[1px] border-r-transparent/10 overflow-y-hidden">
+			<aside className="flex flex-col asideLayout w-1/3 max-w-[350px] min-w-fit shadow-lg border-r-[1px] border-r-transparent/10 overflow-y-hidden">
 				<nav className="py-3 flex flex-col items-center bg-slate-200">
 					<Heading className="!font-poppins" size="4" as="h3" weight="bold">
 						ChatApp by{' '}
@@ -75,19 +77,25 @@ export default function RoomLayout({ children }: { children: ReactNode }) {
 					<SearchBox placeholder="Search chats." />
 				</section>
 
-				<main className="borderLayout overflow-y-auto !border-b-0 h-full">
-					{roomState.size == 0 ? (
-						<NoChatsAvailable />
-					) : (
-						<ul className="flex flex-col gap-y-2">
-							{[...roomState.entries()].map(([key, value]) => {
-								return <ChatBubble key={key} roomAllProps={value} />
-							})}
-						</ul>
-					)}
-				</main>
+				<RenderChat roomState={roomState} />
 			</aside>
 			{children}
 		</main>
 	)
-}
+})
+
+const RenderChat = memo(function RenderChatBubble({ roomState }: { roomState: Map<string, roomState> }) {
+	return (
+		<main className="borderLayout overflow-y-auto !border-b-0 h-full">
+			{roomState.size == 0 ? (
+				<NoChatsAvailable />
+			) : (
+				<ul className="flex flex-col gap-y-2">
+					{[...roomState.entries()].map(([key, value]) => {
+						return <ChatBubble key={key} roomAllProps={value} />
+					})}
+				</ul>
+			)}
+		</main>
+	)
+})

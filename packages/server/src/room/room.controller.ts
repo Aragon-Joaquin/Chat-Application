@@ -29,6 +29,8 @@ export class RoomController {
   @Get('allRooms')
   async getAllRooms(@Request() req: RequestType) {
     const rooms = await this.wsConn.GetRoomsOfUser(req.user.id);
+
+    if (!rooms?.length) return [];
     return await this.wsConn.GetRoomMessages(req.user.id, rooms);
   }
 }
