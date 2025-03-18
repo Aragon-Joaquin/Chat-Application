@@ -4,8 +4,9 @@ import { transformToDate } from '@/app/_utils/utils'
 import { Messages } from '@/app/_utils/tableTypes'
 import { messageStatus } from '../../_reducers/types'
 import { ClockIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { memo } from 'react'
 
-export function MessagesRoom({ messages }: { messages: Messages & messageStatus }) {
+function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }) {
 	const {
 		profile_picture,
 		user_name,
@@ -57,3 +58,5 @@ export function MessagesRoom({ messages }: { messages: Messages & messageStatus 
 		</span>
 	)
 }
+
+export const MessagesRoom = memo(MessagesRoomNoMemo)
