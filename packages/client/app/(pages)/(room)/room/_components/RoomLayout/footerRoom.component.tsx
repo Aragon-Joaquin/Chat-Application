@@ -36,7 +36,6 @@ export function FooterRoom() {
 			payload: {
 				messageString: String.raw`${data}`,
 				roomID: actualRoom['roomInfo']['room_id'],
-				own_message: true,
 				client_id: createdID
 			}
 		})

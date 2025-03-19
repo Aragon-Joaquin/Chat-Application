@@ -67,13 +67,12 @@ export class WsConnGateway {
       messageString: string;
       messageID?: string;
       roomID: string;
-      own_message: boolean;
       file?: UUID_TYPE;
     },
   ) {
-    const { roomID, messageString, own_message, messageID, file } = payload;
+    const { roomID, messageString, messageID, file } = payload;
 
-    if (messageString === '' || own_message == null)
+    if (messageString === '')
       return this.returnCustomError(client.id, [
         'Message not defined',
         HttpStatus.BAD_REQUEST,
@@ -100,15 +99,34 @@ export class WsConnGateway {
       JWT_Info['id'],
     );
 
-    this.wss.to(roomID).emit(
-      WS_ENDPOINTS_EVENTS.MESSAGE,
-      JSON.stringify({
-        new_message: newMessage,
-        roomID,
-        own_message,
-        client_id: messageID,
-      }),
-    );
+    try {
+      client.broadcast.to(roomID).emit(
+        WS_ENDPOINTS_EVENTS.MESSAGE,
+        JSON.stringify({
+          new_message: newMessage.message,
+          from_user: newMessage.user,
+          date_sended: newMessage?.date_sended,
+          roomID,
+        }),
+      );
+
+      this.wss.in(client.id).emit(
+        WS_ENDPOINTS_EVENTS.MESSAGE,
+        JSON.stringify({
+          new_message: newMessage.message,
+          own_message: true,
+          date_sended: newMessage?.date_sended,
+          roomID,
+          client_id: messageID,
+        }),
+      );
+    } catch {
+      return this.returnCustomError(client.id, [
+        "Message couldn't be sended.",
+        HttpStatus.BAD_REQUEST,
+        { message_id: messageID },
+      ]);
+    }
   }
 
   @SubscribeMessage(WS_ACTIONS.CREATE)

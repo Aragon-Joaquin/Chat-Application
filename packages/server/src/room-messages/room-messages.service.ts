@@ -76,11 +76,17 @@ export class RoomMessagesService {
     roomID: room['room_id'],
   ) {
     try {
-      return await this.roomMsgsRepo.insert({
-        which_room: roomID,
-        message_id: messageID,
-        sender_id: userID,
-      });
+      return await this.roomMsgsRepo
+        .createQueryBuilder()
+        .insert()
+        .into(room_messages)
+        .values({
+          which_room: roomID,
+          message_id: messageID,
+          sender_id: userID,
+        })
+        .returning('*')
+        .execute();
     } catch {
       throw new InternalServerErrorException('Something went wrong.');
     }

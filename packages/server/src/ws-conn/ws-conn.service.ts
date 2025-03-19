@@ -1,7 +1,13 @@
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
-import { messages, room, users, users_in_room } from 'src/entities';
+import {
+  messages,
+  room,
+  room_messages,
+  users,
+  users_in_room,
+} from 'src/entities';
 import { RoomMessagesService } from 'src/room-messages/room-messages.service';
 import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { RoomService } from 'src/room/room.service';
@@ -118,11 +124,26 @@ export class WsConnService {
     return await this.roomMsgs.DeleteMessageInRoom(userExists, message);
   }
 
+  async getUserByMessageID(messageID: messages['message_id']) {
+    try {
+      const usersMessage = await this.dataSource.query(`
+        SELECT users.user_name, users.profile_picture, users.user_id FROM room_messages 
+        LEFT JOIN users ON room_messages.sender_id = users.user_id WHERE room_messages.message_id = '${messageID}'::uuid;`);
+      return usersMessage[0];
+    } catch {
+      return null;
+    }
+  }
+
   async CreateMessageToRoom(
     messageProps: Pick<messages, 'message_content' | 'file_id'>,
     roomID: room['room_id'],
     userID: users['user_id'],
-  ) {
+  ): Promise<{
+    message: Partial<messages>;
+    date_sended: room_messages['date_sended'];
+    user: Partial<users>;
+  }> {
     const { message_content, file_id } = messageProps;
     if (message_content == undefined && file_id == undefined) return;
 
@@ -148,16 +169,25 @@ export class WsConnService {
         roomID,
       );
 
-      console.log(roomMessage.raw[0]);
+      const userProps = await this.getUserByMessageID(
+        messageCreated.raw[0]?.message_id,
+      );
 
       return {
-        message_content: messageCreated.raw[0]?.message_content,
-        file_id: messageCreated.raw[0]?.file_id,
-        message_id: messageCreated.raw[0]?.message_id,
+        message: {
+          message_content: messageCreated.raw[0]?.message_content,
+          file_id: messageCreated.raw[0]?.file_id,
+          message_id: messageCreated.raw[0]?.message_id,
+        },
+        user: {
+          user_name: userProps?.user_name,
+          profile_picture: userProps?.profile_picture,
+          user_id: userProps?.user_id,
+        },
         date_sended: roomMessage.raw[0]?.date_sended,
       };
     } catch {
-      return;
+      return null;
     }
   }
 

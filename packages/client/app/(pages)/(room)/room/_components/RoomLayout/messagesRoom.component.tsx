@@ -21,7 +21,7 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 
 	return (
 		<span
-			className={`flex flex-row gap-x-4 ${own_message && '!flex-row-reverse'} ${messageStatus === 'loading' && 'bg-red-600/60 p-2 rounded-md'}`}
+			className={`flex flex-row gap-x-4 ${own_message && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}
 		>
 			<div className="min-h-12 min-w-12 w-12 h-12">
 				<ImageAndFallback picture={profile_picture ?? ''} altName={user_name} description={`Image of ${user_name}`} />

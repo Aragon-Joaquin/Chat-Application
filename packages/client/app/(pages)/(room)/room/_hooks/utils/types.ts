@@ -13,7 +13,6 @@ export type wsPayloads =
 			payload: {
 				messageString: string
 				roomID: string
-				own_message: boolean
 				file?: string
 				client_id: CLIENT_UUID_TYPE
 			}

@@ -38,21 +38,22 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		wsSocket.emit(WS_ACTIONS.JOIN_MULTIPLE)
 
 		function handlerMessage(data: string) {
-			const { new_message, own_message, roomID, client_id }: WS_ENDPOINTS_TYPES['sendMessage'] = JSON.parse(data)
+			const { new_message, from_user, own_message, roomID, client_id, date_sended }: WS_ENDPOINTS_TYPES['sendMessage'] =
+				JSON.parse(data)
 
 			if (own_message == true)
 				return ModifyMessage({
 					roomInfo: roomID,
-					message: { ...new_message, own_message, messageStatus: 'sended' },
+					message: { ...new_message, own_message, messageStatus: 'sended', date_sended },
 					client_id: client_id
 				})
+
 			AddMessage({
 				roomInfo: roomID,
 				newMessage: {
-					message_content: new_message.message_content,
-					own_message: own_message,
-					file_id: new_message.file_id,
-					date_sended: new_message.date_sended
+					...new_message,
+					date_sended,
+					...from_user
 				}
 			})
 		}

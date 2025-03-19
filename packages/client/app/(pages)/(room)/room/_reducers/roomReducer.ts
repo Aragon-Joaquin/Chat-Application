@@ -79,7 +79,6 @@ const roomStateActions = {
 			roomCode['messages'].length == 0
 				? undefined
 				: (roomCode['messages']?.findIndex((msgInfo) => {
-						console.log(msgInfo.message_id === client_id)
 						if (message.own_message == true) return msgInfo.message_id === client_id
 						return msgInfo.message_id === message.message_id
 					}) ?? undefined)

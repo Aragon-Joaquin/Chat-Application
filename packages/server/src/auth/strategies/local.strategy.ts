@@ -10,11 +10,16 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(userName: string, userPassword: string): Promise<any> {
-    const jwtHash = await this.authService.LoginIfCredentials(
-      userName,
-      userPassword,
-    );
-    if (!jwtHash) throw new UnauthorizedException();
-    return jwtHash;
+    try {
+      const jwtHash = await this.authService.LoginIfCredentials(
+        userName,
+        userPassword,
+      );
+      if (!jwtHash) throw new UnauthorizedException();
+
+      return jwtHash;
+    } catch {
+      throw new UnauthorizedException('Error while processing JWT.');
+    }
   }
 }

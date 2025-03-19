@@ -27,7 +27,6 @@ export const HASHMAP_WSACTIONS = {
 		socket.emit(WS_ACTIONS.JOIN, { roomID: payload.roomID ?? '', roomPassword: payload.roomPassword ?? '' })
 	},
 	[WS_ACTIONS.CREATE]: function (socket: Socket, payload: PICK_WS_PAYLOAD<'CREATE'>) {
-		console.log({ payload })
 		socket.emit(WS_ACTIONS.CREATE, { roomName: payload.roomName ?? '', roomPassword: payload.roomPassword ?? '' })
 	},
 	[WS_ACTIONS.LEAVE]: function (socket: Socket, payload: PICK_WS_PAYLOAD<'LEAVE'>) {

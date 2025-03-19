@@ -38,7 +38,8 @@ export class UsersRoomsService {
     user: JWT_DECODED_INFO,
     password: string,
   ) {
-    const isUserInRoom = this.usersRoomsService.findOne({
+    // rookie mistake     ⬇
+    const isUserInRoom = await this.usersRoomsService.findOne({
       where: {
         user_id: user.id,
         room_id: room.room_id,
