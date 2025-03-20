@@ -4,6 +4,7 @@
 /node_modules
 
 tsconfig.build.tsbuildinfo
+uploads/*
 # Logs
 logs
 *.log

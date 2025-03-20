@@ -8,6 +8,7 @@ import { WsConnModule } from './ws-conn/ws-conn.module';
 import { RoomModule } from './room/room.module';
 import { RoomMessagesModule } from './room-messages/room-messages.module';
 import { UsersRoomsModule } from './users-rooms/users-rooms.module';
+import { UserModule } from './user/user.module';
 import {
   file_storage,
   messages,
@@ -27,6 +28,7 @@ import {
     RoomModule,
     RoomMessagesModule,
     UsersRoomsModule,
+    UserModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',

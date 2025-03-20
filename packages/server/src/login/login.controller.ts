@@ -13,7 +13,6 @@ import { UserDto } from './dto/user.dto';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { Request } from 'express';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-
 @Controller('login')
 export class LoginController {
   constructor(private loginService: LoginService) {}
@@ -54,9 +53,4 @@ export class LoginController {
   changePassword(@Body() body) {
     return body;
   }
-
-  // @Post('logout')
-  // logout(@Body() body) {
-  //     return body;
-  // }
 }
