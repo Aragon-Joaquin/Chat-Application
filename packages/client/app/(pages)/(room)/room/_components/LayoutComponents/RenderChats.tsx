@@ -5,7 +5,7 @@ import { roomState } from '../../_reducers/types'
 
 export const LayoutRenderChat = memo(function RenderChatBubble({ roomState }: { roomState: Map<string, roomState> }) {
 	return (
-		<main className="borderLayout overflow-y-auto !border-b-0 h-full">
+		<main className="flex-1 borderLayout overflow-y-auto !border-b-0">
 			{roomState.size == 0 ? (
 				<NoChatsAvailable />
 			) : (

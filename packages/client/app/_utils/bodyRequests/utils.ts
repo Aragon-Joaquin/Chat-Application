@@ -1,6 +1,6 @@
 import { HTTP_METHOD } from 'next/dist/server/web/http'
 
-type GENERAL_ROUTES = '/login' | '/room'
+type GENERAL_ROUTES = '/login' | '/room' | '/user'
 
 type HTTP_METHODS = Partial<{
 	[key in HTTP_METHOD]: {

@@ -5,11 +5,13 @@ import { TextField } from '@radix-ui/themes'
 
 function SearchBoxNoMemo({ placeholder }: { placeholder: string }) {
 	return (
-		<TextField.Root size="3" placeholder={placeholder} variant="surface" radius="large">
-			<Slot>
-				<MagnifyingGlassIcon />
-			</Slot>
-		</TextField.Root>
+		<section className="bg-slate-200 p-2">
+			<TextField.Root size="3" placeholder={placeholder} variant="surface" radius="large">
+				<Slot>
+					<MagnifyingGlassIcon />
+				</Slot>
+			</TextField.Root>
+		</section>
 	)
 }
 

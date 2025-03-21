@@ -1,6 +1,6 @@
 'use client'
 
-import { Heading, Text } from '@radix-ui/themes'
+import { Heading, Spinner, Text } from '@radix-ui/themes'
 import { FieldSVGComponent } from '../_components/Field.component'
 import { Control, Field, Root, Submit } from '@radix-ui/react-form'
 import { BottomText } from '../_components/BottomText.component'
@@ -53,7 +53,7 @@ export default function Login() {
 			</div>
 
 			<Submit type="submit" className={`submitButton ${isPending && 'bg-zinc-900/80'}`} disabled={isPending}>
-				{!isPending ? (hasToken ? 'You are already logged in!' : 'Login') : 'Loading... (making a animation later)'}
+				{!isPending ? hasToken ? 'You are already logged in!' : 'Login' : <Spinner />}
 			</Submit>
 			<div className="footerForm">
 				<BottomText descriptionText="Don't have an account yet?" linkTo="/register" boldText="Register now" />

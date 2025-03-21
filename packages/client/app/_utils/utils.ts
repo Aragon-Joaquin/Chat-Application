@@ -1,6 +1,6 @@
 //! d.ts === files are declaration files that contain only type information.
 import { WS_PORT } from '@chat-app/utils/globalConstants'
-import { LOGIN_REQUEST, ROOM_REQUEST } from './bodyRequests'
+import { LOGIN_REQUEST, ROOM_REQUEST, USER_REQUEST } from './bodyRequests'
 import { UUID_CLIENT_GENERATED } from '../(pages)/(room)/room/_reducers/types'
 
 export const GET_BACKEND_URL = 'http://localhost' as const
@@ -16,12 +16,14 @@ export type EVERY_ROUTE = typeof ROOM_REQUEST & typeof LOGIN_REQUEST
 export type LIST_OF_SUBROUTES =
 	| keyof (typeof ROOM_REQUEST)['listOfSubRoutes']
 	| keyof (typeof LOGIN_REQUEST)['listOfSubRoutes']
+	| keyof (typeof USER_REQUEST)['listOfSubRoutes']
 
 export type SELECT_ROUTE<T extends EVERY_ROUTE> = T
 
 export const ROUTES_HASHMAP = {
 	'/login': LOGIN_REQUEST,
-	'/room': ROOM_REQUEST
+	'/room': ROOM_REQUEST,
+	'/user': USER_REQUEST
 }
 
 export const transformToDate = (date: Date | string | undefined): string => {

@@ -8,7 +8,7 @@ import { useRoomContext } from './_hooks/consumeRoomContext'
 import { createSocket } from './_hooks/utils/wsCalls'
 import { SearchBox } from './_components/SearchBox.component'
 import { LoadingFallback } from '@/app/_components/LoadingFallback'
-import { LayoutRenderChat, LayoutHeader } from './_components/LayoutComponents'
+import { LayoutRenderChat, LayoutHeader, ProfileInformation } from './_components/LayoutComponents'
 
 export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 	const { isPending, makeHTTPRequest, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
@@ -47,11 +47,11 @@ export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 		<main className="flex flex-row h-screen w-screen ">
 			<aside className="flex flex-col asideLayout w-1/3 max-w-[350px] min-w-fit shadow-lg border-r-[1px] border-r-transparent/10 overflow-y-hidden">
 				<LayoutHeader />
-				<section className="bg-slate-200 p-2">
-					<SearchBox placeholder="Search chats." />
-				</section>
+
+				<SearchBox placeholder="Search chats." />
 
 				<LayoutRenderChat roomState={roomState} />
+				<ProfileInformation />
 			</aside>
 			{children}
 		</main>
