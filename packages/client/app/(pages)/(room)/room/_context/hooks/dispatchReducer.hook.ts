@@ -1,6 +1,6 @@
 import { useReducer } from 'react'
-import { roomReducer } from '../../_reducers/roomReducer'
-import { initialRoomState, PICK_PAYLOAD } from '../../_reducers/types'
+import { roomReducer } from '../../_reducers/roomReducer/roomReducer'
+import { initialRoomState, PICK_PAYLOAD } from '../../_reducers/roomReducer/types'
 
 export function useRoomReducer() {
 	const [roomState, dispatch] = useReducer(roomReducer, initialRoomState)

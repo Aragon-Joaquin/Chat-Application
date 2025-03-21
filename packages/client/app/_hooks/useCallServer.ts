@@ -12,10 +12,10 @@ export function useCallServer<T>() {
 	} = useConsumeContext()
 
 	const makeHTTPRequest = useCallback(
-		({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT }: Parameters<typeof callServer>[0]) => {
+		({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT, formData }: Parameters<typeof callServer>[0]) => {
 			startTransition(async () => {
 				try {
-					const response = await callServer({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT })
+					const response = await callServer({ rootRoute, subroute, HTTPmethod, bodyFields, passJWT, formData })
 					if (response?.statusCode < 200 || response?.statusCode > 299)
 						throw new BadRequest(response?.message ?? 'Status code is not in range of 200-299', response.statusCode)
 

@@ -1,5 +1,6 @@
 import { UnprocessableEntityException } from '@nestjs/common';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import { randomUUID } from 'crypto';
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 
@@ -11,7 +12,7 @@ export const ALLOWED_MIMETYPES = ['image/png', 'image/jpeg'];
 export const DESTINATION_FOLDER = './uploads' as const;
 
 export const VALIDATE_FILE = (
-  req: Request,
+  _req: Request,
   file: Express.Multer.File,
   callback: (error: Error | null, filename: string) => void,
 ) => {

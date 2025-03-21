@@ -1,4 +1,4 @@
-import { roomState } from '../_reducers/types'
+import { roomState } from '../_reducers/roomReducer/types'
 import { Heading, Strong, Text } from '@radix-ui/themes'
 import { useRoomContext } from '../_hooks/consumeRoomContext'
 import { ImageAndFallback } from '@app/_components/ImageAndFallback.component'

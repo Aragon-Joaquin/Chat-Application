@@ -1,4 +1,4 @@
-import { roomState } from '@/app/(pages)/(room)/room/_reducers/types'
+import { roomState } from '@/app/(pages)/(room)/room/_reducers/roomReducer/types'
 import { REQUEST_SHAPE } from './utils'
 
 type ROOM_ROUTES = '/' | '/roomhistory' | '/allRooms'

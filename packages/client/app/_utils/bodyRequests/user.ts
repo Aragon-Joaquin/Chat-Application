@@ -20,7 +20,8 @@ export const USER_REQUEST: REQUEST_SHAPE<USER_ROUTES> = {
 		'/uploadPhoto': {
 			POST: {
 				passJWT: true,
-				bodyParametersName: ['file']
+				bodyParametersName: [],
+				fileName: 'file'
 			}
 		}
 	}

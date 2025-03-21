@@ -1,5 +1,11 @@
 import { UUID_TYPE } from 'src/utils/types';
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { file_storage } from './FileStoragerEntity';
 
 @Entity()
@@ -14,5 +20,6 @@ export class users {
   user_password: string;
 
   @OneToOne(() => file_storage, (entity) => entity.file_id, { nullable: true })
+  @JoinColumn({ name: 'profile_picture' })
   profile_picture: file_storage;
 }

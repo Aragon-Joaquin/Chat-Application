@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { NoChatsAvailable } from '../noChatsAvailable.component'
 import { ChatBubble } from '../chatBubble.component'
-import { roomState } from '../../_reducers/types'
+import { roomState } from '../../_reducers/roomReducer/types'
 
 export const LayoutRenderChat = memo(function RenderChatBubble({ roomState }: { roomState: Map<string, roomState> }) {
 	return (

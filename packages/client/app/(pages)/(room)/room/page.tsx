@@ -4,7 +4,7 @@ import { NoChatSelected } from './_components/NoChatSelected.component'
 import { useRoomContext } from './_hooks/consumeRoomContext'
 import { FooterRoom, HeaderRoom, MessagesRoom } from './_components/RoomLayout'
 import { memo, useRef } from 'react'
-import { roomState } from './_reducers/types'
+import { roomState } from './_reducers/roomReducer/types'
 
 export default function RoomPage() {
 	const {

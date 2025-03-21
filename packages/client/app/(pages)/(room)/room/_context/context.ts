@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, Dispatch, SetStateAction } from 'react'
-import { initialRoomState, PICK_PAYLOAD, roomState } from '../_reducers/types'
+import { initialRoomState, PICK_PAYLOAD, roomState } from '../_reducers/roomReducer/types'
 import { Socket } from 'socket.io-client'
 import { wsPayloads } from '../_hooks/utils/types'
 import { WS_ACTIONS } from '@chat-app/utils/globalConstants'

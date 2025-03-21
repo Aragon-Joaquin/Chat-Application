@@ -1,7 +1,7 @@
 //! d.ts === files are declaration files that contain only type information.
 import { WS_PORT } from '@chat-app/utils/globalConstants'
 import { LOGIN_REQUEST, ROOM_REQUEST, USER_REQUEST } from './bodyRequests'
-import { UUID_CLIENT_GENERATED } from '../(pages)/(room)/room/_reducers/types'
+import { UUID_CLIENT_GENERATED } from '../(pages)/(room)/room/_reducers/roomReducer/types'
 
 export const GET_BACKEND_URL = 'http://localhost' as const
 

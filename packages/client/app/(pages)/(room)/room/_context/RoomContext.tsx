@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode, useCallback, useEffect, useState } from 'react'
-import { roomState } from '../_reducers/types'
+import { roomState } from '../_reducers/roomReducer/types'
 import { useWebsocket } from '../_hooks/useWebsocket'
 import { useRoomReducer } from './hooks/dispatchReducer.hook'
 import { RoomContext } from './context'

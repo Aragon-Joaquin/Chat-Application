@@ -6,6 +6,7 @@ type HTTP_METHODS = Partial<{
 	[key in HTTP_METHOD]: {
 		passJWT: boolean
 		bodyParametersName: (string | number)[]
+		fileName?: string
 	}
 }>
 

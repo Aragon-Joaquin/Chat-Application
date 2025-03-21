@@ -2,7 +2,7 @@ import { Heading, Text } from '@radix-ui/themes'
 import { ImageAndFallback } from '@app/_components/ImageAndFallback.component'
 import { transformToDate } from '@/app/_utils/utils'
 import { Messages } from '@/app/_utils/tableTypes'
-import { messageStatus } from '../../_reducers/types'
+import { messageStatus } from '../../_reducers/roomReducer/types'
 import { ClockIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import { memo } from 'react'
 
