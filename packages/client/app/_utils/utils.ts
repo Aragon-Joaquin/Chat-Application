@@ -46,3 +46,5 @@ export const transformToDate = (date: Date | string | undefined): string => {
 export type CLIENT_UUID_TYPE = `${string}${typeof UUID_CLIENT_GENERATED}`
 
 export const CREATE_CLIENT_UUID = (): CLIENT_UUID_TYPE => `${crypto.randomUUID()}${UUID_CLIENT_GENERATED}`
+export const GET_FILES_FOLDER = (file_name?: string) =>
+	file_name != undefined || file_name != '' ? `../../../uploads/${file_name}` : null
