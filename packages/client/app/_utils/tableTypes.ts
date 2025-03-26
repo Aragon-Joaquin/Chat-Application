@@ -6,9 +6,8 @@ export type Messages = {
 	file_id: string | null
 
 	//could use sender_info: {user_name: string} | {own_message: boolean} but it requires me to modify all references of the state
-	user_name?: string
+	sender_id?: UserInfo['user_id']
 	own_message?: boolean
-	profile_picture: string | null
 }
 
 export type RoomInfo = {

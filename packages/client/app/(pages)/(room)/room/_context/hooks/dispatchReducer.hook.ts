@@ -1,9 +1,16 @@
 import { useReducer } from 'react'
-import { roomReducer } from '../../_reducers/roomReducer/roomReducer'
-import { initialRoomState, PICK_PAYLOAD } from '../../_reducers/roomReducer/types'
+import { roomReducer } from '../../_reducers/roomReducer'
+import { initialReducerState, PICK_PAYLOAD } from '../../_reducers/types'
 
 export function useRoomReducer() {
-	const [roomState, dispatch] = useReducer(roomReducer, initialRoomState)
+	const [reducerState, dispatch] = useReducer(roomReducer, initialReducerState)
+
+	const ModifyUser = (payload: PICK_PAYLOAD<'MODIFY_USERINFO'>) => {
+		dispatch({
+			type: 'MODIFY_USERINFO',
+			payload
+		})
+	}
 
 	const AddRoom = (payload: PICK_PAYLOAD<'ADD_ROOM'>) =>
 		dispatch({
@@ -48,7 +55,9 @@ export function useRoomReducer() {
 		})
 
 	return {
-		roomState,
+		roomState: reducerState['rooms'],
+		userState: reducerState['users'],
+		ModifyUser,
 		AddRoom,
 		AddMultipleRooms,
 		AddMessage,

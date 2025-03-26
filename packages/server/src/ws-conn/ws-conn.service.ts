@@ -213,7 +213,7 @@ export class WsConnService {
       //* in the future, this will become a problem. It's just better to do two queries.
       const messageInfo: Array<{ which_room: string }> = await this.dataSource
         .query(`
-        SELECT users.user_name, file_storage.file_src AS profile_picture,room_messages.which_room, room_messages.date_sended, 
+        SELECT users.user_name, file_storage.file_src AS profile_picture, users.user_id,room_messages.which_room, room_messages.date_sended, 
         messages.message_content, messages.file_id, messages.message_id, case when room_messages.sender_id = ${userID}::integer then TRUE else FALSE end AS own_message
         FROM 
           (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
@@ -224,12 +224,17 @@ export class WsConnService {
         WHERE room_messages.row_number <= ${MAX_MESSAGES_PER_REQ} AND room_messages.which_room 
         IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) ORDER BY date_sended ASC;`);
 
+      console.log(messageInfo);
+      //! didnt finish this
       const mergeResults = roomInfo.map((room: room) => {
         const messagesRoom =
           messageInfo?.flatMap((msg) =>
             msg.which_room == room.room_id ? msg : [],
           ) || [];
-        return { roomInfo: room, messages: messagesRoom ?? [] };
+        return {
+          roomInfo: { ...room, ...messageInfo },
+          userInfo: [],
+        };
       });
 
       return mergeResults;

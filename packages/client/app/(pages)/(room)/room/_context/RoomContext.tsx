@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode, useCallback, useEffect, useState } from 'react'
-import { roomState } from '../_reducers/roomReducer/types'
+import { roomState } from '../_reducers/types'
 import { useWebsocket } from '../_hooks/useWebsocket'
 import { useRoomReducer } from './hooks/dispatchReducer.hook'
 import { RoomContext } from './context'
@@ -12,8 +12,18 @@ import { useConsumeContext } from '@/app/_hooks/consumeContext'
 import { AnnouncerNav } from '@/app/_components/AnnouncerNav'
 
 export function GetRoomContext({ children }: { children: ReactNode }) {
-	const { roomState, AddRoom, AddMultipleRooms, AddMessage, AddOwnMessage, ModifyMessage, LeaveRoom, DeleteMessage } =
-		useRoomReducer()
+	const {
+		roomState,
+		userState,
+		ModifyUser,
+		AddRoom,
+		AddMultipleRooms,
+		AddMessage,
+		AddOwnMessage,
+		ModifyMessage,
+		LeaveRoom,
+		DeleteMessage
+	} = useRoomReducer()
 	const { wsSocket, setWsSocket, handleWSActions } = useWebsocket()
 	const [selectedKeyRoom, setSelectedKeyRoom] = useState<string>()
 
@@ -51,9 +61,13 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 			AddMessage({
 				roomInfo: roomID,
 				newMessage: {
-					...new_message,
-					date_sended,
-					...from_user
+					message: {
+						...new_message,
+						date_sended
+					},
+					sender: {
+						...from_user
+					}
 				}
 			})
 		}
@@ -88,6 +102,8 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 			value={{
 				RoomCtx: {
 					roomState,
+					userState,
+					ModifyUser,
 					AddRoom,
 					AddMultipleRooms,
 					AddMessage,
