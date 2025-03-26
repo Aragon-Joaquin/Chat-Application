@@ -18,12 +18,16 @@ export const CREATE_MESSAGE_OBJ_WITH_FALLBACK = (message: Partial<Messages>): Me
 }
 
 export const ADD_USERS_MAP = (newUser: UserInfo[] | UserInfo, state: Map<number, UserInfo>) => {
+	if (newUser == undefined) return state
+
 	if (!Array.isArray(newUser)) {
 		const founded = state.get(newUser['user_id'])
 
 		if (founded != undefined) return state
 		return new Map(state).set(newUser['user_id'], newUser)
 	}
+
+	if (!newUser?.length) return state
 
 	const newMap = new Map<UserInfo['user_id'], UserInfo>(state)
 

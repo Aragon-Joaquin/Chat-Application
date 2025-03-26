@@ -37,7 +37,7 @@ type TYPES_NAMES<T extends keyof typeof STATE_ACTIONS> = Extract<keyof typeof ST
 
 export type PAYLOAD_TYPES =
 	| { type: TYPES_NAMES<'ADD_ROOM'>; payload: roomState['roomInfo'] }
-	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: Array<{ roomInfo: roomState; userInfo: UserInfo }> }
+	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: { roomInfo: roomState[]; userInfo: UserInfo[] } }
 	| {
 			type: TYPES_NAMES<'ADD_MESSAGE'>
 			payload: {

@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
 import {
@@ -15,8 +15,8 @@ import { UsersRoomsService } from 'src/users-rooms/users-rooms.service';
 import { JWT_DECODED_INFO } from 'src/utils/types';
 import { DataSource, InsertResult } from 'typeorm';
 import { MAX_MESSAGES_PER_REQ } from 'src/utils/constants';
-import { WsException } from '@nestjs/websockets';
 import { RoomDto } from 'src/room/dto/room.dto';
+import { roomInfo, userInfo } from './utils';
 
 @Injectable()
 export class WsConnService {
@@ -211,33 +211,37 @@ export class WsConnService {
 
       //* this query is unnecesary large & complex, but it justs gets the last 50 messages of every room by counting the times the room_id was repeated
       //* in the future, this will become a problem. It's just better to do two queries.
-      const messageInfo: Array<{ which_room: string }> = await this.dataSource
-        .query(`
-        SELECT users.user_name, file_storage.file_src AS profile_picture, users.user_id,room_messages.which_room, room_messages.date_sended, 
-        messages.message_content, messages.file_id, messages.message_id, case when room_messages.sender_id = ${userID}::integer then TRUE else FALSE end AS own_message
-        FROM 
-          (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
-          FROM room_messages) room_messages
-	      LEFT JOIN messages ON room_messages.message_id = messages.message_id
-        LEFT JOIN users ON room_messages.sender_id = users.user_id
-        LEFT JOIN file_storage ON users.profile_picture = file_storage.file_id
-        WHERE room_messages.row_number <= ${MAX_MESSAGES_PER_REQ} AND room_messages.which_room 
-        IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) ORDER BY date_sended ASC;`);
+      const messageInfo: Array<roomInfo> = await this.dataSource.query(`
+          SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, messages.message_content, messages.file_id, messages.message_id, 
+          CASE WHEN room_messages.sender_id = ${userID}::integer then TRUE else FALSE end AS own_message
+            FROM 
+              (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
+              FROM room_messages) room_messages
+            LEFT JOIN messages ON room_messages.message_id = messages.message_id
+            LEFT JOIN users ON room_messages.sender_id = users.user_id  
+            WHERE 
+              room_messages.row_number <= ${MAX_MESSAGES_PER_REQ} AND 
+              room_messages.which_room  IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) ORDER BY date_sended ASC;`);
 
-      console.log(messageInfo);
-      //! didnt finish this
-      const mergeResults = roomInfo.map((room: room) => {
+      const userInfo: Array<userInfo> = await this.dataSource.query(` 
+          SELECT DISTINCT(users.user_id), users.user_name, file_storage.file_src AS profile_picture 
+            FROM users 
+            LEFT JOIN file_storage ON users.profile_picture = file_storage.file_id
+            LEFT JOIN room_messages ON users.user_id = room_messages.sender_id 
+            WHERE room_messages.which_room IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)});`);
+
+      const room = roomInfo.map((room: room) => {
         const messagesRoom =
           messageInfo?.flatMap((msg) =>
             msg.which_room == room.room_id ? msg : [],
           ) || [];
-        return {
-          roomInfo: { ...room, ...messageInfo },
-          userInfo: [],
-        };
-      });
 
-      return mergeResults;
+        return { roomInfo: room, messages: messagesRoom ?? [] };
+      });
+      return {
+        roomInfo: room,
+        userInfo,
+      };
     } catch {
       return null;
     }

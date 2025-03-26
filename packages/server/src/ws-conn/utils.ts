@@ -10,3 +10,19 @@ export const createErrorMessage = (
     error_code: code ?? HttpStatus.AMBIGUOUS,
     ...(content != null && { error_content: content }),
   });
+
+export type userInfo = {
+  user_id: number;
+  user_name: string;
+  profile_picture: string;
+};
+
+export type roomInfo = {
+  sender_id: number;
+  which_room: string;
+  date_sended: Date;
+  message_content: string;
+  file_id: string | null;
+  message_id: string;
+  own_message: boolean;
+};

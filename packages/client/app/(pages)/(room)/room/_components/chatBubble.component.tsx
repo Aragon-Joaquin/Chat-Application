@@ -1,4 +1,4 @@
-import { roomState } from '../_reducers/roomReducer/types'
+import { roomState } from '../_reducers/types'
 import { Heading, Strong, Text } from '@radix-ui/themes'
 import { useRoomContext } from '../_hooks/consumeRoomContext'
 import { ImageAndFallback } from '@app/_components/ImageAndFallback.component'
@@ -7,7 +7,8 @@ import { memo } from 'react'
 
 function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 	const {
-		selectedRoom: { selectedKeyRoom, setSelectedKeyRoom }
+		selectedRoom: { selectedKeyRoom, setSelectedKeyRoom },
+		RoomCtx: { userState }
 	} = useRoomContext()
 
 	const { roomInfo, messages } = roomAllProps
@@ -23,7 +24,7 @@ function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 			</aside>
 
 			<div className="w-full">
-				<span className="w-full max-h-fit flex flex-row justify-between items-center">
+				<span className="w-full max-h-fit flex flex-row gap-x-1 justify-between items-center">
 					<Heading
 						as="h4"
 						size="4"
@@ -46,7 +47,7 @@ function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 								<Strong
 									truncate
 									className="max-w-[50%]"
-								>{`${messages.at(-1)?.own_message ? 'You' : (messages.at(-1)?.user_name ?? '???')}:`}</Strong>
+								>{`${messages.at(-1)?.own_message ? 'You' : (userState.get(messages.at(-1)?.sender_id ?? 0)?.user_name ?? '???')}:`}</Strong>
 								<p className="w-fit truncate">{messages.at(-1)?.message_content}</p>
 							</>
 						) : (

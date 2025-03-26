@@ -45,22 +45,22 @@ const roomStateActions = {
 		payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>
 	}) {
 		console.log({ payload })
-		if (!payload || !payload?.length) return state
-		const { rooms, users } = state
+		const { roomInfo, userInfo } = payload
+		if (!payload || !roomInfo.length) return state
 
+		const { rooms, users } = state
 		const filteredRoom: Map<string, roomState> = new Map()
 
-		payload.forEach(({ roomInfo: roomProps }) => {
-			const { roomInfo } = roomProps
+		roomInfo.forEach(({ messages, roomInfo }) => {
 			const getRoom = rooms?.get(roomInfo['room_id'])
 			if (getRoom != undefined) return
-			filteredRoom.set(roomInfo['room_id'], roomProps)
+			filteredRoom.set(roomInfo['room_id'], { roomInfo, messages })
 		})
 
 		return {
 			rooms: new Map([...rooms, ...filteredRoom]),
 			users: ADD_USERS_MAP(
-				payload.map((user) => user['userInfo']),
+				userInfo?.map((user) => user),
 				users
 			)
 		}

@@ -37,7 +37,8 @@ export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		if (responseData == null) return
-		AddMultipleRooms(responseData)
+		console.log({ responseData })
+		AddMultipleRooms({ roomInfo: responseData?.roomInfo, userInfo: responseData?.userInfo })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [responseData])
 
