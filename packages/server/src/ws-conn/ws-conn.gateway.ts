@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { BadRequestException, HttpStatus, UseGuards } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -22,7 +17,6 @@ import { messages } from 'src/entities';
 import { WsConnService } from './ws-conn.service';
 import { createErrorMessage } from './utils';
 import { UUID_TYPE } from 'src/utils/types';
-import { error } from 'console';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -92,7 +86,6 @@ export class WsConnGateway {
         HttpStatus.FORBIDDEN,
       ]);
 
-    //! create message in db
     const newMessage = await this.wsConnService.CreateMessageToRoom(
       { message_content: messageString, file_id: file },
       roomID,

@@ -1,6 +1,7 @@
 import { UserInfo } from './tableTypes'
 
 const DEFAULT_KEY = 'userInformation' as const
+type USER_STORAGE = { user_name: string; file_src: string }
 
 export const SETSessionStorage = (user: UserInfo) => {
 	if (typeof 'window' === undefined) return null
@@ -12,9 +13,14 @@ export const GETSessionStorage = (key?: 'string') => {
 	const storage = sessionStorage?.getItem(key ?? DEFAULT_KEY)
 	if (storage == undefined) return null
 
-	return JSON.parse(storage) as Partial<Omit<UserInfo, 'user_id'>>
+	return JSON.parse(storage) as USER_STORAGE
 }
 
-// export const DELETESessionStorage = (key?: 'string') => {
-
-// }
+export const DELETESessionStorage = () => {
+	if (typeof 'window' === undefined) return null
+	try {
+		sessionStorage.clear()
+	} catch (e) {
+		console.log(e)
+	}
+}

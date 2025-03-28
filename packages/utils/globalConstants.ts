@@ -31,3 +31,5 @@ export const COOKIE_EXPIRATION = {
 	ANNOTATION_MODE: '12h',
 	BY_SECONDS: 43200
 } as const
+
+export const PUBLIC_FOLDER_NAME = '/assets/' as const

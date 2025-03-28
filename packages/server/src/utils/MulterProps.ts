@@ -1,6 +1,5 @@
 import { UnprocessableEntityException } from '@nestjs/common';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-import { randomUUID } from 'crypto';
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 
@@ -10,6 +9,11 @@ export const TOTAL_MB = MAXIMUM_KB_PER_IMAGE * oneKb;
 
 export const ALLOWED_MIMETYPES = ['image/png', 'image/jpeg'];
 export const DESTINATION_FOLDER = './uploads' as const;
+
+export const FOLDER_PATHS = {
+  PFPS: 'profile_picture',
+  IMGS: 'images',
+} as const;
 
 export const VALIDATE_FILE = (
   _req: Request,
@@ -25,9 +29,12 @@ export const VALIDATE_FILE = (
   callback(null, `${Date.now()}-${file.originalname}`);
 };
 
-export const MULTER_OPTIONS = (maxFields?: number): MulterOptions => ({
+export const MULTER_OPTIONS = (
+  subfolder: (typeof FOLDER_PATHS)[keyof typeof FOLDER_PATHS],
+  maxFields?: number,
+): MulterOptions => ({
   storage: diskStorage({
-    destination: DESTINATION_FOLDER,
+    destination: `${DESTINATION_FOLDER}/${subfolder}`,
     filename: VALIDATE_FILE,
   }),
   limits: {

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Multer } from 'multer';
 import { file_storage, users } from 'src/entities';
@@ -15,22 +19,18 @@ export class UserService {
   ) {}
 
   async getUser(userID: JWT_DECODED_INFO['id']) {
-    const userFound = await this.userRepository.findOne({
-      where: {
-        user_id: userID,
-      },
-      select: {
-        user_id: false,
-        user_name: true,
-        profile_picture: { file_src: true },
-        user_password: false,
-      },
-    });
+    try {
+      const userFound = await this.userRepository.query(`
+        SELECT u.user_name, f.file_src FROM USERS u LEFT JOIN file_storage f ON u.profile_picture = f.file_id
+        WHERE user_id = ${userID}::integer;`);
 
-    if (userFound == undefined)
-      throw new BadRequestException('This user does not exists.');
+      if (userFound == undefined)
+        throw new BadRequestException('This user does not exists.');
 
-    return userFound;
+      return userFound?.at(0);
+    } catch {
+      return null;
+    }
   }
 
   async uploadProfilePic(

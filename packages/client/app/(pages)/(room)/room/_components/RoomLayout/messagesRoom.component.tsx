@@ -14,9 +14,7 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 
 	//file_id, message_id, which_room
 	const { message_content, own_message, sender_id, date_sended, messageStatus } = messages
-
 	const actualUser = userState?.get(sender_id ?? 0)
-	console.log({ actualUser })
 
 	return (
 		<span

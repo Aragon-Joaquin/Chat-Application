@@ -19,19 +19,4 @@ export class FileStorageService {
       return null;
     }
   }
-
-  async returnMultipleFiles(files: string[]) {
-    try {
-      return files?.map((fileName) => {
-        const file = createReadStream(
-          join(process.cwd(), `./uploads/${fileName}`),
-        );
-        return new StreamableFile(file, {
-          disposition: `attachment; filename=${fileName}`,
-        });
-      });
-    } catch {
-      return null;
-    }
-  }
 }

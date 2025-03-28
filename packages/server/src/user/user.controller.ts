@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   Post,
   Req,
   UploadedFile,
@@ -31,7 +32,9 @@ export class UserController {
 
   @Get()
   async getUserInformation(@Req() req: Request) {
-    return await this.userService.getUser(req.user['id']);
+    const user = await this.userService.getUser(req.user['id']);
+    if (user == undefined) throw new InternalServerErrorException();
+    return user;
   }
 
   // @Post('logout')

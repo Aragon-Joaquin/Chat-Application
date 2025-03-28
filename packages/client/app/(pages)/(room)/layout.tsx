@@ -4,7 +4,7 @@ import { ReactNode, useEffect } from 'react'
 import { GetRoomContext } from './room/_context/RoomContext'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { USER_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
-import { SETSessionStorage } from '@/app/_utils/sessionStorage'
+import { DELETESessionStorage, SETSessionStorage } from '@/app/_utils/sessionStorage'
 
 export default function RoomContext({ children }: { children: ReactNode }) {
 	const { makeHTTPRequest, responseData } = useCallServer<USER_TYPES_RESPONSES['/']>()
@@ -16,6 +16,10 @@ export default function RoomContext({ children }: { children: ReactNode }) {
 	useEffect(() => {
 		if (responseData == undefined) return
 		SETSessionStorage(responseData)
+
+		return () => {
+			DELETESessionStorage()
+		}
 	}, [responseData])
 
 	return <GetRoomContext>{children}</GetRoomContext>
