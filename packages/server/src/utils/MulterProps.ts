@@ -9,7 +9,7 @@ export const MAXIMUM_KB_PER_IMAGE = 500 as const; // its 4mb
 export const TOTAL_MB = MAXIMUM_KB_PER_IMAGE * oneKb;
 
 export const ALLOWED_MIMETYPES = ['image/png', 'image/jpeg'];
-export const DESTINATION_FOLDER = '../uploads' as const;
+export const DESTINATION_FOLDER = './uploads' as const;
 
 export const VALIDATE_FILE = (
   _req: Request,
