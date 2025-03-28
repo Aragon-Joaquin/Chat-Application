@@ -2,29 +2,32 @@ import { Heading, Text } from '@radix-ui/themes'
 import { ImageAndFallback } from '@app/_components/ImageAndFallback.component'
 import { transformToDate } from '@/app/_utils/utils'
 import { Messages } from '@/app/_utils/tableTypes'
-import { messageStatus } from '../../_reducers/roomReducer/types'
+import { messageStatus } from '../../_reducers/types'
 import { ClockIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import { memo } from 'react'
+import { useRoomContext } from '../../_hooks/consumeRoomContext'
 
 function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }) {
 	const {
-		profile_picture,
-		user_name,
-		message_content,
-		own_message,
-		file_id,
-		message_id,
-		which_room,
-		date_sended,
-		messageStatus
-	} = messages
+		RoomCtx: { userState }
+	} = useRoomContext()
+
+	//file_id, message_id, which_room
+	const { message_content, own_message, sender_id, date_sended, messageStatus } = messages
+
+	const actualUser = userState?.get(sender_id ?? 0)
+	console.log({ actualUser })
 
 	return (
 		<span
 			className={`flex flex-row gap-x-4 ${own_message && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}
 		>
 			<div className="min-h-12 min-w-12 w-12 h-12">
-				<ImageAndFallback picture={profile_picture ?? ''} altName={user_name} description={`Image of ${user_name}`} />
+				<ImageAndFallback
+					picture={actualUser?.profile_picture ?? ''}
+					altName={actualUser?.user_name ?? ''}
+					description={`Image of ${actualUser?.user_name ?? ''}`}
+				/>
 			</div>
 
 			<span
@@ -36,9 +39,9 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 					as="h5"
 					size="3"
 					className={`text-blue-800 overflow-clip text-nowrap text-ellipsis max-w-fit ${own_message && '!text-red-800 place-self-end'}`}
-					title={user_name}
+					title={actualUser?.user_name ?? ''}
 				>
-					{own_message ? 'You' : user_name}
+					{own_message ? 'You' : (actualUser?.user_name ?? '')}
 				</Heading>
 				<Text as="p" className={`text-black font-sans text-pretty`}>{String.raw`${message_content ?? ''}`}</Text>
 				<Text as="label" size="1" color="gray" className={`mt-1 flex justify-end ${own_message && '!justify-start'}`}>

@@ -52,7 +52,11 @@ export default function Login() {
 				/>
 			</div>
 
-			<Submit type="submit" className={`submitButton ${isPending && 'bg-zinc-900/80'}`} disabled={isPending}>
+			<Submit
+				type="submit"
+				className={`submitButton ${isPending && 'bg-zinc-900/80'} flex justify-center items-center min-h-[40px]`}
+				disabled={isPending}
+			>
 				{!isPending ? hasToken ? 'You are already logged in!' : 'Login' : <Spinner />}
 			</Submit>
 			<div className="footerForm">
