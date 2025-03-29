@@ -7,7 +7,7 @@ type ROOM_ROUTES = '/' | '/roomhistory' | '/allRooms'
 export interface ROOM_TYPES_RESPONSES {
 	'/': null
 	'/roomhistory': unknown
-	'/allRooms': { roomInfo: roomState[]; userInfo: UserInfo[] }
+	'/allRooms': { roomInfo: roomState[]; userInfo: UserInfo[]; currentUser: UserInfo }
 }
 
 export const ROOM_REQUEST: REQUEST_SHAPE<ROOM_ROUTES> = {

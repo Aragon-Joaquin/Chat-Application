@@ -13,5 +13,6 @@ import { FOLDER_PATHS, MULTER_OPTIONS } from 'src/utils/MulterProps';
   ],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

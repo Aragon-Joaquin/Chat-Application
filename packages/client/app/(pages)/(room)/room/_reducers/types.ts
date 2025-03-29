@@ -42,7 +42,7 @@ export type PAYLOAD_TYPES =
 			type: TYPES_NAMES<'ADD_MESSAGE'>
 			payload: {
 				roomInfo: roomState['roomInfo']['room_id']
-				newMessage: { message: Partial<Messages>; sender: UserInfo }
+				newMessage: Partial<Messages>
 			}
 	  }
 	| {

@@ -1,5 +1,8 @@
 import { UserInfo } from './tableTypes'
 
+/*
+! All of this functions has no usage, still keeping them if are required
+*/
 const DEFAULT_KEY = 'userInformation' as const
 type USER_STORAGE = { user_name: string; file_src: string }
 

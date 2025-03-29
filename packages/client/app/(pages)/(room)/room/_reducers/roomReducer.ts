@@ -1,4 +1,11 @@
-import { initialReducerState, PAYLOAD_TYPES, PICK_PAYLOAD, roomState, STATE_ACTIONS } from './types'
+import {
+	initialReducerState,
+	PAYLOAD_TYPES,
+	PICK_PAYLOAD,
+	roomState,
+	STATE_ACTIONS,
+	UUID_CLIENT_GENERATED
+} from './types'
 import { ADD_USERS_MAP, CREATE_MESSAGE_OBJ_WITH_FALLBACK } from './utils'
 
 const roomStateActions = {
@@ -116,10 +123,11 @@ const roomStateActions = {
 			roomCode['messages'].length == 0
 				? undefined
 				: (roomCode['messages']?.findIndex((msgInfo) => {
-						if (message.own_message == true) return msgInfo.message_id === client_id
+						if (msgInfo.message_id?.includes(UUID_CLIENT_GENERATED)) return msgInfo.message_id === client_id
 						return msgInfo.message_id === message.message_id
 					}) ?? undefined)
 
+		console.log({ findMessageByID })
 		if (findMessageByID == undefined || findMessageByID < 0) return state
 
 		return {
@@ -145,10 +153,7 @@ const roomStateActions = {
 		state: typeof initialReducerState
 		payload: PICK_PAYLOAD<'ADD_MESSAGE'>
 	}) {
-		const {
-			roomInfo,
-			newMessage: { message, sender }
-		} = payload
+		const { roomInfo, newMessage } = payload
 		const { rooms, users } = state
 
 		const roomCode = rooms.get(roomInfo)
@@ -158,9 +163,12 @@ const roomStateActions = {
 		return {
 			rooms: new Map(rooms).set(roomInfo, {
 				roomInfo: roomCode['roomInfo'],
-				messages: [...roomCode['messages'], { ...CREATE_MESSAGE_OBJ_WITH_FALLBACK(message), messageStatus: 'sended' }]
+				messages: [
+					...roomCode['messages'],
+					{ ...CREATE_MESSAGE_OBJ_WITH_FALLBACK(newMessage), messageStatus: 'sended' }
+				]
 			}),
-			users: ADD_USERS_MAP(sender, users)
+			users
 		}
 	},
 

@@ -14,7 +14,8 @@ export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 	const { isPending, makeHTTPRequest, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
 	const {
 		RoomCtx: { roomState, AddMultipleRooms },
-		webSocket: { setWsSocket, wsSocket }
+		webSocket: { setWsSocket, wsSocket },
+		currentUser: { setCurrentUser }
 	} = useRoomContext()
 
 	//todo: try to reduce all of this useEffects in two or less
@@ -37,8 +38,11 @@ export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		if (responseData == null) return
-		console.log({ responseData })
-		AddMultipleRooms({ roomInfo: responseData?.roomInfo, userInfo: responseData?.userInfo })
+		AddMultipleRooms({
+			roomInfo: responseData?.roomInfo,
+			userInfo: [...responseData?.userInfo, responseData.currentUser]
+		})
+		setCurrentUser(responseData?.currentUser.user_id)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [responseData])
 

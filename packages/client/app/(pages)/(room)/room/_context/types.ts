@@ -8,13 +8,8 @@ export interface WS_ENDPOINTS_TYPES {
 			message_id: Messages['message_id']
 		}
 		date_sended: Messages['date_sended']
-		from_user: {
-			user_id: UserInfo['user_id']
-			user_name: UserInfo['user_name']
-			profile_picture: UserInfo['profile_picture']
-		}
+		from_user_id: UserInfo['user_id']
 		roomID: string
-		own_message?: boolean
 		client_id?: string
 	}
 

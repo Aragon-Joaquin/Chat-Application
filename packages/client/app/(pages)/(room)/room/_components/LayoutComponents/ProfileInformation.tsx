@@ -1,29 +1,30 @@
 'use client'
 
 import { ImageAndFallback } from '@/app/_components/ImageAndFallback.component'
-import { GETSessionStorage } from '@/app/_utils/sessionStorage'
 import { Heading, Text } from '@radix-ui/themes'
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 import { DialogEditProfile } from './components/DialogEditProfile'
+import { useRoomContext } from '../../_hooks/consumeRoomContext'
 
 function ProfileInformationNoMemo() {
-	const [sessionStorage, setSessionStorage] = useState<ReturnType<typeof GETSessionStorage>>()
-	useEffect(() => {
-		setSessionStorage(GETSessionStorage())
-	}, [])
+	const {
+		currentUser: { currentUser },
+		RoomCtx: { userState }
+	} = useRoomContext()
 
-	if (sessionStorage == null) return
+	const actualUser = userState.get(currentUser ?? 0)
+	if (actualUser == undefined) return
 
 	return (
 		<footer className="flex flex-row items-center pb-5 gap-x-2 bg-neutral-100 borderLayout w-full !max-w-[350px]">
 			<div className="h-14 w-14 min-h-14 min-w-14 rounded-[50%]">
-				<ImageAndFallback picture={sessionStorage?.file_src ?? ''} altName="Your profile picture." />
+				<ImageAndFallback picture={actualUser?.profile_picture ?? ''} altName="Your profile picture." />
 			</div>
 
 			<span className="flex flex-col !overflow-hidden w-full">
 				<span className="flex flex-row items-center gap-x-1 w-full">
 					<Heading as="h4" size="4" className="!overflow-hidden !text-nowrap !text-ellipsis max-w-[90%]" title="You">
-						{sessionStorage.user_name ?? 'You'}
+						{actualUser.user_name ?? 'You'}
 					</Heading>
 
 					<DialogEditProfile />

@@ -5,6 +5,7 @@ import { initialReducerState, PICK_PAYLOAD, roomState } from '../_reducers/types
 import { Socket } from 'socket.io-client'
 import { wsPayloads } from '../_hooks/utils/types'
 import { WS_ACTIONS } from '@chat-app/utils/globalConstants'
+import { UserInfo } from '@/app/_utils/tableTypes'
 
 interface RoomCtx {
 	roomState: (typeof initialReducerState)['rooms']
@@ -21,6 +22,11 @@ interface RoomCtx {
 interface selectedRoom {
 	selectedKeyRoom: string | undefined
 	setSelectedKeyRoom: (stateID: roomState['roomInfo']['room_id']) => void
+}
+
+interface currentUser {
+	currentUser: UserInfo['user_id'] | undefined
+	setCurrentUser: Dispatch<SetStateAction<UserInfo['user_id'] | undefined>>
 }
 
 interface webSocket {
@@ -40,6 +46,7 @@ interface webSocket {
 interface RoomContextProps {
 	RoomCtx: RoomCtx
 	selectedRoom: selectedRoom
+	currentUser: currentUser
 	webSocket: webSocket
 }
 

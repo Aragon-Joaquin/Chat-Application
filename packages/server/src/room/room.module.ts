@@ -4,9 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { room } from 'src/entities';
 import { RoomController } from './room.controller';
 import { WsConnModule } from 'src/ws-conn/ws-conn.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([room]), forwardRef(() => WsConnModule)],
+  imports: [
+    TypeOrmModule.forFeature([room]),
+    UserModule,
+    forwardRef(() => WsConnModule),
+  ],
   providers: [RoomService],
   exports: [RoomService],
   controllers: [RoomController],

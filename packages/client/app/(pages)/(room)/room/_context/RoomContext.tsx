@@ -1,15 +1,17 @@
 'use client'
 
 import { ReactNode, useCallback, useEffect, useState } from 'react'
-import { roomState } from '../_reducers/types'
-import { useWebsocket } from '../_hooks/useWebsocket'
-import { useRoomReducer } from './hooks/dispatchReducer.hook'
+
 import { RoomContext } from './context'
 import { WS_ACTIONS, WS_ENDPOINTS_EVENTS } from '@chat-app/utils/globalConstants'
 import { WS_ENDPOINTS_TYPES } from './types'
 import { BadRequest } from '@/app/_errors'
 import { useConsumeContext } from '@/app/_hooks/consumeContext'
 import { AnnouncerNav } from '@/app/_components/AnnouncerNav'
+import { useWebsocket } from '../_hooks/useWebsocket'
+import { useRoomReducer } from './hooks/dispatchReducer.hook'
+import { roomState } from '../_reducers/types'
+import { UserInfo } from '@/app/_utils/tableTypes'
 
 export function GetRoomContext({ children }: { children: ReactNode }) {
 	const {
@@ -24,14 +26,19 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		LeaveRoom,
 		DeleteMessage
 	} = useRoomReducer()
+
 	const { wsSocket, setWsSocket, handleWSActions } = useWebsocket()
-	const [selectedKeyRoom, setSelectedKeyRoom] = useState<string>()
 
 	const {
 		ErrorContext: { setUIError }
 	} = useConsumeContext()
 
+	//! it saves the id to then find the user
+	const [currentUser, setCurrentUser] = useState<UserInfo['user_id']>()
+
 	//! set selectedRoom state
+	const [selectedKeyRoom, setSelectedKeyRoom] = useState<string>()
+
 	const handleSetState = useCallback(
 		(stateID: roomState['roomInfo']['room_id']) => {
 			const findRoomInState = roomState.get(stateID)
@@ -48,26 +55,24 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		wsSocket.emit(WS_ACTIONS.JOIN_MULTIPLE)
 
 		function handlerMessage(data: string) {
-			const { new_message, from_user, own_message, roomID, client_id, date_sended }: WS_ENDPOINTS_TYPES['sendMessage'] =
+			const { new_message, from_user_id, roomID, client_id, date_sended }: WS_ENDPOINTS_TYPES['sendMessage'] =
 				JSON.parse(data)
 
-			if (own_message == true)
+			console.log(JSON.parse(data))
+
+			if (client_id != undefined)
 				return ModifyMessage({
 					roomInfo: roomID,
-					message: { ...new_message, own_message, messageStatus: 'sended', date_sended },
+					message: { ...new_message, sender_id: from_user_id, messageStatus: 'sended', date_sended },
 					client_id: client_id
 				})
 
 			AddMessage({
 				roomInfo: roomID,
 				newMessage: {
-					message: {
-						...new_message,
-						date_sended
-					},
-					sender: {
-						...from_user
-					}
+					...new_message,
+					date_sended,
+					sender_id: from_user_id
 				}
 			})
 		}
@@ -116,6 +121,10 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 					selectedKeyRoom: selectedKeyRoom,
 					setSelectedKeyRoom: handleSetState
 				},
+				currentUser: {
+					currentUser,
+					setCurrentUser
+				},
 				webSocket: {
 					wsSocket,
 					setWsSocket,
@@ -123,14 +132,13 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 				}
 			}}
 		>
-			{children}
-
-			{wsSocket?.disconnected === true && (
+			{wsSocket?.active === false && (
 				<AnnouncerNav
 					color="Error"
 					titleName="WebSocket has been disconnected. Please reload the page or you won't be able to chat until so. "
 				/>
 			)}
+			{children}
 		</RoomContext.Provider>
 	)
 }

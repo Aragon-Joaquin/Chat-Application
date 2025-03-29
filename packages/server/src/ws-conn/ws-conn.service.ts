@@ -142,7 +142,6 @@ export class WsConnService {
   ): Promise<{
     message: Partial<messages>;
     date_sended: room_messages['date_sended'];
-    user: Partial<users>;
   }> {
     const { message_content, file_id } = messageProps;
     if (message_content == undefined && file_id == undefined) return;
@@ -169,20 +168,11 @@ export class WsConnService {
         roomID,
       );
 
-      const userProps = await this.getUserByMessageID(
-        messageCreated.raw[0]?.message_id,
-      );
-
       return {
         message: {
           message_content: messageCreated.raw[0]?.message_content,
           file_id: messageCreated.raw[0]?.file_id,
           message_id: messageCreated.raw[0]?.message_id,
-        },
-        user: {
-          user_name: userProps?.user_name,
-          profile_picture: userProps?.profile_picture,
-          user_id: userProps?.user_id,
         },
         date_sended: roomMessage.raw[0]?.date_sended,
       };
@@ -220,24 +210,27 @@ export class WsConnService {
             LEFT JOIN messages ON room_messages.message_id = messages.message_id
             LEFT JOIN users ON room_messages.sender_id = users.user_id  
             WHERE 
-              room_messages.row_number <= ${MAX_MESSAGES_PER_REQ} AND 
-              room_messages.which_room  IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) ORDER BY date_sended ASC;`);
+              room_messages.which_room  IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) ORDER BY date_sended DESC limit ${MAX_MESSAGES_PER_REQ};`);
 
-      const userInfo: Array<userInfo> = await this.dataSource.query(` 
-          SELECT DISTINCT(users.user_id), users.user_name, file_storage.file_src AS profile_picture 
-            FROM users 
-            LEFT JOIN file_storage ON users.profile_picture = file_storage.file_id
-            LEFT JOIN room_messages ON users.user_id = room_messages.sender_id 
-            WHERE room_messages.which_room IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)});`);
+      const userInfo: Array<userInfo & { current_user: boolean }> = await this
+        .dataSource.query(`
+	        SELECT DISTINCT(users.user_id), users.user_name, file_storage.file_src AS profile_picture
+	          FROM users
+	          LEFT JOIN file_storage ON users.profile_picture = file_storage.file_id
+	          LEFT JOIN room_messages ON users.user_id = room_messages.sender_id 
+	          WHERE room_messages.which_room IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) AND users.user_id != ${userID}::integer
+        `);
 
       const room = roomInfo.map((room: room) => {
         const messagesRoom =
-          messageInfo?.flatMap((msg) =>
-            msg.which_room == room.room_id ? msg : [],
-          ) || [];
+          messageInfo
+            ?.reverse()
+            .flatMap((msg) => (msg.which_room == room.room_id ? msg : [])) ||
+          [];
 
         return { roomInfo: room, messages: messagesRoom ?? [] };
       });
+
       return {
         roomInfo: room,
         userInfo,

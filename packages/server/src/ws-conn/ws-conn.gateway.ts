@@ -97,17 +97,18 @@ export class WsConnGateway {
         WS_ENDPOINTS_EVENTS.MESSAGE,
         JSON.stringify({
           new_message: newMessage.message,
-          from_user: newMessage.user,
+          from_user_id: JWT_Info['id'],
           date_sended: newMessage?.date_sended,
           roomID,
         }),
       );
 
+      // SINCE I HAVE NOW THE REFERENCE OF USER IN THE CLIENT, own_message WOULD BE DELETED
       this.wss.in(client.id).emit(
         WS_ENDPOINTS_EVENTS.MESSAGE,
         JSON.stringify({
           new_message: newMessage.message,
-          own_message: true,
+          from_user_id: JWT_Info['id'],
           date_sended: newMessage?.date_sended,
           roomID,
           client_id: messageID,
