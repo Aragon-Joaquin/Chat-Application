@@ -103,7 +103,6 @@ export class WsConnGateway {
         }),
       );
 
-      // SINCE I HAVE NOW THE REFERENCE OF USER IN THE CLIENT, own_message WOULD BE DELETED
       this.wss.in(client.id).emit(
         WS_ENDPOINTS_EVENTS.MESSAGE,
         JSON.stringify({

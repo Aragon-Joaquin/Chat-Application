@@ -9,16 +9,19 @@ import { useRoomContext } from '../../_hooks/consumeRoomContext'
 
 function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }) {
 	const {
-		RoomCtx: { userState }
+		RoomCtx: { userState },
+		currentUser: { currentUser }
 	} = useRoomContext()
 
 	//file_id, message_id, which_room
-	const { message_content, own_message, sender_id, date_sended, messageStatus } = messages
+	const { message_content, sender_id, date_sended, messageStatus } = messages
+
 	const actualUser = userState?.get(sender_id ?? 0)
+	const ownMessage = actualUser?.user_id === currentUser
 
 	return (
 		<span
-			className={`flex flex-row gap-x-4 ${own_message && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}
+			className={`flex flex-row gap-x-4 ${ownMessage && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}
 		>
 			<div className="min-h-12 min-w-12 w-12 h-12">
 				<ImageAndFallback
@@ -31,18 +34,18 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 			<span
 				className={`flex flex-col bg-neutral-200 p-2 rounded-md relative mt-3 m-1 max-w-[50%]
 			before:content-[''] before:absolute before:w-0 before:h-0 before:border-8 before:border-transparent before:border-t-neutral-200 before:top-0
-			${own_message ? 'rounded-tr-none before:right-0 before:translate-x-full before:border-l-neutral-200' : 'rounded-tl-none before:left-0 before:-translate-x-full before:border-r-neutral-200'}`}
+			${ownMessage ? 'rounded-tr-none before:right-0 before:translate-x-full before:border-l-neutral-200' : 'rounded-tl-none before:left-0 before:-translate-x-full before:border-r-neutral-200'}`}
 			>
 				<Heading
 					as="h5"
 					size="3"
-					className={`text-blue-800 overflow-clip text-nowrap text-ellipsis max-w-fit ${own_message && '!text-red-800 place-self-end'}`}
+					className={`text-blue-800 overflow-clip text-nowrap text-ellipsis max-w-fit ${ownMessage && '!text-red-800 place-self-end'}`}
 					title={actualUser?.user_name ?? ''}
 				>
-					{own_message ? 'You' : (actualUser?.user_name ?? '')}
+					{ownMessage ? 'You' : (actualUser?.user_name ?? '')}
 				</Heading>
 				<Text as="p" className={`text-black font-sans text-pretty`}>{String.raw`${message_content ?? ''}`}</Text>
-				<Text as="label" size="1" color="gray" className={`mt-1 flex justify-end ${own_message && '!justify-start'}`}>
+				<Text as="label" size="1" color="gray" className={`mt-1 flex justify-end ${ownMessage && '!justify-start'}`}>
 					{transformToDate(date_sended)}
 				</Text>
 				{messageStatus != undefined && (

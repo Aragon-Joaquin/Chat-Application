@@ -24,5 +24,4 @@ export type roomInfo = {
   message_content: string;
   file_id: string | null;
   message_id: string;
-  own_message: boolean;
 };

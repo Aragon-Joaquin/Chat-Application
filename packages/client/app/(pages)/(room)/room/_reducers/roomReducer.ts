@@ -95,8 +95,7 @@ const roomStateActions = {
 						...CREATE_MESSAGE_OBJ_WITH_FALLBACK({
 							...ownMessage,
 							message_id: client_id,
-							which_room: roomInfo,
-							own_message: true
+							which_room: roomInfo
 						}),
 						messageStatus: 'loading'
 					}

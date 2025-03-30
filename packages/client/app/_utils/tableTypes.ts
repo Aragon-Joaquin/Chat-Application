@@ -4,10 +4,7 @@ export type Messages = {
 	date_sended: Date | string
 	message_content: string | null
 	file_id: string | null
-
-	//could use sender_info: {user_name: string} | {own_message: boolean} but it requires me to modify all references of the state
-	sender_id?: UserInfo['user_id']
-	own_message?: boolean
+	sender_id: UserInfo['user_id']
 }
 
 export type RoomInfo = {

@@ -202,8 +202,8 @@ export class WsConnService {
       //* this query is unnecesary large & complex, but it justs gets the last 50 messages of every room by counting the times the room_id was repeated
       //* in the future, this will become a problem. It's just better to do two queries.
       const messageInfo: Array<roomInfo> = await this.dataSource.query(`
-          SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, messages.message_content, messages.file_id, messages.message_id, 
-          CASE WHEN room_messages.sender_id = ${userID}::integer then TRUE else FALSE end AS own_message
+          SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, 
+            messages.message_content, messages.file_id, messages.message_id 
             FROM 
               (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
               FROM room_messages) room_messages

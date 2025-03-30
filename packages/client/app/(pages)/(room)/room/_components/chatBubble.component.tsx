@@ -8,7 +8,8 @@ import { memo } from 'react'
 function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 	const {
 		selectedRoom: { selectedKeyRoom, setSelectedKeyRoom },
-		RoomCtx: { userState }
+		RoomCtx: { userState },
+		currentUser: { currentUser }
 	} = useRoomContext()
 
 	const { roomInfo, messages } = roomAllProps
@@ -47,7 +48,7 @@ function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 								<Strong
 									truncate
 									className="max-w-[50%]"
-								>{`${messages.at(-1)?.own_message ? 'You' : (userState.get(messages.at(-1)?.sender_id ?? 0)?.user_name ?? '???')}:`}</Strong>
+								>{`${messages.at(-1)?.sender_id === currentUser ? 'You' : (userState.get(messages.at(-1)?.sender_id ?? 0)?.user_name ?? '???')}:`}</Strong>
 								<p className="w-fit truncate">{messages.at(-1)?.message_content}</p>
 							</>
 						) : (
