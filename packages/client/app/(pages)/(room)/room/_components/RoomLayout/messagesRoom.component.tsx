@@ -23,13 +23,12 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 		<span
 			className={`flex flex-row gap-x-4 ${ownMessage && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}
 		>
-			<div className="min-h-12 min-w-12 w-12 h-12">
-				<ImageAndFallback
-					picture={actualUser?.profile_picture ?? ''}
-					altName={actualUser?.user_name ?? ''}
-					description={`Image of ${actualUser?.user_name ?? ''}`}
-				/>
-			</div>
+			<ImageAndFallback
+				picture={actualUser?.profile_picture ?? ''}
+				altName={actualUser?.user_name ?? ''}
+				description={`Image of ${actualUser?.user_name ?? ''}`}
+				size={60}
+			/>
 
 			<span
 				className={`flex flex-col bg-neutral-200 p-2 rounded-md relative mt-3 m-1 max-w-[50%]

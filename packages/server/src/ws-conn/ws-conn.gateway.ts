@@ -15,8 +15,10 @@ import { WsConnGuard } from './ws-conn.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { messages } from 'src/entities';
 import { WsConnService } from './ws-conn.service';
-import { createErrorMessage } from './utils';
+import { createErrorMessage, MEDIA_PAYLOADS } from './utils';
 import { UUID_TYPE } from 'src/utils/types';
+import multer from 'multer';
+import { MULTER_OPTIONS } from 'src/utils/MulterProps';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -120,6 +122,15 @@ export class WsConnGateway {
         { message_id: messageID },
       ]);
     }
+  }
+
+  @SubscribeMessage(WS_ACTIONS.SEND_MEDIA)
+  async handleSendMedia(
+    client: Socket,
+    payload: { type: MEDIA_PAYLOADS; fileSrc: string },
+  ) {
+    const { type, fileSrc } = payload;
+    console.log({ payload });
   }
 
   @SubscribeMessage(WS_ACTIONS.CREATE)

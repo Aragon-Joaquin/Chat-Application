@@ -2,13 +2,14 @@ import { BadRequest, BadRequestCodes } from '@/app/_errors'
 import { useConsumeContext } from '@/app/_hooks/consumeContext'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { USER_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
+import { IMAGES_TYPES } from '@/app/_utils/utils'
 import { Pencil1Icon } from '@radix-ui/react-icons'
 import { Button, Dialog, IconButton, Text } from '@radix-ui/themes'
-import { ChangeEvent, DragEvent, FormEvent, useCallback, useEffect, useId, useRef, useState } from 'react'
+import { ChangeEvent, DragEvent, FormEvent, memo, useCallback, useEffect, useId, useRef, useState } from 'react'
 
 const INPUT_FILE_NAME = 'file' as const
 
-export const DialogEditProfile = function DialogEditProfileNoMemo() {
+export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 	const { responseData, makeHTTPRequest } = useCallServer<USER_TYPES_RESPONSES['/uploadPhoto']>()
 	const {
 		ErrorContext: { setUIError }
@@ -26,7 +27,7 @@ export const DialogEditProfile = function DialogEditProfileNoMemo() {
 		if (!file?.length || !divRef?.current == undefined) return
 		const getFile = file[0]
 
-		if (!['image/png', 'image/jpeg'].includes(getFile.type))
+		if (!IMAGES_TYPES.includes(getFile.type))
 			return setUIError(new BadRequest('Needs to be a PNG/JPG/JPEG file', BadRequestCodes.UNSUPPORTED_MEDIA_TYPE))
 
 		setImage(getFile)
@@ -133,4 +134,4 @@ export const DialogEditProfile = function DialogEditProfileNoMemo() {
 			</Dialog.Content>
 		</Dialog.Root>
 	)
-}
+})

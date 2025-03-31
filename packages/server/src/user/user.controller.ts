@@ -26,7 +26,6 @@ export class UserController {
     file: Express.Multer.File,
     @Req() req: Request,
   ) {
-    console.log({ file, asd: file.filename });
     return await this.userService.uploadProfilePic(req.user['id'], file);
   }
 

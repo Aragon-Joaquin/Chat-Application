@@ -1,5 +1,5 @@
 import { ROOM_CODE_TYPE, UUID_TYPE } from 'src/utils/types';
-import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { hash } from 'node:crypto';
 import { createDateNow } from 'src/utils/constants';
 import { file_storage } from './FileStoragerEntity';
@@ -28,5 +28,6 @@ export class room {
   created_at: Date;
 
   @OneToOne(() => file_storage, (entity) => entity.file_id, { nullable: true })
+  @JoinColumn({ name: 'room_picture' })
   room_picture: file_storage;
 }

@@ -3,9 +3,8 @@ import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 
-export const oneKb = 1000 as const; // = 1000 is measured in bytes, so its 1kb
-export const MAXIMUM_KB_PER_IMAGE = 500 as const; // its 4mb
-export const TOTAL_MB = MAXIMUM_KB_PER_IMAGE * oneKb;
+export const MAXIMUM_MB_PER_IMAGE = 3 as const;
+export const TOTAL_MB = MAXIMUM_MB_PER_IMAGE * 10 * 10 * 10 * 10 * 10 * 10 * 10;
 
 export const ALLOWED_MIMETYPES = ['image/png', 'image/jpeg'];
 export const DESTINATION_FOLDER = './uploads' as const;

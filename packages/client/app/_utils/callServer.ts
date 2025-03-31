@@ -3,9 +3,16 @@ import { CREATE_BODY, CREATE_REQUEST_BODY } from './bodyRequests'
 import { getJWT } from './JWTMethods'
 import { URL_DATABASE } from './utils'
 
+//! need to be like this, since i can break the entire project if i modify the CREATE_BODY interface
+export interface callServerParameters extends CREATE_BODY {
+	passJWT?: boolean
+	formData?: FormData
+}
+
 const GET_ROUTE = ({ rootRoute, subroute }: { rootRoute: string; subroute: string }) =>
 	`${rootRoute}${subroute != '/' ? subroute : ''}`
 const GET_DB_ENDPOINT = (endpoint: string) => `${URL_DATABASE}${endpoint === null || `${endpoint}`}`
+
 const MAKE_FETCH = async ({
 	route,
 	HTTPmethod,
@@ -28,12 +35,6 @@ const MAKE_FETCH = async ({
 			...{ ...(bodyArgs != null && { body: bodyArgs }) }
 		})
 	).json()
-}
-
-//! need to be like this, since i can break the entire project if i modify the CREATE_BODY interface
-export interface callServerParameters extends CREATE_BODY {
-	passJWT?: boolean
-	formData?: FormData
 }
 
 export async function callServer({

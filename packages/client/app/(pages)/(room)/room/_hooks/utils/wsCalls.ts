@@ -22,6 +22,12 @@ export const HASHMAP_WSACTIONS = {
 			...(payload?.file != undefined && { file: payload.file })
 		})
 	},
+	[WS_ACTIONS.SEND_MEDIA]: function (socket: Socket, payload: PICK_WS_PAYLOAD<'SEND_MEDIA'>) {
+		socket.emit(WS_ACTIONS.SEND_MEDIA, {
+			type: payload?.type,
+			file: payload?.file
+		})
+	},
 	[WS_ACTIONS.JOIN]: function (socket: Socket, payload: PICK_WS_PAYLOAD<'JOIN'>) {
 		socket.emit(WS_ACTIONS.JOIN, { roomID: payload.roomID ?? '', roomPassword: payload.roomPassword ?? '' })
 	},

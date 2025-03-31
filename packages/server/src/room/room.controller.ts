@@ -2,8 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  Post,
+  Req,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -11,6 +15,9 @@ import { RoomHistoryDto } from './dto/roomHistory.dto';
 import { WsConnService } from 'src/ws-conn/ws-conn.service';
 import { Request as RequestType } from 'express';
 import { UserService } from 'src/user/user.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { RoomService } from './room.service';
+import { room } from 'src/entities';
 
 @Controller('room')
 @UseGuards(JWTAuthGuard)
@@ -18,6 +25,7 @@ export class RoomController {
   constructor(
     private wsConn: WsConnService,
     private userService: UserService,
+    private roomService: RoomService,
   ) {}
 
   // createRoom method is useless here since the user needs to join the room in the socket as well
@@ -44,5 +52,16 @@ export class RoomController {
       ...allRooms,
       currentUser,
     };
+  }
+
+  @Post('uploadPhoto')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPhoto(
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Body() body: { roomID: room['room_id'] },
+  ) {
+    await this.roomService.uploadRoomPhoto(body?.roomID, file);
+    return file?.filename;
   }
 }

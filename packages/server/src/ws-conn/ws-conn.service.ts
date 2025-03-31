@@ -192,18 +192,19 @@ export class WsConnService {
 
     try {
       const roomInfo: room[] | [] = await this.dataSource.query(`
-        SELECT DISTINCT ON (room.room_id) room.room_id, room.room_name, room.room_description, room.created_at, room.room_picture from room
+        SELECT room.room_id, room.room_name, room.room_description, room.created_at, file_storage.file_src as room_picture from room
         LEFT JOIN users_in_room ON room.room_id = users_in_room.room_id
-        LEFT JOIN room_messages ON users_in_room.room_id = room_messages.which_room 
-        WHERE users_in_room.room_id IN (${getRooms}) AND users_in_room.user_id = (${userID})::integer;
-        `);
+        LEFT JOIN room_messages ON users_in_room.room_id = room_messages.which_room
+        LEFT JOIN file_storage ON room.room_picture = file_storage.file_id
+        WHERE users_in_room.room_id IN (${getRooms}) AND users_in_room.user_id = (${userID})::integer GROUP BY room.room_id, file_storage.file_src
+        ORDER BY max(room_messages.date_sended) NULLS LAST;
+      `);
       if (!roomInfo?.length) return null;
 
-      //* this query is unnecesary large & complex, but it justs gets the last 50 messages of every room by counting the times the room_id was repeated
+      //* this query is unnecessary large & complex, but it justs gets the last X messages of every room by counting the times the room_id was repeated
       //* in the future, this will become a problem. It's just better to do two queries.
       const messageInfo: Array<roomInfo> = await this.dataSource.query(`
-          SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, 
-            messages.message_content, messages.file_id, messages.message_id 
+          SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, messages.message_content, messages.file_id, messages.message_id
             FROM 
               (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
               FROM room_messages) room_messages

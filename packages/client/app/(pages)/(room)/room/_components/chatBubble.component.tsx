@@ -20,9 +20,7 @@ function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 				${selectedKeyRoom === roomInfo.room_id && '!bg-blue-400/40'}`}
 			onClick={() => setSelectedKeyRoom(roomInfo.room_id)}
 		>
-			<aside className="h-16 w-16 min-w-16 min-h-16 p-1">
-				<ImageAndFallback picture={roomInfo.room_picture ?? ''} />
-			</aside>
+			<ImageAndFallback picture={roomInfo.room_picture ?? ''} size={60} />
 
 			<div className="w-full">
 				<span className="w-full max-h-fit flex flex-row gap-x-1 justify-between items-center">

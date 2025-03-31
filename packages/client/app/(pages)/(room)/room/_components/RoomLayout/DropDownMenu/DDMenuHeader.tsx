@@ -24,10 +24,15 @@ export function DDMenu({ handleLeave, roomID }: DDMenuProps) {
 						<DotsVerticalIcon className="w-full h-full svgOnHover" />
 					</IconButton>
 				</Trigger>
-				<Content>
-					<Item onClick={(e) => handleState(e)} color="indigo" className="hover:cursor-pointer">
-						{!isIDVisible ? 'RoomID' : roomID}
-					</Item>
+				<Content className="items-center">
+					<DropdownMenu.Sub>
+						<DropdownMenu.SubTrigger>Settings</DropdownMenu.SubTrigger>
+						<DropdownMenu.SubContent>
+							<Item onClick={(e) => handleState(e)} color="indigo" className="hover:cursor-pointer self-center">
+								{!isIDVisible ? 'RoomID' : roomID}
+							</Item>
+						</DropdownMenu.SubContent>
+					</DropdownMenu.Sub>
 
 					<Separator />
 

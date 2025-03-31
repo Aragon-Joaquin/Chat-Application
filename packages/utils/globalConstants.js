@@ -9,7 +9,8 @@ exports.WS_ACTIONS = {
     JOIN_MULTIPLE: 'joinRooms',
     SEND: 'sendMessage',
     DELETE: 'deleteMessage',
-    CREATE: 'createRoom'
+    CREATE: 'createRoom',
+    SEND_MEDIA: 'sendMediaFiles'
 };
 exports.WS_ENDPOINTS_EVENTS = {
     MESSAGE: 'sendMessage',
@@ -17,7 +18,8 @@ exports.WS_ENDPOINTS_EVENTS = {
     LEAVED_ROOM: 'leavedRoom',
     DELETE_MESSAGE: 'deleteMessage',
     CREATE_ROOM: 'createdRoom',
-    ERROR_CHANNEL: 'errorChannel'
+    ERROR_CHANNEL: 'errorChannel',
+    MEDIA_CHANNEL: 'mediaChannel'
 };
 exports.ROLES = {
     user: 'user',

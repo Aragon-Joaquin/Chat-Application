@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { room, users } from 'src/entities';
 
 export const createErrorMessage = (
   name: string,
@@ -25,3 +26,24 @@ export type roomInfo = {
   file_id: string | null;
   message_id: string;
 };
+
+export type MEDIA_PAYLOADS =
+  | {
+      action: 'roomPicture';
+      roomPicture: {
+        roomID: room['room_id'];
+      };
+    }
+  | {
+      action: 'userPicture';
+      userPicture: {
+        userID: users['user_id'];
+      };
+    }
+  | {
+      action: 'chatIMG';
+      chatIMG: {
+        roomID: room['room_id'];
+        userID: users['user_id'];
+      };
+    };

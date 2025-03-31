@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { room } from 'src/entities';
+import { file_storage, room } from 'src/entities';
 import { FindOneOptions, Repository } from 'typeorm';
 import { RoomDto } from './dto/room.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +10,8 @@ export class RoomService {
   constructor(
     @InjectRepository(room)
     private roomRepository: Repository<room>,
+    @InjectRepository(file_storage)
+    private fileStorage: Repository<file_storage>,
   ) {}
 
   async FindOne(where: FindOneOptions<room>): Promise<room> {
@@ -61,6 +63,25 @@ export class RoomService {
         'Something went wrong while creating the room.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async uploadRoomPhoto(roomID: room['room_id'], file: Express.Multer.File) {
+    if (roomID == undefined) return;
+    try {
+      const roomPhoto = await this.fileStorage.insert({
+        file_name: file?.originalname,
+        file_src: file?.filename,
+      });
+
+      return await this.roomRepository.update(
+        { room_id: roomID },
+        {
+          room_picture: roomPhoto.raw[0].file_id,
+        },
+      );
+    } catch {
+      return null;
     }
   }
 }

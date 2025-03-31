@@ -17,9 +17,7 @@ function ProfileInformationNoMemo() {
 
 	return (
 		<footer className="flex flex-row items-center pb-5 gap-x-2 bg-neutral-100 borderLayout w-full !max-w-[350px]">
-			<div className="h-14 w-14 min-h-14 min-w-14 rounded-[50%]">
-				<ImageAndFallback picture={actualUser?.profile_picture ?? ''} altName="Your profile picture." />
-			</div>
+			<ImageAndFallback picture={actualUser?.profile_picture ?? ''} altName="Your profile picture." />
 
 			<span className="flex flex-col !overflow-hidden w-full">
 				<span className="flex flex-row items-center gap-x-1 w-full">
