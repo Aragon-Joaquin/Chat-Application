@@ -36,14 +36,10 @@ export type MEDIA_PAYLOADS =
     }
   | {
       action: 'userPicture';
-      userPicture: {
-        userID: users['user_id'];
-      };
     }
   | {
       action: 'chatIMG';
       chatIMG: {
         roomID: room['room_id'];
-        userID: users['user_id'];
       };
     };

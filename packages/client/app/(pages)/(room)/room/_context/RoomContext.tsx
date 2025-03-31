@@ -18,6 +18,7 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		roomState,
 		userState,
 		ModifyUser,
+		AddUsers,
 		AddRoom,
 		AddMultipleRooms,
 		AddMessage,
@@ -55,10 +56,9 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		wsSocket.emit(WS_ACTIONS.JOIN_MULTIPLE)
 
 		function handlerMessage(data: string) {
+			console.log(data)
 			const { new_message, from_user_id, roomID, client_id, date_sended }: WS_ENDPOINTS_TYPES['sendMessage'] =
 				JSON.parse(data)
-
-			console.log(JSON.parse(data))
 
 			if (client_id != undefined)
 				return ModifyMessage({
@@ -82,10 +82,9 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		}
 
 		function handlerJoin(data: string) {
-			const { room_description, room_id, room_name, created_at, room_picture }: WS_ENDPOINTS_TYPES['createdRoom'] =
-				JSON.parse(data)
-
-			AddRoom({ room_description, room_id, room_name, room_picture, created_at })
+			const parsedData: WS_ENDPOINTS_TYPES['joinedRoom'] = JSON.parse(data)
+			if ('user_id' in parsedData) AddUsers(parsedData)
+			else AddRoom(parsedData)
 		}
 
 		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
@@ -108,7 +107,6 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 				RoomCtx: {
 					roomState,
 					userState,
-					ModifyUser,
 					AddRoom,
 					AddMultipleRooms,
 					AddMessage,

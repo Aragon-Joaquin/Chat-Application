@@ -17,8 +17,6 @@ import { messages } from 'src/entities';
 import { WsConnService } from './ws-conn.service';
 import { createErrorMessage, MEDIA_PAYLOADS } from './utils';
 import { UUID_TYPE } from 'src/utils/types';
-import multer from 'multer';
-import { MULTER_OPTIONS } from 'src/utils/MulterProps';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -130,7 +128,49 @@ export class WsConnGateway {
     payload: { type: MEDIA_PAYLOADS; fileSrc: string },
   ) {
     const { type, fileSrc } = payload;
+    const JWT_Info = this.getJWTHeader(client);
+
     console.log({ payload });
+
+    if (!('action' in type))
+      return this.returnCustomError(client.id, [
+        'Action is missing',
+        HttpStatus.BAD_REQUEST,
+      ]);
+
+    switch (type.action) {
+      case 'chatIMG': {
+        this.wss
+          .in(type.chatIMG.roomID)
+          .emit(WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL, {
+            clientID: JWT_Info.id,
+            fileSrc,
+          });
+        break;
+      }
+      case 'roomPicture': {
+        this.wss
+          .in(type.roomPicture.roomID)
+          .emit(WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL, {
+            fileSrc,
+          });
+        break;
+      }
+      case 'userPicture': {
+        client.broadcast.emit(WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL, {
+          clientID: JWT_Info.id,
+          fileSrc,
+        });
+        break;
+      }
+
+      default: {
+        return this.returnCustomError(client.id, [
+          'Unknown action.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ]);
+      }
+    }
   }
 
   @SubscribeMessage(WS_ACTIONS.CREATE)
@@ -168,13 +208,13 @@ export class WsConnGateway {
     const JWT_Info = this.getJWTHeader(client);
 
     try {
-      const roomExists = await this.wsConnService.JoinToNewRoom(
-        roomID,
-        JWT_Info,
-        roomPassword,
-      );
+      const [roomExists, userInfo] = await Promise.all([
+        this.wsConnService.JoinToNewRoom(roomID, JWT_Info, roomPassword),
+        this.wsConnService.GetUser(JWT_Info['id']),
+      ]);
+      console.log(roomExists);
 
-      if (roomExists == undefined)
+      if (roomExists == undefined || userInfo == undefined)
         return this.returnCustomError(client.id, [
           'Room does not exists with that ID',
           HttpStatus.BAD_REQUEST,
@@ -182,12 +222,23 @@ export class WsConnGateway {
 
       await client.join(roomID);
 
-      this.wss
-        .in(roomID)
-        .emit(
-          WS_ENDPOINTS_EVENTS.JOINED_ROOM,
-          `${JWT_Info.userName} joined the room.`,
-        );
+      this.wss.to(client.id).emit(
+        WS_ENDPOINTS_EVENTS.JOINED_ROOM,
+        JSON.stringify({
+          room_id: roomExists.room_id,
+          room_name: roomExists.room_name,
+          room_description: roomExists?.room_description,
+          created_at: roomExists.created_at,
+          room_picture: roomExists.room_picture?.file_src,
+        }),
+      );
+
+      client.broadcast.emit(
+        WS_ENDPOINTS_EVENTS.JOINED_ROOM,
+        JSON.stringify({
+          userInfo,
+        }),
+      );
     } catch (error) {
       if (error instanceof BadRequestException)
         return this.returnCustomError(client.id, [

@@ -1,5 +1,5 @@
 import { BadRequestType } from '@/app/_errors'
-import { Messages, UserInfo } from '@/app/_utils/tableTypes'
+import { Messages, RoomInfo, UserInfo } from '@/app/_utils/tableTypes'
 export interface WS_ENDPOINTS_TYPES {
 	sendMessage: {
 		new_message: {
@@ -23,4 +23,18 @@ export interface WS_ENDPOINTS_TYPES {
 		created_at: Date
 		room_picture: string | null
 	}
+
+	joinedRoom:
+		| {
+				user_id: UserInfo['user_id']
+				user_name: UserInfo['user_name']
+				profile_picture: UserInfo['profile_picture']
+		  }
+		| {
+				room_id: RoomInfo['room_id']
+				room_name: RoomInfo['room_name']
+				room_description: RoomInfo['room_description']
+				created_at: RoomInfo['created_at']
+				room_picture: RoomInfo['room_picture']
+		  }
 }

@@ -14,9 +14,20 @@ export class RoomService {
     private fileStorage: Repository<file_storage>,
   ) {}
 
-  async FindOne(where: FindOneOptions<room>): Promise<room> {
-    const roomExisting = this.roomRepository.findOne(where);
-
+  async FindOne(where: FindOneOptions<room>['where']): Promise<room> {
+    const roomExisting = await this.roomRepository.findOne({
+      where: where,
+      relations: {
+        room_picture: true,
+      },
+      select: {
+        room_picture: {
+          file_id: false,
+          file_name: false,
+          file_src: true,
+        },
+      },
+    });
     if (!roomExisting)
       throw new HttpException('Room does not exist', HttpStatus.BAD_REQUEST);
 

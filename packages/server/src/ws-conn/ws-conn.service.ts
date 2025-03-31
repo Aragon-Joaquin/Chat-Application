@@ -17,6 +17,7 @@ import { DataSource, InsertResult } from 'typeorm';
 import { MAX_MESSAGES_PER_REQ } from 'src/utils/constants';
 import { RoomDto } from 'src/room/dto/room.dto';
 import { roomInfo, userInfo } from './utils';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class WsConnService {
@@ -24,6 +25,7 @@ export class WsConnService {
     private roomService: RoomService,
     private roomMsgs: RoomMessagesService,
     private usersRoomsService: UsersRoomsService,
+    private userService: UserService,
     @InjectDataSource()
     private dataSource: DataSource,
   ) {}
@@ -43,16 +45,17 @@ export class WsConnService {
     return userRooms >= MAXIMUM_ROOMS_PER_USER ? true : false;
   }
 
+  GetUser = async (user: JWT_DECODED_INFO['id']) =>
+    await this.userService.getUser(user);
+
   //! rooms methods ⬇
   async JoinToNewRoom(
     id: string,
     userInfo: JWT_DECODED_INFO,
     password?: string,
   ) {
-    const roomExisting = await this.roomService.FindOne({
-      where: { room_id: id },
-    });
-
+    const roomExisting = await this.roomService.FindOne({ room_id: id });
+    console.log(roomExisting);
     if (!roomExisting) return null;
 
     await this.usersRoomsService.VerifyAndJoinRoom(
@@ -70,9 +73,7 @@ export class WsConnService {
   }
 
   async RoomHistory(user: JWT_DECODED_INFO, body?: RoomHistoryDto) {
-    const room = await this.roomService.FindOne({
-      where: { room_id: body.roomName },
-    });
+    const room = await this.roomService.FindOne({ room_id: body.roomName });
 
     const [history, _] = await Promise.all([
       this.roomMsgs.InnerJoinRoomMessages(body),

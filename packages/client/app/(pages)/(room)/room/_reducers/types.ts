@@ -12,6 +12,8 @@ export const STATE_ACTIONS = {
 	ADD_OWN_MESSAGE: 'ADD_OWN_MESSAGE',
 	MODIFY_MESSAGE: 'MODIFY_MESSAGE',
 	DELETED_MESSAGE: 'DELETED_MESSAGE',
+
+	ADD_USERS: 'ADD_USERS',
 	MODIFY_USERINFO: 'MODIFY_USERINFO'
 }
 
@@ -70,6 +72,10 @@ export type PAYLOAD_TYPES =
 	| {
 			type: TYPES_NAMES<'MODIFY_USERINFO'>
 			payload: { userID: UserInfo['user_id']; newProps: Omit<UserInfo, ' user_id'> }
+	  }
+	| {
+			type: TYPES_NAMES<'ADD_USERS'>
+			payload: UserInfo | UserInfo[]
 	  }
 
 export type PICK_TYPE<T extends keyof typeof STATE_ACTIONS> = Extract<PAYLOAD_TYPES, { type: T }>

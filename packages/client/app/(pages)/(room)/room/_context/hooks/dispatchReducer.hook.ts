@@ -5,6 +5,7 @@ import { initialReducerState, PICK_PAYLOAD } from '../../_reducers/types'
 export function useRoomReducer() {
 	const [reducerState, dispatch] = useReducer(roomReducer, initialReducerState)
 
+	//! users methods
 	const ModifyUser = (payload: PICK_PAYLOAD<'MODIFY_USERINFO'>) => {
 		dispatch({
 			type: 'MODIFY_USERINFO',
@@ -12,6 +13,14 @@ export function useRoomReducer() {
 		})
 	}
 
+	const AddUsers = (payload: PICK_PAYLOAD<'ADD_USERS'>) => {
+		dispatch({
+			type: 'ADD_USERS',
+			payload
+		})
+	}
+
+	//! room methods
 	const AddRoom = (payload: PICK_PAYLOAD<'ADD_ROOM'>) =>
 		dispatch({
 			type: 'ADD_ROOM',
@@ -58,6 +67,7 @@ export function useRoomReducer() {
 		roomState: reducerState['rooms'],
 		userState: reducerState['users'],
 		ModifyUser,
+		AddUsers,
 		AddRoom,
 		AddMultipleRooms,
 		AddMessage,

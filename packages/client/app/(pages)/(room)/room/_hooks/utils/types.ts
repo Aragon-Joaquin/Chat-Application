@@ -40,14 +40,10 @@ type MEDIA_PAYLOADS =
 	  }
 	| {
 			action: 'userPicture'
-			userPicture: {
-				userID: UserInfo['user_id']
-			}
 	  }
 	| {
 			action: 'chatIMG'
 			chatIMG: {
 				roomID: RoomInfo['room_id']
-				userID: UserInfo['user_id']
 			}
 	  }

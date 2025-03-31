@@ -9,6 +9,38 @@ import {
 import { ADD_USERS_MAP, CREATE_MESSAGE_OBJ_WITH_FALLBACK } from './utils'
 
 const roomStateActions = {
+	[STATE_ACTIONS.ADD_USERS]: function ({
+		state,
+		payload
+	}: {
+		state: typeof initialReducerState
+		payload: PICK_PAYLOAD<'ADD_USERS'>
+	}) {
+		const { users } = state
+
+		const newMap = new Map(users)
+		if (!Array.isArray(payload)) {
+			const getUser = users.get(payload.user_id)
+			if (getUser != undefined) return state
+
+			return {
+				...state,
+				users: newMap.set(payload.user_id, payload)
+			}
+		}
+
+		payload.forEach((userElement) => {
+			const getUser = users.get(userElement.user_id)
+			if (getUser != undefined) return state
+			newMap.set(userElement.user_id, userElement)
+		})
+
+		return {
+			...state,
+			users: newMap
+		}
+	},
+
 	[STATE_ACTIONS.MODIFY_USERINFO]: function ({
 		state,
 		payload
@@ -23,7 +55,7 @@ const roomStateActions = {
 		if (!userFound) return state
 		return {
 			...state,
-			user: new Map(users).set(userID, {
+			users: new Map(users).set(userID, {
 				...userFound,
 				...newProps
 			})
@@ -51,7 +83,6 @@ const roomStateActions = {
 		state: typeof initialReducerState
 		payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>
 	}) {
-		console.log({ payload })
 		const { roomInfo, userInfo } = payload
 		if (!payload || !roomInfo.length) return state
 

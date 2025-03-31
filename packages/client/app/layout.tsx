@@ -5,7 +5,7 @@ import { Theme } from '@radix-ui/themes'
 
 import { Poppins } from 'next/font/google'
 import { ErrorBoundary } from './_errors/errorBoundary'
-import { GetErrorContext } from './_context/ErrorContext'
+import { GetErrorContext } from './_context'
 
 export const metadata: Metadata = {
 	title: 'Chat Application',
