@@ -103,6 +103,31 @@ const roomStateActions = {
 			)
 		}
 	},
+
+	[STATE_ACTIONS.MODIFY_ROOM]: function ({
+		state,
+		payload
+	}: {
+		state: typeof initialReducerState
+		payload: PICK_PAYLOAD<'MODIFY_ROOM'>
+	}) {
+		const { roomID, newProps } = payload
+		const { rooms } = state
+
+		const roomFound = rooms.get(roomID)
+		if (roomFound == undefined) return state
+
+		return {
+			...state,
+			rooms: new Map(rooms).set(roomID, {
+				...roomFound,
+				roomInfo: {
+					...roomFound.roomInfo,
+					...newProps
+				}
+			})
+		}
+	},
 	[STATE_ACTIONS.ADD_OWN_MESSAGE]: function ({
 		state,
 		payload
@@ -157,7 +182,6 @@ const roomStateActions = {
 						return msgInfo.message_id === message.message_id
 					}) ?? undefined)
 
-		console.log({ findMessageByID })
 		if (findMessageByID == undefined || findMessageByID < 0) return state
 
 		return {

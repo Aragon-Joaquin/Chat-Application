@@ -18,6 +18,7 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		roomState,
 		userState,
 		ModifyUser,
+		ModifyRoom,
 		AddUsers,
 		AddRoom,
 		AddMultipleRooms,
@@ -83,14 +84,42 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 
 		function handlerJoin(data: string) {
 			const parsedData: WS_ENDPOINTS_TYPES['joinedRoom'] = JSON.parse(data)
-			if ('user_id' in parsedData) AddUsers(parsedData)
-			else AddRoom(parsedData)
+			if ('user_id' in parsedData) {
+				AddUsers(parsedData)
+				AddMessage({
+					newMessage: { type: 'server', message_content: `${parsedData?.user_name ?? '???'} has joined the room.` },
+					roomInfo: parsedData.room_id
+				})
+			} else {
+				AddRoom(parsedData)
+				AddMessage({
+					newMessage: { type: 'server', message_content: `You joined the room!` },
+					roomInfo: parsedData.room_id
+				})
+			}
+		}
+
+		function handleMediaChannel(data: string) {
+			const parsedData: WS_ENDPOINTS_TYPES['sendMediaFiles'] = JSON.parse(data)
+			console.log(parsedData)
+			if (parsedData.type === 'roomPicture')
+				return ModifyRoom({ roomID: parsedData.roomID, newProps: { room_picture: parsedData.fileSrc } })
+			if (parsedData.type === 'userPicture')
+				return ModifyUser({ userID: parsedData.clientID, newProps: { profile_picture: parsedData.fileSrc } })
+
+			//! this needs more information
+			if (parsedData.type === 'chatIMG')
+				return AddMessage({
+					roomInfo: parsedData.roomID,
+					newMessage: { sender_id: parsedData.clientID, message_content: '', file_id: parsedData.fileSrc }
+				})
 		}
 
 		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
 		wsSocket.on(WS_ENDPOINTS_EVENTS.ERROR_CHANNEL, handlerErrors)
 		wsSocket.on(WS_ENDPOINTS_EVENTS.CREATE_ROOM, handlerJoin)
 		wsSocket.on(WS_ENDPOINTS_EVENTS.JOINED_ROOM, handlerJoin)
+		wsSocket.on(WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL, handleMediaChannel)
 		wsSocket.on('disconnect', () => {
 			setUIError(new Error('WebSocket has been disconnected. Please reload the page again. '))
 		})

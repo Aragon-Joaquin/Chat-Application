@@ -35,7 +35,9 @@ export default function RoomPage() {
 				className="h-full mb-16 overflow-y-auto bg-chatBackground bg-blend-lighten bg-white/90 bg-no-repeat bg-cover bg-center [scrollbar-width:thin]"
 				ref={mainRef}
 			>
-				<RenderMessages messages={actualRoom.messages} />
+				<>
+					<RenderMessages messages={actualRoom.messages} />
+				</>
 			</main>
 			<FooterRoom />
 		</main>

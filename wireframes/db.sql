@@ -8,7 +8,7 @@
 CREATE TABLE file_storage (
 	file_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 	file_src text NOT NULL, -- i have no idea how long the url is gonna be
-	file_name varchar(30) NOT NULL
+	file_name varchar(128) NOT NULL
 );
 
 CREATE TABLE users (

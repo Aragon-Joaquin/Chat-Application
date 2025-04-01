@@ -125,12 +125,13 @@ export class WsConnGateway {
   @SubscribeMessage(WS_ACTIONS.SEND_MEDIA)
   async handleSendMedia(
     client: Socket,
-    payload: { type: MEDIA_PAYLOADS; fileSrc: string },
+    payload: { type: MEDIA_PAYLOADS; file: string },
   ) {
-    const { type, fileSrc } = payload;
-    const JWT_Info = this.getJWTHeader(client);
-
     console.log({ payload });
+    console.log({ room: payload?.type });
+
+    const { type, file } = payload;
+    const JWT_Info = this.getJWTHeader(client);
 
     if (!('action' in type))
       return this.returnCustomError(client.id, [
@@ -139,28 +140,38 @@ export class WsConnGateway {
       ]);
 
     switch (type.action) {
-      case 'chatIMG': {
-        this.wss
-          .in(type.chatIMG.roomID)
-          .emit(WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL, {
-            clientID: JWT_Info.id,
-            fileSrc,
-          });
-        break;
-      }
       case 'roomPicture': {
-        this.wss
-          .in(type.roomPicture.roomID)
-          .emit(WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL, {
-            fileSrc,
-          });
+        this.wss.in(type.roomPicture.roomID).emit(
+          WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
+          JSON.stringify({
+            type: 'roomPicture',
+            roomID: type.roomPicture.roomID,
+            fileSrc: file,
+          }),
+        );
         break;
       }
       case 'userPicture': {
-        client.broadcast.emit(WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL, {
-          clientID: JWT_Info.id,
-          fileSrc,
-        });
+        client.emit(
+          WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
+          JSON.stringify({
+            type: 'userPicture',
+            clientID: JWT_Info.id,
+            fileSrc: file,
+          }),
+        );
+        break;
+      }
+      case 'chatIMG': {
+        this.wss.in(type.chatIMG.roomID).emit(
+          WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
+          JSON.stringify({
+            type: 'chatIMG',
+            clientID: JWT_Info.id,
+            roomID: type.chatIMG.roomID,
+            fileSrc: file,
+          }),
+        );
         break;
       }
 
@@ -236,6 +247,7 @@ export class WsConnGateway {
       client.broadcast.emit(
         WS_ENDPOINTS_EVENTS.JOINED_ROOM,
         JSON.stringify({
+          room_id: roomExists.room_id,
           userInfo,
         }),
       );

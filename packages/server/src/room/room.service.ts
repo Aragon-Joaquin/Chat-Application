@@ -85,12 +85,13 @@ export class RoomService {
         file_src: file?.filename,
       });
 
-      return await this.roomRepository.update(
+      const photo = await this.roomRepository.update(
         { room_id: roomID },
         {
           room_picture: roomPhoto.raw[0].file_id,
         },
       );
+      return photo;
     } catch {
       return null;
     }

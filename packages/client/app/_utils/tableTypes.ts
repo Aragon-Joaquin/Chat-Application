@@ -1,4 +1,5 @@
 export type Messages = {
+	type: 'user' | 'server' | 'admin'
 	message_id: `${string}-${string}-${string}-${string}-${string}` | string
 	which_room: string
 	date_sended: Date | string

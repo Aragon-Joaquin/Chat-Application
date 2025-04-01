@@ -6,19 +6,17 @@ export function useRoomReducer() {
 	const [reducerState, dispatch] = useReducer(roomReducer, initialReducerState)
 
 	//! users methods
-	const ModifyUser = (payload: PICK_PAYLOAD<'MODIFY_USERINFO'>) => {
+	const ModifyUser = (payload: PICK_PAYLOAD<'MODIFY_USERINFO'>) =>
 		dispatch({
 			type: 'MODIFY_USERINFO',
 			payload
 		})
-	}
 
-	const AddUsers = (payload: PICK_PAYLOAD<'ADD_USERS'>) => {
+	const AddUsers = (payload: PICK_PAYLOAD<'ADD_USERS'>) =>
 		dispatch({
 			type: 'ADD_USERS',
 			payload
 		})
-	}
 
 	//! room methods
 	const AddRoom = (payload: PICK_PAYLOAD<'ADD_ROOM'>) =>
@@ -33,6 +31,18 @@ export function useRoomReducer() {
 			payload
 		})
 
+	const LeaveRoom = (payload: PICK_PAYLOAD<'LEAVE_ROOM'>) =>
+		dispatch({
+			type: 'LEAVE_ROOM',
+			payload
+		})
+	const ModifyRoom = (payload: PICK_PAYLOAD<'MODIFY_ROOM'>) =>
+		dispatch({
+			type: 'MODIFY_ROOM',
+			payload
+		})
+
+	//! message methods
 	const AddMessage = (payload: PICK_PAYLOAD<'ADD_MESSAGE'>) =>
 		dispatch({
 			type: 'ADD_MESSAGE',
@@ -51,12 +61,6 @@ export function useRoomReducer() {
 			payload
 		})
 
-	const LeaveRoom = (payload: PICK_PAYLOAD<'LEAVE_ROOM'>) =>
-		dispatch({
-			type: 'LEAVE_ROOM',
-			payload
-		})
-
 	const DeleteMessage = (payload: PICK_PAYLOAD<'DELETED_MESSAGE'>) =>
 		dispatch({
 			type: 'DELETED_MESSAGE',
@@ -69,6 +73,7 @@ export function useRoomReducer() {
 		ModifyUser,
 		AddUsers,
 		AddRoom,
+		ModifyRoom,
 		AddMultipleRooms,
 		AddMessage,
 		AddOwnMessage,

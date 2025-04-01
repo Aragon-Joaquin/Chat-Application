@@ -56,7 +56,9 @@ export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 				<SearchBox placeholder="Search chats." />
 
 				<LayoutRenderChat roomState={roomState} />
-				<ProfileInformation />
+				<>
+					<ProfileInformation />
+				</>
 			</aside>
 			{children}
 		</main>

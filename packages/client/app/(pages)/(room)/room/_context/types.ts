@@ -26,6 +26,7 @@ export interface WS_ENDPOINTS_TYPES {
 
 	joinedRoom:
 		| {
+				room_id: RoomInfo['room_id']
 				user_id: UserInfo['user_id']
 				user_name: UserInfo['user_name']
 				profile_picture: UserInfo['profile_picture']
@@ -36,5 +37,22 @@ export interface WS_ENDPOINTS_TYPES {
 				room_description: RoomInfo['room_description']
 				created_at: RoomInfo['created_at']
 				room_picture: RoomInfo['room_picture']
+		  }
+	sendMediaFiles:
+		| {
+				type: 'chatIMG'
+				clientID: UserInfo['user_id']
+				roomID: RoomInfo['room_id']
+				fileSrc: string
+		  }
+		| {
+				type: 'roomPicture'
+				roomID: RoomInfo['room_id']
+				fileSrc: string
+		  }
+		| {
+				type: 'userPicture'
+				clientID: UserInfo['user_id']
+				fileSrc: string
 		  }
 }

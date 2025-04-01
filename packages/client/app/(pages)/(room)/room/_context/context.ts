@@ -10,12 +10,14 @@ import { UserInfo } from '@/app/_utils/tableTypes'
 interface RoomCtx {
 	roomState: (typeof initialReducerState)['rooms']
 	userState: (typeof initialReducerState)['users']
+
 	AddRoom: (payload: PICK_PAYLOAD<'ADD_ROOM'>) => void
 	AddMultipleRooms: (payload: PICK_PAYLOAD<'ADD_MULTIPLE_ROOMS'>) => void
+	LeaveRoom: (payload: PICK_PAYLOAD<'LEAVE_ROOM'>) => void
+
 	AddMessage: (payload: PICK_PAYLOAD<'ADD_MESSAGE'>) => void
 	AddOwnMessage: (payload: PICK_PAYLOAD<'ADD_OWN_MESSAGE'>) => void
 	ModifyMessage: (payload: PICK_PAYLOAD<'MODIFY_MESSAGE'>) => void
-	LeaveRoom: (payload: PICK_PAYLOAD<'LEAVE_ROOM'>) => void
 	DeleteMessage: (payload: PICK_PAYLOAD<'DELETED_MESSAGE'>) => void
 }
 interface selectedRoom {

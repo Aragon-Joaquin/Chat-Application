@@ -6,6 +6,7 @@ import { messageStatus } from '../../_reducers/types'
 import { ClockIcon, ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import { memo } from 'react'
 import { useRoomContext } from '../../_hooks/consumeRoomContext'
+import { ServerMessage } from './messageTypes/ServerMessage'
 
 function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }) {
 	const {
@@ -14,11 +15,13 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 	} = useRoomContext()
 
 	//file_id, message_id, which_room
-	const { message_content, sender_id, date_sended, messageStatus } = messages
+	const { message_content, sender_id, date_sended, messageStatus, type } = messages
+
+	//! atomize this & improve it
+	if (type === 'server') return <ServerMessage message_content={message_content} />
 
 	const actualUser = userState?.get(sender_id ?? 0)
 	const ownMessage = actualUser?.user_id === currentUser
-
 	return (
 		<span
 			className={`flex flex-row gap-x-4 ${ownMessage && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}

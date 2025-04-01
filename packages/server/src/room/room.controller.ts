@@ -62,6 +62,6 @@ export class RoomController {
     @Body() body: { roomID: room['room_id'] },
   ) {
     await this.roomService.uploadRoomPhoto(body?.roomID, file);
-    return file?.filename;
+    return JSON.stringify(file?.filename);
   }
 }

@@ -35,16 +35,20 @@ export class UserService {
     userID: JWT_DECODED_INFO['id'],
     file: Express.Multer.File,
   ) {
-    const image = await this.fileRepository.insert({
-      file_name: file.originalname,
-      file_src: file.filename,
-    });
+    try {
+      const image = await this.fileRepository.insert({
+        file_name: file.originalname,
+        file_src: file.filename,
+      });
 
-    return await this.userRepository.update(
-      { user_id: userID },
-      {
-        profile_picture: image.raw[0].file_id,
-      },
-    );
+      return await this.userRepository.update(
+        { user_id: userID },
+        {
+          profile_picture: image.raw[0].file_id,
+        },
+      );
+    } catch (error) {
+      return null;
+    }
   }
 }

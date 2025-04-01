@@ -6,6 +6,7 @@ import { IMAGES_TYPES } from '@/app/_utils/utils'
 import { Pencil1Icon } from '@radix-ui/react-icons'
 import { Button, Dialog, IconButton, Text } from '@radix-ui/themes'
 import { ChangeEvent, DragEvent, FormEvent, memo, useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useRoomContext } from '../../../_hooks/consumeRoomContext'
 
 const INPUT_FILE_NAME = 'file' as const
 
@@ -14,6 +15,9 @@ export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 	const {
 		ErrorContext: { setUIError }
 	} = useConsumeContext()
+	const {
+		webSocket: { handleWSActions }
+	} = useRoomContext()
 
 	const divRef = useRef<HTMLDivElement>(null)
 	const idInput = useId()
@@ -45,8 +49,8 @@ export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 	const handleSubmit = useCallback(
 		(e: FormEvent<HTMLFormElement>) => {
 			e.preventDefault()
-			console.log({ image })
 			if (image == null) return setUIError(new BadRequest('Upload something first!', BadRequestCodes.BAD_REQUEST))
+
 			const FData = new FormData()
 			FData.append(INPUT_FILE_NAME, image)
 
@@ -63,7 +67,12 @@ export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 
 	useEffect(() => {
 		console.log({ responseData })
-	}, [responseData])
+		if (responseData == null) return
+		handleWSActions<'SEND_MEDIA'>({
+			action: 'sendMediaFiles',
+			payload: { file: responseData, type: { action: 'userPicture' } }
+		})
+	}, [handleWSActions, responseData])
 
 	return (
 		<Dialog.Root>

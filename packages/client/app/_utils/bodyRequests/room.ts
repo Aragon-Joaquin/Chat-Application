@@ -8,7 +8,7 @@ export interface ROOM_TYPES_RESPONSES {
 	'/': null
 	'/roomhistory': unknown
 	'/allRooms': { roomInfo: roomState[]; userInfo: UserInfo[]; currentUser: UserInfo }
-	'/uploadPhoto': { filename: string }
+	'/uploadPhoto': string
 }
 
 export const ROOM_REQUEST: REQUEST_SHAPE<ROOM_ROUTES> = {

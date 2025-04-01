@@ -8,6 +8,8 @@ export const STATE_ACTIONS = {
 	ADD_ROOM: 'ADD_ROOM',
 	ADD_MULTIPLE_ROOMS: 'ADD_MULTIPLE_ROOMS',
 	LEAVE_ROOM: 'LEAVE_ROOM',
+	MODIFY_ROOM: 'MODIFY_ROOM',
+
 	ADD_MESSAGE: 'ADD_MESSAGE',
 	ADD_OWN_MESSAGE: 'ADD_OWN_MESSAGE',
 	MODIFY_MESSAGE: 'MODIFY_MESSAGE',
@@ -41,6 +43,10 @@ export type PAYLOAD_TYPES =
 	| { type: TYPES_NAMES<'ADD_ROOM'>; payload: roomState['roomInfo'] }
 	| { type: TYPES_NAMES<'ADD_MULTIPLE_ROOMS'>; payload: { roomInfo: roomState[]; userInfo: UserInfo[] } }
 	| {
+			type: TYPES_NAMES<'MODIFY_ROOM'>
+			payload: { roomID: RoomInfo['room_id']; newProps: Partial<Omit<RoomInfo, 'room_id'>> }
+	  }
+	| {
 			type: TYPES_NAMES<'ADD_MESSAGE'>
 			payload: {
 				roomInfo: roomState['roomInfo']['room_id']
@@ -71,7 +77,7 @@ export type PAYLOAD_TYPES =
 	  }
 	| {
 			type: TYPES_NAMES<'MODIFY_USERINFO'>
-			payload: { userID: UserInfo['user_id']; newProps: Omit<UserInfo, ' user_id'> }
+			payload: { userID: UserInfo['user_id']; newProps: Partial<Omit<UserInfo, 'user_id'>> }
 	  }
 	| {
 			type: TYPES_NAMES<'ADD_USERS'>

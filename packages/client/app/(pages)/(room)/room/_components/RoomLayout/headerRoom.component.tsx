@@ -91,7 +91,7 @@ const RoomHeader = memo(function useRoomHeaderNoMemo({
 		if (responseData == null) return
 		handleWSActions<'SEND_MEDIA'>({
 			action: 'sendMediaFiles',
-			payload: { file: responseData.filename, type: { action: 'roomPicture', roomPicture: { roomID: room_id } } }
+			payload: { file: responseData, type: { action: 'roomPicture', roomPicture: { roomID: room_id } } }
 		})
 	}, [responseData, handleWSActions, room_id])
 

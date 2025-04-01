@@ -7,6 +7,7 @@ import { Messages, UserInfo } from '@/app/_utils/tableTypes'
  */
 export const CREATE_MESSAGE_OBJ_WITH_FALLBACK = (message: Partial<Messages>): Messages => {
 	return {
+		type: message?.type ?? 'user',
 		message_content: message.message_content ?? '',
 		date_sended: message.date_sended ?? '',
 		file_id: message.file_id ?? null,

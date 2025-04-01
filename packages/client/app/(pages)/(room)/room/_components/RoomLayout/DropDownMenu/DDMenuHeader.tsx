@@ -26,7 +26,7 @@ export function DDMenu({ handleLeave, roomID }: DDMenuProps) {
 				</Trigger>
 				<Content className="items-center">
 					<DropdownMenu.Sub>
-						<DropdownMenu.SubTrigger>Settings</DropdownMenu.SubTrigger>
+						<DropdownMenu.SubTrigger className="hover:cursor-pointer">Settings</DropdownMenu.SubTrigger>
 						<DropdownMenu.SubContent>
 							<Item onClick={(e) => handleState(e)} color="indigo" className="hover:cursor-pointer self-center">
 								{!isIDVisible ? 'RoomID' : roomID}
@@ -36,9 +36,11 @@ export function DDMenu({ handleLeave, roomID }: DDMenuProps) {
 
 					<Separator />
 
-					<Item className="hover:cursor-pointer flex justify-center">
+					<Item className="flex justify-center !bg-transparent">
 						<AlertDialog.Trigger>
-							<Button color="red">Leave</Button>
+							<Button color="red" className="hover:cursor-pointer  hover:brightness-90">
+								Leave
+							</Button>
 						</AlertDialog.Trigger>
 					</Item>
 				</Content>

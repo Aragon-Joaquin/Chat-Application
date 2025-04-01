@@ -55,7 +55,7 @@ export class WsConnService {
     password?: string,
   ) {
     const roomExisting = await this.roomService.FindOne({ room_id: id });
-    console.log(roomExisting);
+
     if (!roomExisting) return null;
 
     await this.usersRoomsService.VerifyAndJoinRoom(

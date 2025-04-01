@@ -10,6 +10,6 @@ export class file_storage {
   @Column({ nullable: false, type: 'varchar' })
   file_src: string;
 
-  @Column({ nullable: false, length: 30, type: 'varchar' })
+  @Column({ nullable: false, length: 128, type: 'varchar' })
   file_name: string;
 }
