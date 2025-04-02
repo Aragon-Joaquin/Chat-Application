@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
-import { room, users } from 'src/entities';
+import { room } from 'src/entities';
 
 export const createErrorMessage = (
   name: string,

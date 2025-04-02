@@ -50,7 +50,9 @@ function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 								<p className="w-fit truncate">{messages.at(-1)?.message_content}</p>
 							</>
 						) : (
-							'No messages yet.'
+							<Text as="p" color="gray" weight="medium">
+								No messages yet.
+							</Text>
 						)}
 					</Text>
 				</span>

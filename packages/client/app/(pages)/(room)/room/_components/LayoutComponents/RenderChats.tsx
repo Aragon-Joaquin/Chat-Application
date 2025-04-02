@@ -1,11 +1,15 @@
 import { memo } from 'react'
 import { NoChatsAvailable } from '../noChatsAvailable.component'
 import { ChatBubble } from '../chatBubble.component'
-import { roomState } from '../../_reducers/types'
+import { useRoomContext } from '../../_hooks/consumeRoomContext'
 
-export const LayoutRenderChat = memo(function RenderChatBubble({ roomState }: { roomState: Map<string, roomState> }) {
+export const LayoutRenderChat = memo(function RenderChatBubble() {
+	const {
+		RoomCtx: { roomState }
+	} = useRoomContext()
+
 	return (
-		<main className="flex-1 borderLayout overflow-y-auto !border-b-0">
+		<main className="overflow-y-auto">
 			{roomState.size == 0 ? (
 				<NoChatsAvailable />
 			) : (

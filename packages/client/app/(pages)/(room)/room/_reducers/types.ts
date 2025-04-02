@@ -4,6 +4,8 @@ import { CLIENT_UUID_TYPE } from '@/app/_utils/utils'
 // this is a ID just to identify it in the client, when it goes through the server the id will change
 export const UUID_CLIENT_GENERATED = '_client-side' as const
 
+export type ORDER_MESSAGES = 'asNewest' | 'asOlder'
+
 export const STATE_ACTIONS = {
 	ADD_ROOM: 'ADD_ROOM',
 	ADD_MULTIPLE_ROOMS: 'ADD_MULTIPLE_ROOMS',
@@ -50,7 +52,8 @@ export type PAYLOAD_TYPES =
 			type: TYPES_NAMES<'ADD_MESSAGE'>
 			payload: {
 				roomInfo: roomState['roomInfo']['room_id']
-				newMessage: Partial<Messages>
+				newMessage: Partial<Messages> | Partial<Messages>[]
+				order?: ORDER_MESSAGES
 			}
 	  }
 	| {

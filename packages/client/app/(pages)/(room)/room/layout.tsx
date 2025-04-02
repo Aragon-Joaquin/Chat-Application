@@ -13,7 +13,7 @@ import { LayoutRenderChat, LayoutHeader, ProfileInformation } from './_component
 export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 	const { isPending, makeHTTPRequest, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/allRooms']>()
 	const {
-		RoomCtx: { roomState, AddMultipleRooms },
+		RoomCtx: { AddMultipleRooms },
 		webSocket: { setWsSocket, wsSocket },
 		currentUser: { setCurrentUser }
 	} = useRoomContext()
@@ -51,16 +51,30 @@ export default memo(function RoomLayout({ children }: { children: ReactNode }) {
 	return (
 		<main className="flex flex-row h-screen w-screen ">
 			<aside className="flex flex-col asideLayout w-1/3 max-w-[350px] min-w-fit shadow-lg border-r-[1px] border-r-transparent/10 overflow-y-hidden">
-				<LayoutHeader />
+				<header>
+					<LayoutHeader />
+					<SearchBox placeholder="Search chats." />
+				</header>
 
-				<SearchBox placeholder="Search chats." />
-
-				<LayoutRenderChat roomState={roomState} />
-				<>
-					<ProfileInformation />
-				</>
+				<Layout />
 			</aside>
 			{children}
 		</main>
+	)
+})
+
+//! doing this prevent the LayoutRenderChat & ProfileInformation rerender 150 times when searching new messages
+//! i have no idea how to fix this unless doing this
+const Layout = memo(function layout() {
+	return (
+		<>
+			<main className="flex-1 borderLayout !border-b-0">
+				<LayoutRenderChat />
+			</main>
+
+			<footer>
+				<ProfileInformation />
+			</footer>
+		</>
 	)
 })

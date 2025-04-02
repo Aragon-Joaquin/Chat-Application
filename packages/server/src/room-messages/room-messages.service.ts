@@ -11,7 +11,6 @@ import {
   users,
   users_in_room,
 } from 'src/entities';
-import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { JWT_DECODED_INFO } from 'src/utils/types';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,18 +21,6 @@ export class RoomMessagesService {
     @InjectRepository(room_messages)
     private roomMsgsRepo: Repository<room_messages>,
   ) {}
-
-  async InnerJoinRoomMessages(body?: RoomHistoryDto) {
-    const history = await this.roomMsgsRepo
-      .createQueryBuilder('msgs')
-      .innerJoinAndSelect('msgs.message_id', 'messages')
-      .innerJoinAndSelect('msgs.sender_id', 'sender')
-      .limit(body?.limit ?? 50)
-      .offset(body?.offset ?? 0)
-      .getManyAndCount();
-
-    return history;
-  }
 
   async FindMessageInRoom({
     roomID,

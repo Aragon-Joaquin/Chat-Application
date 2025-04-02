@@ -207,22 +207,39 @@ const roomStateActions = {
 		state: typeof initialReducerState
 		payload: PICK_PAYLOAD<'ADD_MESSAGE'>
 	}) {
-		const { roomInfo, newMessage } = payload
-		const { rooms, users } = state
+		const { roomInfo, newMessage, order = 'asNewest' } = payload
+		const { rooms } = state
 
 		const roomCode = rooms.get(roomInfo)
+		console.log(payload)
 
+		const fallbackMessages = Array.isArray(newMessage)
+			? newMessage.map((message) => CREATE_MESSAGE_OBJ_WITH_FALLBACK(message))
+			: { ...CREATE_MESSAGE_OBJ_WITH_FALLBACK(newMessage), messageStatus: 'sended' }
+
+		console.log({ fallbackMessages })
 		if (roomCode == undefined) return state
 
+		if (order === 'asNewest') {
+			return {
+				...state,
+				rooms: new Map(rooms).set(roomInfo, {
+					roomInfo: roomCode['roomInfo'],
+					...(Array.isArray(fallbackMessages)
+						? { messages: [...roomCode['messages'], ...fallbackMessages] }
+						: { messages: [...roomCode['messages'], fallbackMessages] })
+				})
+			}
+		}
+
 		return {
+			...state,
 			rooms: new Map(rooms).set(roomInfo, {
 				roomInfo: roomCode['roomInfo'],
-				messages: [
-					...roomCode['messages'],
-					{ ...CREATE_MESSAGE_OBJ_WITH_FALLBACK(newMessage), messageStatus: 'sended' }
-				]
-			}),
-			users
+				...(Array.isArray(fallbackMessages)
+					? { messages: [...fallbackMessages, ...roomCode['messages']] }
+					: { messages: [fallbackMessages, ...roomCode['messages']] })
+			})
 		}
 	},
 

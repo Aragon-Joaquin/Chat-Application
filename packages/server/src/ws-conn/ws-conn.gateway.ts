@@ -17,6 +17,8 @@ import { messages } from 'src/entities';
 import { WsConnService } from './ws-conn.service';
 import { createErrorMessage, MEDIA_PAYLOADS } from './utils';
 import { UUID_TYPE } from 'src/utils/types';
+import { FileStorageService } from 'src/file-storage/file-storage.service';
+import { FOLDER_PATHS } from 'src/utils/MulterProps';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -32,6 +34,7 @@ export class WsConnGateway {
   constructor(
     private authService: AuthService,
     private wsConnService: WsConnService,
+    private fileStorageService: FileStorageService,
   ) {}
 
   //! utils ⬇
@@ -163,13 +166,24 @@ export class WsConnGateway {
         break;
       }
       case 'chatIMG': {
+        const result = await this.fileStorageService.returnFile(
+          file,
+          FOLDER_PATHS.IMGS,
+        );
+
+        if (result == null)
+          return this.returnCustomError(client.id, [
+            'Image uploading gone wrong.',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          ]);
+
         this.wss.in(type.chatIMG.roomID).emit(
           WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
           JSON.stringify({
             type: 'chatIMG',
             clientID: JWT_Info.id,
             roomID: type.chatIMG.roomID,
-            fileSrc: file,
+            fileSrc: result,
           }),
         );
         break;

@@ -35,3 +35,4 @@ export const COOKIE_EXPIRATION = {
 } as const
 
 export const PUBLIC_FOLDER_NAME = '/assets/' as const
+export const MAX_MESSAGES_PER_REQ = 30 as const

@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Post,
-  Req,
   Request,
   UploadedFile,
   UseGuards,
@@ -30,12 +29,12 @@ export class RoomController {
 
   // createRoom method is useless here since the user needs to join the room in the socket as well
 
-  @Get('roomhistory')
+  @Post('roomHistory')
   async getRoomHistory(
     @Request() req: RequestType,
     @Body(new ValidationPipe()) body: RoomHistoryDto,
   ) {
-    return this.wsConn.RoomHistory(req.user, body);
+    return this.wsConn.RoomHistory(req.user.id, body);
   }
 
   @Get('allRooms')

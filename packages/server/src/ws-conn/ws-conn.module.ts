@@ -8,6 +8,7 @@ import { RoomMessagesModule } from 'src/room-messages/room-messages.module';
 import { UsersRoomsModule } from 'src/users-rooms/users-rooms.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserModule } from 'src/user/user.module';
+import { FileStorageModule } from 'src/file-storage/file-storage.module';
 
 @Module({
   providers: [WsConnGateway, WsConnService],
@@ -18,6 +19,7 @@ import { UserModule } from 'src/user/user.module';
     UsersRoomsModule,
     AuthModule,
     UserModule,
+    FileStorageModule,
   ],
   controllers: [WsConnController],
   exports: [WsConnService],

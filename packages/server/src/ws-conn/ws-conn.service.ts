@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { MAXIMUM_ROOMS_PER_USER } from '@chat-app/utils/globalConstants';
+import {
+  MAX_MESSAGES_PER_REQ,
+  MAXIMUM_ROOMS_PER_USER,
+} from '@chat-app/utils/globalConstants';
 import {
   messages,
   room,
@@ -13,8 +16,7 @@ import { RoomHistoryDto } from 'src/room/dto/roomHistory.dto';
 import { RoomService } from 'src/room/room.service';
 import { UsersRoomsService } from 'src/users-rooms/users-rooms.service';
 import { JWT_DECODED_INFO } from 'src/utils/types';
-import { DataSource, InsertResult } from 'typeorm';
-import { MAX_MESSAGES_PER_REQ } from 'src/utils/constants';
+import { DataSource } from 'typeorm';
 import { RoomDto } from 'src/room/dto/room.dto';
 import { roomInfo, userInfo } from './utils';
 import { UserService } from 'src/user/user.service';
@@ -72,15 +74,26 @@ export class WsConnService {
     await this.usersRoomsService.DeleteFromRoom(userExists);
   }
 
-  async RoomHistory(user: JWT_DECODED_INFO, body?: RoomHistoryDto) {
-    const room = await this.roomService.FindOne({ room_id: body.roomName });
+  async RoomHistory(user: JWT_DECODED_INFO['id'], body?: RoomHistoryDto) {
+    const room = await this.FindUserInRoom(user, body.room_id);
+    try {
+      const messages: Array<messages> = await this.dataSource.query(`
+        SELECT * FROM (
+          SELECT m.message_id, rm.which_room, rm.date_sended, m.message_content, fis.file_src as file_id, rm.sender_id 
+            FROM room_messages rm
+            INNER JOIN messages m ON rm.message_id = m.message_id
+            LEFT JOIN file_storage fis ON m.file_id = fis.file_id
+            WHERE rm.which_room = '${room.room_id}'::varchar ORDER BY rm.date_sended DESC OFFSET ${body.offset}::integer
+        ) subquery ORDER BY subquery.date_sended ASC
+        `);
 
-    const [history, _] = await Promise.all([
-      this.roomMsgs.InnerJoinRoomMessages(body),
-      this.FindUserInRoom(user['id'], room['room_id']),
-    ]);
-
-    return history;
+      return {
+        room_id: room?.room_id,
+        messages,
+      };
+    } catch {
+      return null;
+    }
   }
 
   async FindUserInRoom(
@@ -205,14 +218,15 @@ export class WsConnService {
       //* this query is unnecessary large & complex, but it justs gets the last X messages of every room by counting the times the room_id was repeated
       //* in the future, this will become a problem. It's just better to do two queries.
       const messageInfo: Array<roomInfo> = await this.dataSource.query(`
-          SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, messages.message_content, messages.file_id, messages.message_id
+          SELECT * FROM (SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, messages.message_content, messages.file_id, messages.message_id
             FROM 
               (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
               FROM room_messages) room_messages
             LEFT JOIN messages ON room_messages.message_id = messages.message_id
             LEFT JOIN users ON room_messages.sender_id = users.user_id  
             WHERE 
-              room_messages.which_room  IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) ORDER BY date_sended DESC limit ${MAX_MESSAGES_PER_REQ};`);
+              room_messages.which_room  IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) 
+            ORDER BY date_sended DESC limit ${MAX_MESSAGES_PER_REQ}) subquery ORDER BY subquery.date_sended ASC;`);
 
       const userInfo: Array<userInfo & { current_user: boolean }> = await this
         .dataSource.query(`
@@ -225,10 +239,9 @@ export class WsConnService {
 
       const room = roomInfo.map((room: room) => {
         const messagesRoom =
-          messageInfo
-            ?.reverse()
-            .flatMap((msg) => (msg.which_room == room.room_id ? msg : [])) ||
-          [];
+          messageInfo.flatMap((msg) =>
+            msg.which_room == room.room_id ? msg : [],
+          ) || [];
 
         return { roomInfo: room, messages: messagesRoom ?? [] };
       });

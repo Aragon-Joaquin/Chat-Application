@@ -114,7 +114,6 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 					newMessage: { sender_id: parsedData.clientID, message_content: '', file_id: parsedData.fileSrc }
 				})
 		}
-
 		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
 		wsSocket.on(WS_ENDPOINTS_EVENTS.ERROR_CHANNEL, handlerErrors)
 		wsSocket.on(WS_ENDPOINTS_EVENTS.CREATE_ROOM, handlerJoin)

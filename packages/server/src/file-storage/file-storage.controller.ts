@@ -1,13 +1,12 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   Get,
-  Post,
   Query,
   Res,
 } from '@nestjs/common';
 import { FileStorageService } from './file-storage.service';
+import { Response } from 'express';
 
 @Controller('file-storage')
 export class FileStorageController {
@@ -15,7 +14,7 @@ export class FileStorageController {
 
   @Get()
   async getImage(
-    @Res({ passthrough: true }) res,
+    @Res({ passthrough: true }) res: Response,
     @Query() query: { file: string },
   ) {
     const result = await this.fileService.returnFile(query?.file);

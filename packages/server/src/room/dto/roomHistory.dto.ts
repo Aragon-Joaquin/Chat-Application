@@ -1,16 +1,13 @@
-import { IsNumber, IsPositive, IsString, MaxLength } from 'class-validator';
+import { MAX_MESSAGES_PER_REQ } from '@chat-app/utils/globalConstants';
+import { IsNumber, IsPositive, IsString, Min } from 'class-validator';
 import { REQUEST_DB_OPTIONS } from 'src/utils/types';
 
 export class RoomHistoryDto implements REQUEST_DB_OPTIONS {
   @IsString()
-  @MaxLength(6)
-  roomName: string;
+  room_id: string;
 
   @IsNumber()
   @IsPositive()
-  limit?: number;
-
-  @IsNumber()
-  @IsPositive()
-  offset?: number;
+  @Min(MAX_MESSAGES_PER_REQ)
+  offset: number;
 }

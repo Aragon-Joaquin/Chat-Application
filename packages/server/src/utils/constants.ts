@@ -10,5 +10,3 @@ export const typesOfRoles = {
   ADMIN: 'admin',
   USER: 'user',
 };
-
-export const MAX_MESSAGES_PER_REQ = 30 as const;
