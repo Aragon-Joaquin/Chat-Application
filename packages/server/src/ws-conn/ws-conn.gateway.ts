@@ -19,8 +19,9 @@ import { createErrorMessage, MEDIA_PAYLOADS } from './utils';
 import { UUID_TYPE } from 'src/utils/types';
 import { FileStorageService } from 'src/file-storage/file-storage.service';
 import { FOLDER_PATHS } from 'src/utils/MulterProps';
-import { readFile, readFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'fs';
+import { extname, join } from 'path';
+import { fileToBase64 } from 'src/utils/getFileAsBase64';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -132,9 +133,6 @@ export class WsConnGateway {
     client: Socket,
     payload: { type: MEDIA_PAYLOADS; file: string },
   ) {
-    console.log({ payload });
-    console.log({ room: payload?.type });
-
     const { type, file } = payload;
     const JWT_Info = this.getJWTHeader(client);
 
@@ -175,12 +173,12 @@ export class WsConnGateway {
           ]);
 
         try {
-          const gotImage = readFileSync(
-            join(process.cwd(), 'uploads', FOLDER_PATHS.IMGS, file ?? '404'),
-          );
-          if (gotImage == null) return null;
+          const fileTo64 = fileToBase64({
+            folderPath: 'images',
+            fileName: file,
+          });
 
-          const base64String = Buffer.from(gotImage).toString('base64');
+          if (fileTo64 == null) return;
 
           this.wss.in(type.chatIMG.roomID).emit(
             WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
@@ -188,7 +186,7 @@ export class WsConnGateway {
               type: 'chatIMG',
               clientID: JWT_Info.id,
               roomID: type.chatIMG.roomID,
-              fileSrc: `data:image/${'png'};base64,${base64String}`,
+              fileSrc: fileTo64,
             }),
           );
         } catch {

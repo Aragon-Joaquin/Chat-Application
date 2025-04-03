@@ -4,7 +4,7 @@ export type Messages = {
 	which_room: string
 	date_sended: Date | string
 	message_content: string | null
-	file_id: string | null
+	file_base64: Base64URLString | null
 	sender_id: UserInfo['user_id']
 }
 

@@ -14,8 +14,8 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 		currentUser: { currentUser }
 	} = useRoomContext()
 
-	//file_id, message_id, which_room
-	const { message_content, sender_id, date_sended, messageStatus, type } = messages
+	// message_id, which_room
+	const { message_content, sender_id, date_sended, messageStatus, type, file_base64 } = messages
 
 	//! atomize this & improve it
 	if (type === 'server') return <ServerMessage message_content={message_content} />
@@ -46,7 +46,17 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 				>
 					{ownMessage ? 'You' : (actualUser?.user_name ?? '')}
 				</Heading>
-				<Text as="p" className={`text-black font-sans text-pretty`}>{String.raw`${message_content ?? ''}`}</Text>
+				{file_base64 != null ? (
+					<ImageAndFallback
+						picture={file_base64}
+						altName={`Image of ${actualUser?.user_name}`}
+						size={130}
+						className="!aspect-video"
+						renderAsBase64
+					/>
+				) : (
+					<Text as="p" className={`text-black font-sans text-pretty`}>{String.raw`${message_content ?? ''}`}</Text>
+				)}
 				<Text as="label" size="1" color="gray" className={`mt-1 flex justify-end ${ownMessage && '!justify-start'}`}>
 					{transformToDate(date_sended)}
 				</Text>

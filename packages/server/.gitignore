@@ -4,7 +4,8 @@
 /node_modules
 
 tsconfig.build.tsbuildinfo
-uploads/*
+uploads/images/*
+uploads/profile_picture/*
 # Logs
 logs
 *.log

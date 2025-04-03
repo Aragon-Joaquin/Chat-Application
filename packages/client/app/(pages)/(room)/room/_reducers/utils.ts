@@ -10,7 +10,7 @@ export const CREATE_MESSAGE_OBJ_WITH_FALLBACK = (message: Partial<Messages>): Me
 		type: message?.type ?? 'user',
 		message_content: message.message_content ?? '',
 		date_sended: message.date_sended ?? '',
-		file_id: message.file_id ?? null,
+		file_base64: message.file_base64 ?? null,
 		message_id: message.message_id ?? '',
 		sender_id: message.sender_id ?? 0,
 		which_room: message.which_room ?? ''

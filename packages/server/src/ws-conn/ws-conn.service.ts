@@ -21,6 +21,7 @@ import { DataSource } from 'typeorm';
 import { RoomDto } from 'src/room/dto/room.dto';
 import { roomInfo, userInfo } from './utils';
 import { UserService } from 'src/user/user.service';
+import { fileToBase64 } from 'src/utils/getFileAsBase64';
 
 @Injectable()
 export class WsConnService {
@@ -217,14 +218,16 @@ export class WsConnService {
       if (!roomInfo?.length) return null;
 
       //* this query is unnecessary large & complex, but it justs gets the last X messages of every room by counting the times the room_id was repeated
-      //* in the future, this will become a problem. It's just better to do two queries.
+      //! add file_base64 from file_storage.file_src, resolve path to image, transform it to base64 and send it to client
       const messageInfo: Array<roomInfo> = await this.dataSource.query(`
-          SELECT * FROM (SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, messages.message_content, messages.file_id, messages.message_id
+          SELECT * FROM (SELECT room_messages.sender_id, room_messages.which_room, room_messages.date_sended, 
+            messages.message_content, messages.message_id, file_storage.file_src as file_id
             FROM 
               (SELECT ROW_NUMBER() OVER (PARTITION BY which_room),*
               FROM room_messages) room_messages
             LEFT JOIN messages ON room_messages.message_id = messages.message_id
-            LEFT JOIN users ON room_messages.sender_id = users.user_id  
+            LEFT JOIN users ON room_messages.sender_id = users.user_id
+            LEFT JOIN file_storage ON messages.file_id = file_storage.file_id
             WHERE 
               room_messages.which_room  IN (${roomInfo.map((roomID) => `'${roomID.room_id}'::varchar`)}) 
             ORDER BY date_sended DESC limit ${MAX_MESSAGES_PER_REQ}) subquery ORDER BY subquery.date_sended ASC;`);
@@ -240,10 +243,20 @@ export class WsConnService {
 
       const room = roomInfo.map((room: room) => {
         const messagesRoom =
-          messageInfo.flatMap((msg) =>
-            msg.which_room == room.room_id ? msg : [],
-          ) || [];
+          messageInfo.flatMap((msg) => {
+            const groupMessages = msg.which_room == room.room_id ? msg : null;
 
+            if (groupMessages == null) return [];
+            if (msg.file_id == null) return groupMessages;
+            console.log(msg.file_id);
+            return {
+              ...groupMessages,
+              file_base64: fileToBase64({
+                fileName: msg.file_id,
+                folderPath: 'images',
+              }),
+            };
+          }) || [];
         return { roomInfo: room, messages: messagesRoom ?? [] };
       });
 

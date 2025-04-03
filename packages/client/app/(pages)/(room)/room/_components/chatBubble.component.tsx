@@ -47,7 +47,13 @@ function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 									truncate
 									className="max-w-[50%]"
 								>{`${messages.at(-1)?.sender_id === currentUser ? 'You' : (userState.get(messages.at(-1)?.sender_id ?? 0)?.user_name ?? '???')}:`}</Strong>
-								<p className="w-fit truncate">{messages.at(-1)?.message_content}</p>
+								<p className="w-fit truncate">
+									{messages.at(-1)?.file_base64 != null ? (
+										<em className="!text-descriptionColor">Image </em>
+									) : (
+										messages.at(-1)?.file_base64
+									)}
+								</p>
 							</>
 						) : (
 							<Text as="p" color="gray" weight="medium">

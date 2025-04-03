@@ -4,7 +4,7 @@ export interface WS_ENDPOINTS_TYPES {
 	sendMessage: {
 		new_message: {
 			message_content: Messages['message_content']
-			file_id: Messages['file_id']
+			file_base64: Messages['file_base64']
 			message_id: Messages['message_id']
 		}
 		date_sended: Messages['date_sended']
@@ -43,7 +43,7 @@ export interface WS_ENDPOINTS_TYPES {
 				type: 'chatIMG'
 				clientID: UserInfo['user_id']
 				roomID: RoomInfo['room_id']
-				fileSrc: string
+				fileSrc: Base64URLString
 		  }
 		| {
 				type: 'roomPicture'

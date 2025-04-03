@@ -10,6 +10,7 @@ interface ImageAndFallback {
 	className?: string
 	size?: 50 | 60 | 70 | 80 | 90 | 130
 	children?: ReactNode
+	renderAsBase64?: boolean
 }
 
 function ImageAndFallbackNoMemo({
@@ -18,7 +19,8 @@ function ImageAndFallbackNoMemo({
 	description,
 	className,
 	size = 50,
-	children = null
+	children = null,
+	renderAsBase64 = false
 }: ImageAndFallback) {
 	return (
 		<div
@@ -29,7 +31,7 @@ function ImageAndFallbackNoMemo({
 				<div className="w-full h-full rounded-full border-2 bg-neutral-300  border-neutral-400" />
 			) : (
 				<Image
-					src={`${URL_DATABASE}${PUBLIC_FOLDER_NAME}${picture}`}
+					src={renderAsBase64 ? decodeURIComponent(picture) : `${URL_DATABASE}${PUBLIC_FOLDER_NAME}${picture}`}
 					onError={(event) => {
 						event.currentTarget.id = '/images/fallback.png'
 						event.currentTarget.srcset = '/images/fallback.png'

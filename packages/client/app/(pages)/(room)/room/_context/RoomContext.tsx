@@ -108,16 +108,9 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 
 			//! this needs more information
 			if (parsedData.type === 'chatIMG') {
-				const image = new Image()
-				image.onload = function () {
-					console.log(image.width) // image is loaded and we have image width
-				}
-				image.src = parsedData.fileSrc
-				document.body.appendChild(image)
-
 				return AddMessage({
 					roomInfo: parsedData.roomID,
-					newMessage: { sender_id: parsedData.clientID, message_content: '', file_id: 'base64ToImage' }
+					newMessage: { sender_id: parsedData.clientID, message_content: '', file_base64: parsedData.fileSrc }
 				})
 			}
 		}

@@ -1,21 +1,37 @@
-> [!NOTE]
-> Updating this readme when the project it's almost done.
+> [!IMPORTANT]
+> Im still updating this.
 
-#### things to remember:
+# 🗣 Chat Application
 
-- Make a table for user logouts & expiration tokens
-- Make a maximum of 5 rooms that a user can join.
-- encode when sending the userPassword and maybe encode cookies with the jwt
+_Relying primarily on WebSockets, JWT for auth and Postgresql as my DB._
 
-## ℹ **General info:**
+[ADD PHOTO HERE]
 
-- **Expected time**: Until (5/1/2025 MM-DD-YY)
-- **Level required**: Medium
-- **Type of application**: SSR SPA
+There's nothing to add since it's just a Real Time Chat on your browser, you can upload photos, talk and create/join rooms.
 
-## 📚 **Resources that i'll implement:**
+- 👎 **Downsides**:
+  - Loads all images immediately after login making the **Interaction to Next Paint (INP)** be huge
+  - There's some UI bugs with **Firefox engine (Gecko)**
+  - Project structure is just a mess and it gets worse and worse
+  - _And still counting..._
 
-The **_NEW_** thingy means that i'll be learning those technologies
+#### What went wrong:
+
+I learnt a ton with this project, but at this point it's just tiring & frustrating to continue because of my:
+
+- **horrible project structure** (im trying to improve that)
+- **bad decision making** (caused by not knowing what i wanted)
+- **the feeling of getting stuck** (i can't continue other projects cuz of this)
+- and **lack of knowledge** which thats the main reason i made this in the first place.
+
+## ℹ **Install guide:**
+
+> [!CAUTION]
+> I don't recommend this project for learning or use it in real life scenarios since it wasn't tested properly and could have potential security risks.
+
+_finish this_
+
+## 📚 **What i've used:**
 
 - General
 
@@ -24,28 +40,14 @@ The **_NEW_** thingy means that i'll be learning those technologies
 - Server
 
   - NestJS
-  - TypeORM **_NEW_**
-  - Web Sockets (Socket.io) **_NEW_**
+  - TypeORM
+  - Socket.io (@nestjs/websockets & @nestjs/platform-socket.io)
   - Postgresql
 
 - Client
   - NextJS
-  - Radix UI **_NEW_**
+  - Radix UI
   - Tailwind CSS
-
-## 🏁 **Steps**
-
-1. ✏ **Design**
-   1. Wireframe (Excalidraw).
-   2. Interface Design (Figma?).
-2. 👨‍💻 **Coding**
-   1. Understand project structure and components needed.
-   2. Code until the project satisfies the base requirements.
-   3. Make installation guide (if needed) & update the README.
-3. 🚀**Expanding**
-   1. Make a list of features/bugfixes that could be implemented (preferably on Notion).
-   2. Try to implement most of them.
-   3. Repeat 🔁 this category.
 
 ## Commits information
 
@@ -58,13 +60,3 @@ The **_NEW_** thingy means that i'll be learning those technologies
 - **Extras:**
   - 💻 Added new technology = :computer:
   - 🌈 UI Update = :rainbow:
-
-<!-- ## The architecture used:
-
-- **Domain:** Redux - Contexts - Models
-
-- **Use Cases (Business Logic):** Components - Utilities - Hooks - Styled_Components/Layouts
-
-- **Adapter:** Adapters - Interceptors
-
-- **External Services:** Services -->
