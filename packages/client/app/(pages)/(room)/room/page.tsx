@@ -26,22 +26,21 @@ export default function RoomPage() {
 
 	useEffect(() => {
 		scroll?.scrollTo({ behavior: 'instant', left: 0, top: scroll?.scrollHeight })
-	}, [scroll, actualRoom])
+	}, [scroll])
 
 	if (scroll == null || mainRef.current != null)
 		setTimeout(() => {
 			setScroll(mainRef.current)
 		}, 0)
+
 	useEffect(() => {
 		if (scroll == null || actualRoom == null) return
 
-		console.log(scroll)
 		function scrollEnd(e: Event) {
 			const { scrollTop } = e.target as never
 
 			if (hasReachedTop.current == false && scrollTop <= 100) {
 				hasReachedTop.current = true
-				console.log(actualRoom?.messages.length ?? 0)
 				makeHTTPRequest({
 					rootRoute: '/room',
 					subroute: '/roomHistory',
@@ -101,7 +100,6 @@ const RenderMessages = memo(function RenderMessagesNoMemoized({ messages }: { me
 	return (
 		<div className="opacity-100 p-4 w-full h-full">
 			{messages.map((messageType) => {
-				console.log(messageType)
 				return <MessagesRoom key={messageType.message_id} messages={messageType} />
 			})}
 		</div>

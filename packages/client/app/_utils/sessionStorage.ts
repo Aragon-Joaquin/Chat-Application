@@ -23,7 +23,7 @@ export const DELETESessionStorage = () => {
 	if (typeof 'window' === undefined) return null
 	try {
 		sessionStorage.clear()
-	} catch (e) {
-		console.log(e)
+	} catch {
+		return null
 	}
 }

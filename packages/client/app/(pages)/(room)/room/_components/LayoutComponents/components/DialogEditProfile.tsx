@@ -2,13 +2,11 @@ import { BadRequest, BadRequestCodes } from '@/app/_errors'
 import { useConsumeContext } from '@/app/_hooks/consumeContext'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { USER_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
-import { IMAGES_TYPES } from '@/app/_utils/utils'
+import { IMAGE_FILE_NAME, IMAGES_TYPES } from '@/app/_utils/utils'
 import { Pencil1Icon } from '@radix-ui/react-icons'
 import { Button, Dialog, IconButton, Text } from '@radix-ui/themes'
 import { ChangeEvent, DragEvent, FormEvent, memo, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useRoomContext } from '../../../_hooks/consumeRoomContext'
-
-const INPUT_FILE_NAME = 'file' as const
 
 export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 	const { responseData, makeHTTPRequest } = useCallServer<USER_TYPES_RESPONSES['/uploadPhoto']>()
@@ -52,7 +50,7 @@ export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 			if (image == null) return setUIError(new BadRequest('Upload something first!', BadRequestCodes.BAD_REQUEST))
 
 			const FData = new FormData()
-			FData.append(INPUT_FILE_NAME, image)
+			FData.append(IMAGE_FILE_NAME, image)
 
 			makeHTTPRequest({
 				rootRoute: '/user',
@@ -66,7 +64,6 @@ export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 	)
 
 	useEffect(() => {
-		console.log({ responseData })
 		if (responseData == null) return
 		handleWSActions<'SEND_MEDIA'>({
 			action: 'sendMediaFiles',
@@ -119,7 +116,7 @@ export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 					</Text>
 					<input
 						id={idInput}
-						name={INPUT_FILE_NAME}
+						name={IMAGE_FILE_NAME}
 						type="file"
 						accept="image/*"
 						hidden

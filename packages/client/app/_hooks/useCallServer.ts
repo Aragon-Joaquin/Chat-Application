@@ -19,7 +19,6 @@ export function useCallServer<T>() {
 					if (response?.statusCode < 200 || response?.statusCode > 299)
 						throw new BadRequest(response?.message ?? 'Status code is not in range of 200-299', response.statusCode)
 
-					console.log({ callServerResponse: response })
 					setResponseData(response)
 				} catch (error) {
 					if (error instanceof BadRequest) setUIError(error)

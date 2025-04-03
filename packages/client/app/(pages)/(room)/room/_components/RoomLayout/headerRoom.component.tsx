@@ -7,7 +7,7 @@ import { DDMenu } from './DropDownMenu/DDMenuHeader'
 import { Pencil1Icon } from '@radix-ui/react-icons'
 import { useConsumeContext } from '@/app/_hooks/consumeContext'
 import { BadRequest, BadRequestCodes } from '@/app/_errors'
-import { IMAGES_TYPES } from '@/app/_utils/utils'
+import { IMAGE_FILE_NAME, IMAGES_TYPES } from '@/app/_utils/utils'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { ROOM_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
 
@@ -62,7 +62,7 @@ const RoomHeader = memo(function useRoomHeaderNoMemo({
 		webSocket: { handleWSActions }
 	} = useRoomContext()
 
-	const { makeHTTPRequest, isPending, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/uploadPhoto']>()
+	const { makeHTTPRequest, isPending, responseData } = useCallServer<ROOM_TYPES_RESPONSES['/uploadRoomPhoto']>()
 
 	const {
 		ErrorContext: { setUIError }
@@ -75,12 +75,12 @@ const RoomHeader = memo(function useRoomHeaderNoMemo({
 			return setUIError(new BadRequest('Type of image not valid.', BadRequestCodes.BAD_REQUEST))
 
 		const imageFile = new FormData()
-		imageFile.append('file', file)
+		imageFile.append(IMAGE_FILE_NAME, file)
 		imageFile.append('roomID', room_id)
 
 		makeHTTPRequest({
 			rootRoute: '/room',
-			subroute: '/uploadPhoto',
+			subroute: '/uploadRoomPhoto',
 			HTTPmethod: 'POST',
 			formData: imageFile,
 			passJWT: true
@@ -107,7 +107,8 @@ const RoomHeader = memo(function useRoomHeaderNoMemo({
 							type="file"
 							id={idInput}
 							accept="image/png, image/jpeg"
-							className="pointer-events-none invisible"
+							className="pointer-events-none"
+							hidden
 							disabled={isPending}
 							onChange={(e) => handleSubmit(e)}
 						/>

@@ -57,7 +57,6 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 		wsSocket.emit(WS_ACTIONS.JOIN_MULTIPLE)
 
 		function handlerMessage(data: string) {
-			console.log(data)
 			const { new_message, from_user_id, roomID, client_id, date_sended }: WS_ENDPOINTS_TYPES['sendMessage'] =
 				JSON.parse(data)
 
@@ -101,18 +100,26 @@ export function GetRoomContext({ children }: { children: ReactNode }) {
 
 		function handleMediaChannel(data: string) {
 			const parsedData: WS_ENDPOINTS_TYPES['sendMediaFiles'] = JSON.parse(data)
-			console.log(parsedData)
+			console.log({ parsedData })
 			if (parsedData.type === 'roomPicture')
 				return ModifyRoom({ roomID: parsedData.roomID, newProps: { room_picture: parsedData.fileSrc } })
 			if (parsedData.type === 'userPicture')
 				return ModifyUser({ userID: parsedData.clientID, newProps: { profile_picture: parsedData.fileSrc } })
 
 			//! this needs more information
-			if (parsedData.type === 'chatIMG')
+			if (parsedData.type === 'chatIMG') {
+				const image = new Image()
+				image.onload = function () {
+					console.log(image.width) // image is loaded and we have image width
+				}
+				image.src = parsedData.fileSrc
+				document.body.appendChild(image)
+
 				return AddMessage({
 					roomInfo: parsedData.roomID,
-					newMessage: { sender_id: parsedData.clientID, message_content: '', file_id: parsedData.fileSrc }
+					newMessage: { sender_id: parsedData.clientID, message_content: '', file_id: 'base64ToImage' }
 				})
+			}
 		}
 		wsSocket.on(WS_ENDPOINTS_EVENTS.MESSAGE, handlerMessage)
 		wsSocket.on(WS_ENDPOINTS_EVENTS.ERROR_CHANNEL, handlerErrors)

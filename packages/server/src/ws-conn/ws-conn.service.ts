@@ -5,6 +5,7 @@ import {
   MAXIMUM_ROOMS_PER_USER,
 } from '@chat-app/utils/globalConstants';
 import {
+  file_storage,
   messages,
   room,
   room_messages,
@@ -250,6 +251,37 @@ export class WsConnService {
         roomInfo: room,
         userInfo,
       };
+    } catch {
+      return null;
+    }
+  }
+
+  async uploadChatPhoto(
+    userID: JWT_DECODED_INFO['id'],
+    roomID: room['room_id'],
+    file: Express.Multer.File,
+  ) {
+    try {
+      const findRoom = await this.FindUserInRoom(userID, roomID);
+      if (findRoom == undefined) return null;
+
+      const image = await this.dataSource.manager.insert(file_storage, {
+        file_name: file?.originalname,
+        file_src: file?.filename,
+      });
+      const message = await this.CreateMessageToRoom(
+        { file_id: image.raw[0].file_id, message_content: '' },
+        roomID,
+        userID,
+      );
+
+      const photo = await this.dataSource.manager.insert(room_messages, {
+        which_room: roomID,
+        sender_id: userID,
+        message_id: message.message.message_id,
+      });
+
+      return photo;
     } catch {
       return null;
     }

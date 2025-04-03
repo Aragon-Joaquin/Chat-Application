@@ -1,6 +1,3 @@
-//! this needs function overloading.
-// FD stands for formData
-
 import { FormEvent } from 'react'
 
 interface FDTypes {

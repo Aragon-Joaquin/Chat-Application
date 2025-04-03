@@ -2,13 +2,14 @@ import { roomState } from '@/app/(pages)/(room)/room/_reducers/types'
 import { REQUEST_SHAPE } from './utils'
 import { Messages, RoomInfo, UserInfo } from '../tableTypes'
 
-type ROOM_ROUTES = '/' | '/roomHistory' | '/allRooms' | '/uploadPhoto'
+type ROOM_ROUTES = '/' | '/roomHistory' | '/allRooms' | '/uploadRoomPhoto' | '/uploadChatPhoto'
 
 export interface ROOM_TYPES_RESPONSES {
 	'/': null
 	'/roomHistory': { room_id: RoomInfo['room_id']; messages: Messages[] }
 	'/allRooms': { roomInfo: roomState[]; userInfo: UserInfo[]; currentUser: UserInfo }
-	'/uploadPhoto': string
+	'/uploadRoomPhoto': string
+	'/uploadChatPhoto': string
 }
 
 export const ROOM_REQUEST: REQUEST_SHAPE<ROOM_ROUTES> = {
@@ -36,7 +37,14 @@ export const ROOM_REQUEST: REQUEST_SHAPE<ROOM_ROUTES> = {
 				bodyParametersName: [] //maybe limit someday
 			}
 		},
-		'/uploadPhoto': {
+		'/uploadRoomPhoto': {
+			POST: {
+				passJWT: true,
+				bodyParametersName: [],
+				fileName: 'file'
+			}
+		},
+		'/uploadChatPhoto': {
 			POST: {
 				passJWT: true,
 				bodyParametersName: [],

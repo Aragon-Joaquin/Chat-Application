@@ -19,6 +19,8 @@ import { createErrorMessage, MEDIA_PAYLOADS } from './utils';
 import { UUID_TYPE } from 'src/utils/types';
 import { FileStorageService } from 'src/file-storage/file-storage.service';
 import { FOLDER_PATHS } from 'src/utils/MulterProps';
+import { readFile, readFileSync } from 'fs';
+import { join } from 'path';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -166,26 +168,36 @@ export class WsConnGateway {
         break;
       }
       case 'chatIMG': {
-        const result = await this.fileStorageService.returnFile(
-          file,
-          FOLDER_PATHS.IMGS,
-        );
-
-        if (result == null)
+        if (file == null || file == '')
           return this.returnCustomError(client.id, [
-            'Image uploading gone wrong.',
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            "File wasn't given.",
+            HttpStatus.BAD_REQUEST,
           ]);
 
-        this.wss.in(type.chatIMG.roomID).emit(
-          WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
-          JSON.stringify({
-            type: 'chatIMG',
-            clientID: JWT_Info.id,
-            roomID: type.chatIMG.roomID,
-            fileSrc: result,
-          }),
-        );
+        try {
+          const gotImage = readFileSync(
+            join(process.cwd(), 'uploads', FOLDER_PATHS.IMGS, file ?? '404'),
+          );
+          if (gotImage == null) return null;
+
+          const base64String = Buffer.from(gotImage).toString('base64');
+
+          this.wss.in(type.chatIMG.roomID).emit(
+            WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
+            JSON.stringify({
+              type: 'chatIMG',
+              clientID: JWT_Info.id,
+              roomID: type.chatIMG.roomID,
+              fileSrc: `data:image/${'png'};base64,${base64String}`,
+            }),
+          );
+        } catch {
+          return this.returnCustomError(client.id, [
+            'Internal Server Error.',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          ]);
+        }
+
         break;
       }
 

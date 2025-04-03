@@ -211,13 +211,11 @@ const roomStateActions = {
 		const { rooms } = state
 
 		const roomCode = rooms.get(roomInfo)
-		console.log(payload)
 
 		const fallbackMessages = Array.isArray(newMessage)
 			? newMessage.map((message) => CREATE_MESSAGE_OBJ_WITH_FALLBACK(message))
 			: { ...CREATE_MESSAGE_OBJ_WITH_FALLBACK(newMessage), messageStatus: 'sended' }
 
-		console.log({ fallbackMessages })
 		if (roomCode == undefined) return state
 
 		if (order === 'asNewest') {

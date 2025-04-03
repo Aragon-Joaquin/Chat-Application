@@ -46,4 +46,6 @@ export const transformToDate = (date: Date | string | undefined): string => {
 export type CLIENT_UUID_TYPE = `${string}${typeof UUID_CLIENT_GENERATED}`
 
 export const CREATE_CLIENT_UUID = (): CLIENT_UUID_TYPE => `${crypto.randomUUID()}${UUID_CLIENT_GENERATED}`
+
 export const IMAGES_TYPES = ['image/png', 'image/jpeg']
+export const IMAGE_FILE_NAME = 'file' as const

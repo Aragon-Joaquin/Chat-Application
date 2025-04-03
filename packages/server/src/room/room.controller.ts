@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -17,6 +18,7 @@ import { UserService } from 'src/user/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RoomService } from './room.service';
 import { room } from 'src/entities';
+import { MULTER_OPTIONS } from 'src/utils/MulterProps';
 
 @Controller('room')
 @UseGuards(JWTAuthGuard)
@@ -53,14 +55,28 @@ export class RoomController {
     };
   }
 
-  @Post('uploadPhoto')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadPhoto(
+  @Post('uploadRoomPhoto')
+  @UseInterceptors(FileInterceptor('file', MULTER_OPTIONS('profile_picture')))
+  async updateRoomPhoto(
     @UploadedFile()
     file: Express.Multer.File,
-    @Body() body: { roomID: room['room_id'] },
+    @Body()
+    body: { roomID: room['room_id'] },
   ) {
     await this.roomService.uploadRoomPhoto(body?.roomID, file);
+    return JSON.stringify(file?.filename);
+  }
+
+  @Post('uploadChatPhoto')
+  @UseInterceptors(FileInterceptor('file', MULTER_OPTIONS('images')))
+  async updateChatPhoto(
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Body()
+    body: { roomID: room['room_id'] },
+    @Request() req: RequestType,
+  ) {
+    await this.wsConn.uploadChatPhoto(req?.user?.id ?? 0, body?.roomID, file);
     return JSON.stringify(file?.filename);
   }
 }
