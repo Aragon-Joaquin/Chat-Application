@@ -49,7 +49,6 @@ export class UsersRoomsService {
     if (isUserInRoom)
       throw new BadRequestException('You are already in this room!');
 
-    console.log(room.room_password);
     if (room.room_password == '' || room.room_password == undefined) {
       return await this.usersRoomsService.insert({
         room_id: room.room_id,
