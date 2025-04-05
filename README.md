@@ -1,6 +1,3 @@
-> [!IMPORTANT]
-> Im still updating this.
-
 # 🗣 Chat Application
 
 _Relying primarily on WebSockets, JWT for auth and Postgresql as my DB._
@@ -23,6 +20,7 @@ _(The UI error was forced only for demostration)_
   - Optimize server logic and prevent more react updates
   - Finish roles & grant permissions (Admin, User & Moderator)
   - Cache react renders...? (useMemo or simply activate the compiler)
+  - Make the RoomDescription thing
 
 #### What went wrong:
 
