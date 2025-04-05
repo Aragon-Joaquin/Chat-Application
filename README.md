@@ -5,9 +5,10 @@
 
 _Relying primarily on WebSockets, JWT for auth and Postgresql as my DB._
 
-There's nothing to add since it's just a Real Time Chat on your browser, you can upload photos, talk and create/join rooms.
+**There's nothing to add since it's just a Real Time Chat on your browser, you can upload photos, talk and create/join rooms.**
 
 ![image of one of the chats](wireframes/preview.png)
+_(The UI error was forced only for demostration)_
 
 - 👎 **Downsides**:
 
@@ -36,6 +37,44 @@ I learnt a ton with this project, but at this point it's just tiring & frustrati
 
 > [!CAUTION]
 > I don't recommend this project for learning or use it in real life scenarios since it wasn't tested properly and could have potential security risks.
+
+![env variables](wireframes/settingUp.png)
+
+1. Create a .env file in $packages/server$ and put these variables names:
+
+   - 🚨**DONT SHARE THESE VALUES**🚨
+   - **DB_PORT =** (_4 digit number_ -> to host your server, default is 5432)
+   - **DB_USERNAME =** (_string_ -> Your postgresql username )
+   - **DB_PASSWORD =** (_string_ -> Your postgresql user password )
+   - **DB_NAME =** (_string_ -> Your postgresql database name, where the sql was executed in)
+   - **HASH_LENGTH =** (_number_ -> Recommended **40**. It's the size its going to be the hashed passwords)
+   - **HASH_SECRET =** (_string_ -> 🚨NEEDS TO BE HARD TO DECIPHER🚨)
+   - **JWT_SECRET =** (_string_ -> 🚨NEEDS TO BE HARD TO DECIPHER🚨)
+
+2. Clone the repository & install packages:
+
+```bash
+git clone https://github.com/Aragon-Joaquin/Chat-Application.git
+cd Chat-Application
+npm i
+```
+
+(if **npm i** does not work, manually install the packages by:)
+
+```bash
+  cd packages/client
+  npm i
+  cd ../server
+  npm i
+```
+
+3. Go to the main root and run the project with:
+
+```bash
+npm run dev (starts both client & server)
+```
+
+4. And i think that should be it. Remember to execute the sql in the $/wireframes$ folder and created the DB.
 
 ## 📚 **What i've used:**
 
