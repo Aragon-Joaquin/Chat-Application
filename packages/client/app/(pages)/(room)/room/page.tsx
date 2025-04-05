@@ -3,7 +3,7 @@
 import { NoChatSelected } from './_components/NoChatSelected.component'
 import { useRoomContext } from './_hooks/consumeRoomContext'
 import { FooterRoom, HeaderRoom, MessagesRoom } from './_components/RoomLayout'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { roomState } from './_reducers/types'
 import { useCallServer } from '@/app/_hooks/useCallServer'
 import { ROOM_TYPES_RESPONSES } from '@/app/_utils/bodyRequests'
@@ -22,11 +22,16 @@ export default function RoomPage() {
 
 	const mainRef = useRef<HTMLElement>(null)
 	const hasReachedTop = useRef<boolean>(false)
+
+	const lastMessagesChanged = useMemo(() => {
+		return actualRoom?.messages.at(-1)
+	}, [actualRoom?.messages])
+
 	const [scroll, setScroll] = useState<HTMLElement | null>(null)
 
 	useEffect(() => {
 		scroll?.scrollTo({ behavior: 'instant', left: 0, top: scroll?.scrollHeight })
-	}, [scroll])
+	}, [scroll, lastMessagesChanged])
 
 	if (scroll == null || mainRef.current != null)
 		setTimeout(() => {
@@ -51,15 +56,19 @@ export default function RoomPage() {
 			}
 		}
 
-		if (actualRoom?.messages?.length ?? 0 >= MAX_MESSAGES_PER_REQ) scroll.addEventListener('scroll', scrollEnd)
+		if ((actualRoom?.messages?.length ?? 0) >= MAX_MESSAGES_PER_REQ) scroll.addEventListener('scroll', scrollEnd)
 		return () => {
-			scroll.addEventListener('scroll', scrollEnd)
+			scroll.removeEventListener('scroll', scrollEnd)
 		}
 	}, [scroll, makeHTTPRequest, actualRoom])
 
 	useEffect(() => {
 		if (responseData == null) return
+
+		if ((responseData?.messages?.length ?? 0) <= 0) return
 		AddMessage({ roomInfo: responseData.room_id, newMessage: responseData.messages, order: 'asOlder' })
+		hasReachedTop.current = false
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [responseData])
 

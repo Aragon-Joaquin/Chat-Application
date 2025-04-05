@@ -1,4 +1,5 @@
 import { Messages, UserInfo } from '@/app/_utils/tableTypes'
+import { CREATE_CLIENT_UUID } from '@/app/_utils/utils'
 
 /**
  * @description This function creates the Messages object even though some props from the parameter are missing
@@ -11,7 +12,7 @@ export const CREATE_MESSAGE_OBJ_WITH_FALLBACK = (message: Partial<Messages>): Me
 		message_content: message.message_content ?? '',
 		date_sended: message.date_sended ?? '',
 		file_base64: message.file_base64 ?? null,
-		message_id: message.message_id ?? '',
+		message_id: message.message_id ?? CREATE_CLIENT_UUID(),
 		sender_id: message.sender_id ?? 0,
 		which_room: message.which_room ?? ''
 	}

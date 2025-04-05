@@ -1,4 +1,4 @@
-import { RoomInfo, UserInfo } from '@/app/_utils/tableTypes'
+import { RoomInfo } from '@/app/_utils/tableTypes'
 import { CLIENT_UUID_TYPE } from '@/app/_utils/utils'
 import { WS_ACTIONS } from '@chat-app/utils/globalConstants'
 

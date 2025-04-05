@@ -1,10 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { file_storage, room, room_messages } from 'src/entities';
+import { file_storage, room } from 'src/entities';
 import { FindOneOptions, Repository } from 'typeorm';
 import { RoomDto } from './dto/room.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hashPassword } from 'src/utils/hashingFuncs';
-import { JWT_DECODED_INFO } from 'src/utils/types';
 
 @Injectable()
 export class RoomService {
@@ -13,8 +12,6 @@ export class RoomService {
     private roomRepository: Repository<room>,
     @InjectRepository(file_storage)
     private fileStorage: Repository<file_storage>,
-    @InjectRepository(room_messages)
-    private roomMsgs: Repository<room_messages>,
   ) {}
 
   async FindOne(where: FindOneOptions<room>['where']): Promise<room> {

@@ -14,7 +14,7 @@ export const ServerMessage = memo(function ServerMessageNoMemo({
 				size="3"
 				weight="bold"
 				color="gray"
-				className="text-center text-nowrap w-3/4 bg-neutral-400/20 border border-transparent/20 px-2 py-1 rounded"
+				className="text-center text-nowrap w-3/4 bg-neutral-400/20 border border-transparent/20 px-2 py-1 my-7 rounded"
 			>
 				{message_content}
 			</Heading>

@@ -93,7 +93,8 @@ const RoomHeader = memo(function useRoomHeaderNoMemo({
 			action: 'sendMediaFiles',
 			payload: { file: responseData, type: { action: 'roomPicture', roomPicture: { roomID: room_id } } }
 		})
-	}, [responseData, handleWSActions, room_id])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [responseData, handleWSActions])
 
 	return (
 		<aside className="flex flex-row gap-x-4">

@@ -18,7 +18,7 @@ function AnnouncerNavNoMemo({ titleName, color }: NotificationAnnouncerProps) {
 
 	if (isClosed) return
 	return (
-		<header className="flex justify-center items-center fixed w-full h-14 bg-neutral-100 rounded-b-md z-50 border-b-2 border-transparent/20">
+		<header className="flex justify-center items-center fixed w-full min-h-14 max-h-24 bg-neutral-100 rounded-b-md z-50 border-b-2 border-transparent/20 text-center px-4">
 			<Heading
 				as="h3"
 				size="4"

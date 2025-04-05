@@ -40,7 +40,7 @@ export const DialogEditProfile = memo(function DialogEditProfileNoMemo() {
 			}
 			fileReader.readAsDataURL(getFile)
 		} catch {
-			return setUIError(new BadRequest('Something happend while processing image', BadRequestCodes.BAD_REQUEST))
+			return setUIError(new BadRequest('Something happened while processing image', BadRequestCodes.BAD_REQUEST))
 		}
 	}
 

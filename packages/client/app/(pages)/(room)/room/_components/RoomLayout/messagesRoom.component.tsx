@@ -24,7 +24,7 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 	const ownMessage = actualUser?.user_id === currentUser
 	return (
 		<span
-			className={`flex flex-row gap-x-4 ${ownMessage && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}
+			className={`flex flex-row gap-x-4 relative ${ownMessage && '!flex-row-reverse'} ${messageStatus === 'error' && 'bg-red-600/60 p-2 rounded-md'}`}
 		>
 			<ImageAndFallback
 				picture={actualUser?.profile_picture ?? ''}
@@ -51,7 +51,6 @@ function MessagesRoomNoMemo({ messages }: { messages: Messages & messageStatus }
 						picture={file_base64}
 						altName={`Image of ${actualUser?.user_name}`}
 						size={130}
-						className="!aspect-video"
 						renderAsBase64
 					/>
 				) : (

@@ -32,6 +32,7 @@ export function DDMenu({ handleLeave, roomID }: DDMenuProps) {
 								{!isIDVisible ? 'RoomID' : roomID}
 							</Item>
 						</DropdownMenu.SubContent>
+						<DropdownMenu.SubTrigger className="hover:cursor-pointer">See users</DropdownMenu.SubTrigger>
 					</DropdownMenu.Sub>
 
 					<Separator />

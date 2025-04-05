@@ -77,6 +77,7 @@ export class WsConnService {
   }
 
   async RoomHistory(user: JWT_DECODED_INFO['id'], body?: RoomHistoryDto) {
+    if ((body?.offset ?? 0) === 0) return [];
     const room = await this.FindUserInRoom(user, body.room_id);
     try {
       const messages: Array<messages> = await this.dataSource.query(`
@@ -85,7 +86,7 @@ export class WsConnService {
             FROM room_messages rm
             INNER JOIN messages m ON rm.message_id = m.message_id
             LEFT JOIN file_storage fis ON m.file_id = fis.file_id
-            WHERE rm.which_room = '${room.room_id}'::varchar ORDER BY rm.date_sended DESC OFFSET ${body.offset}::integer
+            WHERE rm.which_room = '${room.room_id}'::varchar ORDER BY rm.date_sended DESC OFFSET ${body.offset}::integer LIMIT ${MAX_MESSAGES_PER_REQ}
         ) subquery ORDER BY subquery.date_sended ASC
         `);
 
@@ -213,7 +214,7 @@ export class WsConnService {
         LEFT JOIN room_messages ON users_in_room.room_id = room_messages.which_room
         LEFT JOIN file_storage ON room.room_picture = file_storage.file_id
         WHERE users_in_room.room_id IN (${getRooms}) AND users_in_room.user_id = (${userID})::integer GROUP BY room.room_id, file_storage.file_src
-        ORDER BY max(room_messages.date_sended) NULLS LAST;
+        ORDER BY max(room_messages.date_sended) DESC NULLS LAST;
       `);
       if (!roomInfo?.length) return null;
 
@@ -248,7 +249,7 @@ export class WsConnService {
 
             if (groupMessages == null) return [];
             if (msg.file_id == null) return groupMessages;
-            console.log(msg.file_id);
+
             return {
               ...groupMessages,
               file_base64: fileToBase64({

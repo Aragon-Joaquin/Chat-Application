@@ -22,6 +22,7 @@ import { FOLDER_PATHS } from 'src/utils/MulterProps';
 import { readFileSync } from 'fs';
 import { extname, join } from 'path';
 import { fileToBase64 } from 'src/utils/getFileAsBase64';
+import { createDateNow } from 'src/utils/constants';
 
 @UseGuards(WsConnGuard)
 @WebSocketGateway(WS_PORT, {
@@ -155,14 +156,17 @@ export class WsConnGateway {
         break;
       }
       case 'userPicture': {
-        client.emit(
-          WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
-          JSON.stringify({
-            type: 'userPicture',
-            clientID: JWT_Info.id,
-            fileSrc: file,
-          }),
-        );
+        client?.rooms?.forEach((roomID) => {
+          this.wss.to(roomID).emit(
+            WS_ENDPOINTS_EVENTS.MEDIA_CHANNEL,
+            JSON.stringify({
+              type: 'userPicture',
+              clientID: JWT_Info.id,
+              fileSrc: file,
+              date_sended: createDateNow(),
+            }),
+          );
+        });
         break;
       }
       case 'chatIMG': {
@@ -247,7 +251,6 @@ export class WsConnGateway {
         this.wsConnService.JoinToNewRoom(roomID, JWT_Info, roomPassword),
         this.wsConnService.GetUser(JWT_Info['id']),
       ]);
-      console.log(roomExists);
 
       if (roomExists == undefined || userInfo == undefined)
         return this.returnCustomError(client.id, [
@@ -303,12 +306,13 @@ export class WsConnGateway {
       client.leave(roomID),
     ]);
 
-    this.wss
-      .in(roomID)
-      .emit(
-        WS_ENDPOINTS_EVENTS.LEAVED_ROOM,
-        `${JWT_Info.userName} has leaved the room.`,
-      );
+    this.wss.in(roomID).emit(
+      WS_ENDPOINTS_EVENTS.LEAVED_ROOM,
+      JSON.stringify({
+        user_name: JWT_Info.userName,
+        room_id: roomID,
+      }),
+    );
   }
 
   @SubscribeMessage(WS_ACTIONS.DELETE)

@@ -27,9 +27,11 @@ export interface WS_ENDPOINTS_TYPES {
 	joinedRoom:
 		| {
 				room_id: RoomInfo['room_id']
-				user_id: UserInfo['user_id']
-				user_name: UserInfo['user_name']
-				profile_picture: UserInfo['profile_picture']
+				userInfo: {
+					user_id: UserInfo['user_id']
+					user_name: UserInfo['user_name']
+					profile_picture: UserInfo['profile_picture']
+				}
 		  }
 		| {
 				room_id: RoomInfo['room_id']
@@ -44,6 +46,7 @@ export interface WS_ENDPOINTS_TYPES {
 				clientID: UserInfo['user_id']
 				roomID: RoomInfo['room_id']
 				fileSrc: Base64URLString
+				date_sended: Date
 		  }
 		| {
 				type: 'roomPicture'
@@ -55,4 +58,9 @@ export interface WS_ENDPOINTS_TYPES {
 				clientID: UserInfo['user_id']
 				fileSrc: string
 		  }
+
+	leavedRoom: {
+		user_name: string
+		room_id: RoomInfo['room_id']
+	}
 }

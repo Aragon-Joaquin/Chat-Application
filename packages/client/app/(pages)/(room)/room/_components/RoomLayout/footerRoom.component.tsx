@@ -55,7 +55,6 @@ export function FooterRoom() {
 	}
 
 	const handleSubmitImage = (e: ChangeEvent<HTMLInputElement>) => {
-		console.log(e)
 		e.preventDefault()
 		const file = e.currentTarget?.files?.item(0)
 		if (file == null || !IMAGES_TYPES.includes(file?.type) || actualRoom == undefined)

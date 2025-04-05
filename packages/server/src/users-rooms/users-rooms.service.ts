@@ -49,6 +49,7 @@ export class UsersRoomsService {
     if (isUserInRoom)
       throw new BadRequestException('You are already in this room!');
 
+    console.log(room.room_password);
     if (room.room_password == '' || room.room_password == undefined) {
       return await this.usersRoomsService.insert({
         room_id: room.room_id,
@@ -58,18 +59,18 @@ export class UsersRoomsService {
     }
 
     if (
-      !comparePassword({
+      await comparePassword({
         userPassword: password,
         originalPassword: room.room_password,
       })
     )
-      throw new BadRequestException("Passwords don't match.");
+      return await this.usersRoomsService.insert({
+        room_id: room.room_id,
+        user_id: user.id,
+        role_id: { role_name: typesOfRoles.USER },
+      });
 
-    return await this.usersRoomsService.insert({
-      room_id: room.room_id,
-      user_id: user.id,
-      role_id: { role_name: typesOfRoles.USER },
-    });
+    throw new BadRequestException("Passwords don't match.");
   }
 
   async JoinRoomONCreation(roomID: room['room_id'], user: JWT_DECODED_INFO) {

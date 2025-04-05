@@ -51,7 +51,7 @@ function ChatBubbleNoMemoized({ roomAllProps }: { roomAllProps: roomState }) {
 									{messages.at(-1)?.file_base64 != null ? (
 										<em className="!text-descriptionColor">Image </em>
 									) : (
-										messages.at(-1)?.file_base64
+										messages.at(-1)?.message_content
 									)}
 								</p>
 							</>

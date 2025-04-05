@@ -24,11 +24,16 @@ function ImageAndFallbackNoMemo({
 }: ImageAndFallback) {
 	return (
 		<div
-			className={`rounded-[50%] relative overflow-hidden`}
-			style={{ height: `${size}px`, width: `${size}px`, minHeight: `${size}px`, minWidth: `${size}px` }}
+			className={`relative overflow-hidden h-auto w-full ${renderAsBase64 && 'max-h[300px] max-w-[300px]'}`}
+			style={{
+				height: `${!renderAsBase64 && `${size}px`}`,
+				width: `${!renderAsBase64 && `${size}px`}`,
+				minHeight: `${size}px`,
+				minWidth: `${size}px`
+			}}
 		>
 			{picture == undefined || picture == '' ? (
-				<div className="w-full h-full rounded-full border-2 bg-neutral-300  border-neutral-400" />
+				<div className="w-full h-full rounded-full border-2 bg-neutral-300 border-neutral-400" />
 			) : (
 				<Image
 					src={renderAsBase64 ? decodeURIComponent(picture) : `${URL_DATABASE}${PUBLIC_FOLDER_NAME}${picture}`}
@@ -39,7 +44,7 @@ function ImageAndFallbackNoMemo({
 					width={size}
 					height={size}
 					alt={altName ?? ''}
-					className={`w-full h-full rounded-full border-2 border-neutral-800/30 ${className}`}
+					className={`w-full h-full border-2 object-cover  ${renderAsBase64 ? 'rounded-md border-transparent/10 hover:scale-105 transition-all hover:object-contain hover:border-0' : 'rounded-full border-neutral-800/30 '} ${className}`}
 					title={description}
 				/>
 			)}
